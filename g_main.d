@@ -28,4 +28,8 @@ obj/g_main.o: \
  /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/Lmd_Commands_Auths.h \
  /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/Lmd_Commands_Auths_Public.h \
  /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/Lmd_Commands_Public.h \
- /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/Lmd_Bans.h
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/Lmd_Bans.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/g_lua.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/lua/lua.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/lua/luaconf.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/Lmd_Entities_Public.h

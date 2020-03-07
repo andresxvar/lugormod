@@ -63,6 +63,8 @@ const char *verMods =
 #include "Lmd_Bans.h"
 #include "Lmd_EntityCore.h"
 
+#include "g_lua.h"
+
 level_locals_t	level;
 
 int eventClearTime = 0;
@@ -1089,11 +1091,12 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 #ifdef _PATCHER
 		JKG_PatchEngine();
 #endif
+		g_lua_init(); // Lua
 		G_InitGame( arg0, arg1, arg2 );
 		return 0;
 	case GAME_SHUTDOWN:
+		g_lua_shutdown(); // Lua
 		G_ShutdownGame( arg0 );
-
 #ifdef LMD_MEMORY_DEBUG
 	_CrtDumpMemoryLeaks();
 #endif
@@ -1122,7 +1125,8 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 		ClientBegin( arg0, qtrue );
 		return 0;
 	case GAME_CLIENT_COMMAND:
-		ClientCommand( arg0 );
+		if(g_lua_clientCommand(arg0) == qfalse) //Lua
+			ClientCommand(arg0);
 		return 0;
 	case GAME_RUN_FRAME:
 		G_RunFrame( arg0 );

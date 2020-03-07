@@ -7,7 +7,7 @@ CC = g++
 CXXFLAGS = -Wfatal-errors -Wno-narrowing -fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
 	-DLMD_NEW_SKILLSYS -D_DEBUG -D_JK2 -DJK2AWARDS
-LDFLAGS = -shared -lm -pthread
+LDFLAGS = -shared -lm -pthread -L/home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/lua -llua
 
 # Makefile settings - Can be customized.
 APPNAME = jampgamei386.so
