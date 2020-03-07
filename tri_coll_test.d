@@ -1,0 +1,23 @@
+obj/tri_coll_test.o: \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/tri_coll_test.c \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/q_shared.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/../qcommon/disablewarnings.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/teams.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/surfaceflags.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/../qcommon/tags.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/g_local.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/q_shared.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/bg_public.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/bg_weapons.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/anims.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/bg_vehicles.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/../namespace_begin.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/../namespace_end.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/g_public.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/gentity_t.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/b_public.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/ai.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/gclient_t.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/ip_t.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/lmd_mem.h \
+ /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/../game/g_team.h
