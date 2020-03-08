@@ -17,6 +17,7 @@
 #include "Lmd_Checksum.h"
 #include "Lmd_EntityCore.h"
 
+#include "g_lua_main.h"
 
 //RoboPhred
 gentity_t *ClientFromArg (gentity_t *to, int argNum);
@@ -865,6 +866,22 @@ qboolean	ConsoleCommand( void ) {
 		//Com_Printf("info: server: %s\n", msg);
 		return qtrue;
 	}
+
+	if (Q_stricmp(cmd, "luareset") == 0)
+	{
+		g_lua_shutdown();
+		g_lua_init();
+		trap_SendServerCommand( -1, 
+						va("chat \"%s%c%c: %c%c%s\"",
+						g_nameForServer.string,
+						Q_COLOR_ESCAPE, 
+						COLOR_WHITE, 
+						Q_COLOR_ESCAPE, 
+						COLOR_GREEN, 
+						"reloading lua scripts ..."));
+		return qtrue;
+	}
+
 	if (g_dedicated.integer) {        
 		Com_Printf("No such svcmd\n");
 	}

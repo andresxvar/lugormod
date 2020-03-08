@@ -63,7 +63,7 @@ const char *verMods =
 #include "Lmd_Bans.h"
 #include "Lmd_EntityCore.h"
 
-#include "g_lua.h"
+#include "g_lua_main.h"
 
 level_locals_t	level;
 

@@ -1,16 +1,15 @@
-extern "C"{
-    #include "lua/lua.h"
-    #include "lua/lualib.h"
-    #include "lua/lauxlib.h"
+extern "C"
+{
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
 }
-#include "g_lua.h"
+#include "g_lua_main.h"
 #include "g_local.h"
 #include "Lmd_Entities_Public.h"
 
 lua_State *g_lua;
 int lua_toString;
-
-st_lua_cmd_t st_lua_cmds[MAX_LUA_CMDS];
 
 /*
 * Lua error reporting
@@ -60,6 +59,7 @@ int g_lua_loadScript(char *fileName)
 	return 1;
 }
 
+st_lua_cmd_t st_lua_cmds[MAX_LUA_CMDS];
 void g_lua_init()
 {
     G_Printf("-------- Lua Initialization ---------\n");
@@ -69,12 +69,20 @@ void g_lua_init()
     int numGlobalScripts, globalScriptlen;
 	char lstGlobalScripts[2048], *globalScriptPtr;
 	
-    // intialize commands
+    // intialize lua commands
     for (i = 0; i < MAX_LUA_CMDS; i++)
 	{
 		memset(&st_lua_cmds[i], 0, sizeof(st_lua_cmd_t));
 		st_lua_cmds[i].name = 0;
 		st_lua_cmds[i].function = 0;
+	}
+
+	// initialize lua entities
+	for (i = 0; i < MAX_LUA_ENTS; i++)
+	{
+		memset(&st_lua_ents[i], 0, sizeof(st_lua_cmd_t));
+		st_lua_ents[i].name = 0;
+		st_lua_ents[i].function = 0;
 	}
 
     // initialize lua
@@ -99,7 +107,9 @@ void g_lua_init()
 	}    
 
     lua_getglobal(g_lua, "tostring");
-	lua_toString = luaL_ref(g_lua, LUA_REGISTRYINDEX);    
+	lua_toString = luaL_ref(g_lua, LUA_REGISTRYINDEX);
+
+	g_lua_RegisterEntities();
 }
 
 void g_lua_shutdown()

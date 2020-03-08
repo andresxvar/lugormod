@@ -1,9 +1,10 @@
-extern "C"{
-    #include "lua/lua.h"
-    #include "lua/lauxlib.h"
+extern "C" 
+{
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
 }
-#include "g_lua.h"
 #include "g_local.h"
+#include "g_lua_main.h"
 
 //
 // Game.BindCommand(name:String, command:Function)
@@ -91,9 +92,33 @@ static int g_lua_Game_Broadcast(lua_State * L)
 }
 
 //
+// Game.PlayEffect( effect:String, origin:Vector, direction:Vector )
+//
+static int g_lua_Game_PlayEffect(lua_State * L)
+{
+	int n = lua_gettop(L);
+	char *effect = NULL;
+	vec_t *origin, *direction;
+
+	if (n < 3)
+		return luaL_error(L, "syntax: PlayEffect( effect:String, origin:Vector, <direction:Vector> )");
+
+	effect = (char*)luaL_checkstring(L, 1);
+
+	origin = lua_getvector(L, 2);
+	luaL_argcheck(L, origin != NULL, 2, "`QVector' expected");
+
+	direction = lua_getvector(L, 3);
+	luaL_argcheck(L, direction != NULL, 3, "`QVector' expected");
+
+	G_PlayEffectID(G_EffectIndex(effect), origin, direction);
+	return 0;
+}
+
+//
 // Game.ConcatArgs(index:Integer)
 //
-static int lua_Game_ConcatArgs(lua_State * L)
+static int g_lua_Game_ConcatArgs(lua_State * L)
 {
 	int n;
 
@@ -103,9 +128,10 @@ static int lua_Game_ConcatArgs(lua_State * L)
 }
 
 static const luaL_Reg GameRegistry[] = {
-	{ "BindCommand", g_lua_Game_BindCommand },
-    { "Broadcast", g_lua_Game_Broadcast },
-	{ "ConcatArgs",		lua_Game_ConcatArgs },
+	{ "BindCommand", 	g_lua_Game_BindCommand },
+    { "Broadcast", 		g_lua_Game_Broadcast },
+	{ "ConcatArgs",		g_lua_Game_ConcatArgs },
+	{ "PlayEffect", 	g_lua_Game_PlayEffect },
 
 	{ NULL, NULL }
 };

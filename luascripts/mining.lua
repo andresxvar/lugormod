@@ -2,7 +2,8 @@ function material_pain(material, attacker, damage)
 	local attackWeapon = attacker:cliWeapon()
 	if (attackWeapon == 1) 
 	then
-	        Game.Broadcast( "ouch!",  0,  attacker:Number())
+			Game.Broadcast( "ouch!",  0,  attacker:Number())
+			Game.PlayEffect("sparks/bluesparks",material:Position(),material:Position())
 	end
 end
 

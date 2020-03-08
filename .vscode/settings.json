@@ -2,6 +2,7 @@
     "files.associations": {
         "lmd_accounts_friends.h": "c",
         "g_lua.h": "c",
-        "lauxlib.h": "c"
+        "lauxlib.h": "c",
+        "lua.h": "c"
     }
 }

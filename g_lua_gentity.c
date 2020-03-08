@@ -1,13 +1,14 @@
-extern "C"{
-    #include "lua/lua.h"
-    #include "lua/lauxlib.h"
+extern "C" 
+{
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
 }
-#include "g_lua.h"
+#include "g_lua_main.h"
 
 #include "g_local.h"
 #include "Lmd_EntityCore.h"
 
-static int lua_GEntity_GC(lua_State * L)
+static int g_lua_GEntity_GC(lua_State * L)
 {
 	//G_Printf("Lua says bye to entity = %p\n", lua_getentity(L));
 	return 0;
@@ -16,7 +17,7 @@ static int lua_GEntity_GC(lua_State * L)
 //
 // GEntity.FromNumber( id:Integer )
 //
-static int lua_GEntity_FromNumber(lua_State *L)
+static int g_lua_GEntity_FromNumber(lua_State *L)
 {
 	int n = lua_gettop(L), num;
 
@@ -36,7 +37,7 @@ static int lua_GEntity_FromNumber(lua_State *L)
 // GEntity.Place( Spawnstring:String )
 // GEntity.Place( Spawnstring:String, CanSave:Boolean)
 //
-static int lua_GEntity_Place(lua_State *L)
+static int g_lua_GEntity_Place(lua_State *L)
 {
 	int n = lua_gettop(L);
 	char *spawnString;
@@ -66,17 +67,206 @@ static int lua_GEntity_Place(lua_State *L)
 	return 1;
 }
 
+//
+// GEntity.Register( name:string, spawn:function, logical:bool)
+//
+// g_lua_Spawn 
+// Handler for spawning custom lua entities
+st_lua_ent_t st_lua_ents[MAX_LUA_ENTS];
+void Lmd_AddSpawnableEntry(spawn_t spawnData);
+void g_lua_Spawn(gentity_t *ent)
+{	
+	// pick the right spawning function
+	for (int i = 0; i < MAX_LUA_ENTS; ++i)
+	{
+		if (!Q_stricmp(st_lua_ents[i].name, ent->classname))
+		{
+			lua_rawgeti(g_lua, LUA_REGISTRYINDEX, st_lua_ents[i].function);
+			lua_pushgentity(g_lua, ent);
+			if (lua_pcall(g_lua, 1, 0, 0))
+				g_lua_reportError();
+			return;
+		}
+	}
+}
+// g_lua_RegisterEntities
+// Registers a new entity see GEntity.Register()
+void g_lua_RegisterEntities()
+{
+	// register all lua entities
+	for (int i = 0; i < MAX_LUA_ENTS; ++i)
+	{
+		if (st_lua_ents[i].function)
+		{
+			spawn_t data = { st_lua_ents[i].name,g_lua_Spawn, st_lua_ents[i].logical, NULL };
+			Lmd_AddSpawnableEntry(data);
+		}
+		else
+		{
+			break;
+		}
+	}
+}
+static int g_lua_GEntity_Register(lua_State *L)
+{
+	int n = lua_gettop(L), spref = LUA_REFNIL, logical = 0;
+	char *name;
+	int i;
+
+	if (n < 3)
+		return luaL_error(L, "syntax: Register(name:String, spawn:Function, islogical:Boolean)");
+
+	// get the first argument, must be a string
+	name = (char*)luaL_checkstring(L, 1);
+
+	// check if the second argument is a function
+	if (!lua_isfunction(L, 2))
+		return luaL_error(L, "second argument must be a function");
+
+	// push the value of the second argument to the registry
+	lua_pushvalue(L, 2);
+	spref = luaL_ref(L, LUA_REGISTRYINDEX);
+
+	// get the third argument
+	logical = luaL_checkinteger(L, 3);
+	
+	// find if the function has already been registered
+	for (i = 0; i < MAX_LUA_ENTS; ++i)
+	{		
+		if (st_lua_ents[i].function && st_lua_ents[i].function == spref)
+		{
+			lua_pushinteger(L, spref);
+			return 1;
+		}
+	}
+
+	// add new entry to st_lua_ents
+	for (i = 0; i < MAX_LUA_ENTS; ++i)
+	{
+		// find the next empty slot
+		if (!st_lua_ents[i].function)
+		{
+			st_lua_ents[i].name = G_NewString(name);
+			st_lua_ents[i].function = spref;
+			st_lua_ents[i].logical = logical;
+			lua_pushinteger(L, spref);
+			return 1;
+		}
+	}
+
+	lua_pushinteger(L, spref);
+	return 1;
+}
 
 //
 // GEntity:Number( )
 //
-static int lua_GEntity_Number(lua_State *L)
+static int g_lua_GEntity_Number(lua_State *L)
 {
 	lua_GEntity *lent;
 
 	lent = lua_getgentity(L, 1);
 
 	lua_pushinteger(L, lent->e->s.number);
+	return 1;
+}
+
+//
+// GEntity:Position( )
+// GEntity:Position( newVal:QVector )
+//
+static int g_lua_GEntity_Position(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	lent = lua_getgentity(L, 1);
+
+	if (n > 1)
+	{
+		vec_t *newVal = lua_getvector(L, 2);
+		VectorCopy(newVal, lent->e->r.currentOrigin);
+		return 0;
+	}
+
+	lua_pushvector(L, lent->e->r.currentOrigin);
+	return 1;
+}
+
+//
+// GEntity:Angles( )
+// GEntity:Angles( newVal:QVector )
+//
+static int g_lua_GEntity_Angles(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	lent = lua_getgentity(L, 1);
+
+	if (n > 1)
+	{
+		vec_t *newVal = lua_getvector(L, 2);
+		VectorCopy(newVal, lent->e->s.angles);
+		return 0;
+	}
+
+	lua_pushvector(L, lent->e->s.angles);
+	return 1;
+}
+
+//
+// GEntity:Model( )
+// GEntity:Model( newVal:String )
+//
+qboolean SpawnEntModel(gentity_t *ent, qboolean isSolid, qboolean isAnimated);
+static int g_lua_GEntity_Model(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	lent = lua_getgentity(L, 1);
+
+	if (n > 1)
+	{
+		lent->e->s.eFlags &= ~(EF_NODRAW);
+		lent->e->s.modelGhoul2 = 0;
+		lent->e->s.pos.trType = TR_STATIONARY;
+		char *newVal = (char*)luaL_checkstring(L, 2);
+		lent->e->model = G_NewString(newVal);
+		G_SetOrigin( lent->e, lent->e->s.origin );
+		VectorCopy(lent->e->s.origin, lent->e->s.pos.trBase );
+		VectorCopy( lent->e->s.angles, lent->e->s.apos.trBase );
+		SpawnEntModel(lent->e,qtrue,qfalse);
+		trap_LinkEntity(lent->e);
+		return 0;
+	}
+
+	lua_pushstring(L, lent->e->model);
+	return 1;
+}
+
+//
+// GEntity:Health( )
+// GEntity:Health( newVal:Integer )
+//
+static int g_lua_GEntity_Health(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	lent = lua_getgentity(L, 1);
+
+	if (n > 1)
+	{		
+		int newVal = luaL_checkinteger(L, 2);
+		if (newVal>0)
+			lent->e->takedamage = qtrue;
+		lent->e->health = newVal;
+		return 0;
+	}
+
+	lua_pushinteger(L, lent->e->health);
 	return 1;
 }
 
@@ -98,6 +288,26 @@ static int lua_GEntity_cliAimOrigin(lua_State *L)
 	trap_Trace(&tr, start, NULL, NULL, end, lent->e->s.number, MASK_SHOT);
 
 	lua_pushvector(L, tr.endpos);
+	return 1;
+}
+
+//
+// GEntity:cliViewAngles( )
+// GEntity:cliViewAngles( newVal:QVector )
+//
+static int g_lua_GEntity_cliViewAngles(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = lua_getcligentity(L, 1);
+
+	if (n > 1)
+	{
+		vec_t *newVal = lua_getvector(L, 2);
+		VectorCopy(newVal, lent->e->client->ps.viewangles);
+		return 0;
+	}
+
+	lua_pushvector(L, lent->e->client->ps.viewangles);
 	return 1;
 }
 
@@ -209,24 +419,30 @@ static int lua_GEntity_BindPain(lua_State *L)
 }
 
 static const luaL_Reg gentity_ctor[] = {
-	{ "FromNumber", lua_GEntity_FromNumber },
-	{"Place", lua_GEntity_Place},
+	{ "FromNumber", g_lua_GEntity_FromNumber },
+	{ "Place", g_lua_GEntity_Place},
+	{ "Register", g_lua_GEntity_Register },
 	
 	{ NULL, NULL }
 };
 
 static const luaL_Reg gentity_meta[] = {
-	{ "__gc", lua_GEntity_GC },
+	{ "__gc", g_lua_GEntity_GC },
 
 	{ "BindPain", lua_GEntity_BindPain},
 	
 	{ "cliAimOrigin", lua_GEntity_cliAimOrigin },
+	{ "cliViewAngles", g_lua_GEntity_cliViewAngles },
 	{ "cliName", lua_GEntity_cliName },
 	{ "cliWeapon", lua_GEntity_cliWeapon },
 	
 	{ "cliPrintConsole", lua_GEntity_cliPrintConsole },
 	
-	{ "Number", lua_GEntity_Number },	
+	{ "Number", g_lua_GEntity_Number },
+	{ "Position", g_lua_GEntity_Position },
+	{ "Angles", g_lua_GEntity_Angles},
+	{ "Model", g_lua_GEntity_Model},
+	{ "Health", g_lua_GEntity_Health},
 
 	{ NULL, NULL }
 };
