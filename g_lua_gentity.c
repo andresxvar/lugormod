@@ -68,6 +68,37 @@ static int lua_GEntity_cliName(lua_State *L)
 	}
 }
 
+//
+// GEntity:cliPrintConsole( message:String )
+//
+static int lua_GEntity_cliPrintConsole(lua_State *L)
+{
+	int             i;
+	char            buf[1000] = { 0 };
+	int             n = lua_gettop(L);
+	lua_GEntity		*lent = lua_getcligentity(L, 1);
+
+	lua_rawgeti(L, LUA_REGISTRYINDEX, lua_toString);
+
+	for (i = 2; i <= n; i++)
+	{
+		const char *s;
+
+		lua_pushvalue(L, -1);	// function to be called
+		lua_pushvalue(L, i);	// value to print
+		lua_call(L, 1, 1);
+		s = lua_tostring(L, -1);	// get result
+
+		if (s == NULL)
+			return luaL_error(L, "`tostring' must return a string to `print'");
+
+		Q_strcat(buf, sizeof(buf), s);	
+		lua_pop(L, 1);			// pop result
+	}
+	trap_SendServerCommand(lent->e->client->ps.clientNum, va("print \"%s\"", buf));
+	return 0;
+}
+
 static const luaL_Reg gentity_ctor[] = {
 	{ "FromNumber", lua_GEntity_FromNumber },	
 	
@@ -77,8 +108,9 @@ static const luaL_Reg gentity_ctor[] = {
 static const luaL_Reg gentity_meta[] = {
 	{ "__gc", lua_GEntity_GC },
 
-	{ "Number", lua_GEntity_Number },
 	{ "cliName", lua_GEntity_cliName },
+	{ "cliPrintConsole", lua_GEntity_cliPrintConsole },
+	{ "Number", lua_GEntity_Number },
 
 	{ NULL, NULL }
 };
