@@ -81,18 +81,31 @@ static int g_lua_Game_Broadcast(lua_State * L)
 		playerId = luaL_checkinteger(L, 3);
 
 	if (flags & 16)	// print to chat
-		trap_SendServerCommand(-1, va("chat \"%s\"", message));
+		trap_SendServerCommand(playerId, va("chat \"%s\"", message));
 	else if (flags & 8) // print to console
-		trap_SendServerCommand(-1, va("print \"%s\"", message));
+		trap_SendServerCommand(playerId, va("print \"%s\"", message));
 	else // center prints
-		trap_SendServerCommand(-1, va("cp \"%s\"", message));
+		trap_SendServerCommand(playerId, va("cp \"%s\"", message));
 
 	return 0;
+}
+
+//
+// Game.ConcatArgs(index:Integer)
+//
+static int lua_Game_ConcatArgs(lua_State * L)
+{
+	int n;
+
+	n = luaL_optinteger(L, 1, 1);
+	lua_pushstring(L, ConcatArgs(n));
+	return 1;
 }
 
 static const luaL_Reg GameRegistry[] = {
 	{ "BindCommand", g_lua_Game_BindCommand },
     { "Broadcast", g_lua_Game_Broadcast },
+	{ "ConcatArgs",		lua_Game_ConcatArgs },
 
 	{ NULL, NULL }
 };

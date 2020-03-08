@@ -44,6 +44,30 @@ static int lua_GEntity_Number(lua_State *L)
 	return 1;
 }
 
+//
+// GEntity:cliName( )
+// GEntity:cliName( newVal:String )
+//
+static int lua_GEntity_cliName(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = lua_getcligentity(L, 1);
+
+	if (n > 1) {
+		char *newVal = (char*)luaL_checkstring(L, 2);
+		Q_strncpyz(lent->e->client->pers.netname, newVal, sizeof(lent->e->client->pers.netname));
+		lent->e->client->pers.netnameTime = 0;
+		ClientUserinfoChanged(lent->e->client->ps.clientNum);
+		lent->e->client->pers.netnameTime = 0;
+		return 0;
+	}
+	else
+	{
+		lua_pushstring(L, lent->e->client->pers.netname);
+		return 1;
+	}
+}
+
 static const luaL_Reg gentity_ctor[] = {
 	{ "FromNumber", lua_GEntity_FromNumber },	
 	
@@ -54,6 +78,7 @@ static const luaL_Reg gentity_meta[] = {
 	{ "__gc", lua_GEntity_GC },
 
 	{ "Number", lua_GEntity_Number },
+	{ "cliName", lua_GEntity_cliName },
 
 	{ NULL, NULL }
 };
@@ -97,5 +122,18 @@ lua_GEntity	*lua_getgentity(lua_State * L, int argNum)
 	luaL_argcheck(L, ud != NULL, argNum, "`entity' expected");
 
 	lent = (lua_GEntity *)ud;
+	return lent;
+}
+
+lua_GEntity *lua_getcligentity(lua_State * L, int argNum)
+{
+	void *ud;
+	lua_GEntity	*lent;
+
+	ud = luaL_checkudata(L, argNum, "Game.GEntity");
+	luaL_argcheck(L, ud != NULL, argNum, "`entity' expected");
+	lent = (lua_GEntity *)ud;
+	luaL_argcheck(L, lent->e->client != NULL, argNum, "entity is not a client");
+
 	return lent;
 }

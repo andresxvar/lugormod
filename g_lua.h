@@ -41,3 +41,4 @@ typedef struct
 extern int             luaopen_gentity(lua_State * L);
 extern void            lua_pushgentity(lua_State * L, gentity_t * ent);
 extern lua_GEntity    *lua_getgentity(lua_State * L, int argNum);
+extern lua_GEntity 	  *lua_getcligentity(lua_State * L, int argNum);
