@@ -5,6 +5,7 @@ extern "C"{
 #include "g_lua.h"
 
 #include "g_local.h"
+#include "Lmd_EntityCore.h"
 
 static int lua_GEntity_GC(lua_State * L)
 {
@@ -32,6 +33,41 @@ static int lua_GEntity_FromNumber(lua_State *L)
 }
 
 //
+// GEntity.Place( Spawnstring:String )
+// GEntity.Place( Spawnstring:String, CanSave:Boolean)
+//
+static int lua_GEntity_Place(lua_State *L)
+{
+	int n = lua_gettop(L);
+	char *spawnString;
+	gentity_t *result = NULL;
+	SpawnData_t *spawnData = NULL;
+
+	if (n < 1)
+		return luaL_error(L, "syntax: Place( Spawnstring:String )");
+
+	spawnString = (char*)luaL_checkstring(L, 1);
+	result = trySpawn(spawnString);
+
+	if (result)
+	{
+		if (n > 1)
+		{
+			int canSave = luaL_checkinteger(L, 2);
+			if (canSave != 0)
+				Lmd_Entities_SetSaveable(result->Lmd.spawnData, qtrue);				
+		}
+
+		lua_pushgentity(L, result);
+	}
+	else
+		lua_pushnil(L);
+
+	return 1;
+}
+
+
+//
 // GEntity:Number( )
 //
 static int lua_GEntity_Number(lua_State *L)
@@ -43,6 +79,28 @@ static int lua_GEntity_Number(lua_State *L)
 	lua_pushinteger(L, lent->e->s.number);
 	return 1;
 }
+
+//
+// GEntity:cliAimOrigin()
+// GEntity:cliAimOrigin(range:Integer)
+//
+static int lua_GEntity_cliAimOrigin(lua_State *L)
+{
+	trace_t tr;
+	lua_GEntity *lent = NULL;
+	vec3_t start, end, forward;
+
+	lent = lua_getcligentity(L,1);
+	AngleVectors( lent->e->client->ps.viewangles, forward, NULL, NULL );
+	VectorSet( start, lent->e->client->ps.origin[0], lent->e->client->ps.origin[1], lent->e->client->ps.origin[2] + lent->e->client->ps.viewheight );
+	VectorMA( start, luaL_optinteger(L, 2, 131072), forward, end );
+
+	trap_Trace(&tr, start, NULL, NULL, end, lent->e->s.number, MASK_SHOT);
+
+	lua_pushvector(L, tr.endpos);
+	return 1;
+}
+
 
 //
 // GEntity:cliName( )
@@ -66,6 +124,18 @@ static int lua_GEntity_cliName(lua_State *L)
 		lua_pushstring(L, lent->e->client->pers.netname);
 		return 1;
 	}
+}
+
+//
+// GEntity:cliWeapon( )
+//
+static int lua_GEntity_cliWeapon(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = lua_getcligentity(L, 1);
+
+	lua_pushinteger(L, lent->e->client->ps.weapon);
+	return 1;
 }
 
 //
@@ -99,8 +169,48 @@ static int lua_GEntity_cliPrintConsole(lua_State *L)
 	return 0;
 }
 
+//
+// GEntity:BindPain( callback:Function )
+//
+void lua_pain(gentity_t *self, gentity_t *attacker, int damage)
+{
+	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_pain);
+	lua_pushgentity(g_lua, self);
+	lua_pushgentity(g_lua, attacker);
+	lua_pushinteger(g_lua, damage);
+
+	if (lua_pcall(g_lua, 3, 0, 0))
+		g_lua_reportError();
+}
+
+static int lua_GEntity_BindPain(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	if (n < 2)
+		return luaL_error(L, "syntax: BindPain( callback:Function )");
+
+	lent = lua_getgentity(L, 1);
+
+	if (lua_isnil(L, 2))
+	{
+		if (lent->e->lua_pain > 0)
+			luaL_unref(L, LUA_REGISTRYINDEX, lent->e->lua_pain);
+		lent->e->lua_pain = 0;
+	}
+	else
+	{
+		lua_pushvalue(L, 2);
+		lent->e->lua_pain = luaL_ref(L, LUA_REGISTRYINDEX);
+		lent->e->pain = lua_pain;
+	}
+	return 0;
+}
+
 static const luaL_Reg gentity_ctor[] = {
-	{ "FromNumber", lua_GEntity_FromNumber },	
+	{ "FromNumber", lua_GEntity_FromNumber },
+	{"Place", lua_GEntity_Place},
 	
 	{ NULL, NULL }
 };
@@ -108,9 +218,15 @@ static const luaL_Reg gentity_ctor[] = {
 static const luaL_Reg gentity_meta[] = {
 	{ "__gc", lua_GEntity_GC },
 
+	{ "BindPain", lua_GEntity_BindPain},
+	
+	{ "cliAimOrigin", lua_GEntity_cliAimOrigin },
 	{ "cliName", lua_GEntity_cliName },
+	{ "cliWeapon", lua_GEntity_cliWeapon },
+	
 	{ "cliPrintConsole", lua_GEntity_cliPrintConsole },
-	{ "Number", lua_GEntity_Number },
+	
+	{ "Number", lua_GEntity_Number },	
 
 	{ NULL, NULL }
 };

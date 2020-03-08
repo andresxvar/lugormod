@@ -84,6 +84,8 @@ void g_lua_init()
     luaL_openlibs(g_lua);
     luaopen_game(g_lua);
     luaopen_gentity(g_lua);
+	luaopen_vector(g_lua);
+
 
     numGlobalScripts = trap_FS_GetFileList("luascripts", ".lua", lstGlobalScripts, sizeof(lstGlobalScripts));
 	globalScriptPtr = lstGlobalScripts;

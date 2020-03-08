@@ -251,6 +251,9 @@ struct gentity_s {
 	void		(*pain)(gentity_t *self, gentity_t *attacker, int damage);
 	void		(*die)(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
 
+	//Lua bindings
+	int		lua_pain;
+
 	//RoboPhred
 	qboolean	(*pay)(gentity_t *self, int credits, gentity_t *activator);
 	void		(*interact)(gentity_t *self, gentity_t *activator);
