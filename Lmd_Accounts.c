@@ -420,8 +420,8 @@ qboolean Lmd_Accounts_Player_Login(gentity_t *ent, Account_t *acc){
 		if (ent->client->sess.sessionTeam != TEAM_SPECTATOR){
 			//ent->client->ps.persistant[PERS_SCORE]++;
 			ent->client->ps.stats[STAT_HEALTH] = ent->health = 0;
-			ClientSpawn(ent); //Ufo: why die if respawn is sufficient
-			//player_die(ent, ent, ent, 100000, MOD_SUICIDE);
+			//ClientSpawn(ent); //Ufo: why die if respawn is sufficient, CRASH :(
+			player_die(ent, ent, ent, 100000, MOD_SUICIDE);
 		}
 	}
 

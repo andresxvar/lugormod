@@ -4389,6 +4389,7 @@ ClientThink
 A new command has arrived from the client
 ==================
 */
+extern int g_survivalhp;
 void ClientThink( int clientNum, usercmd_t *ucmd ) {
 	gentity_t *ent;
 
@@ -4396,6 +4397,14 @@ void ClientThink( int clientNum, usercmd_t *ucmd ) {
 	if (clientNum < MAX_CLIENTS)
 	{
 		trap_GetUsercmd( clientNum, &ent->client->pers.cmd );
+	}
+
+	playerState_t *ps = &ent->client->ps;
+	if (g_survivalhp && ent->maxHealth) {
+		if (ent->maxHealth == ps->stats[STAT_MAX_HEALTH])
+				G_ScaleNetHealth(ent);
+			else
+				ent->maxHealth = 0;
 	}
 
 	// mark the time we got info, so we can display the

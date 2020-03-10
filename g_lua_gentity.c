@@ -250,6 +250,7 @@ static int g_lua_GEntity_Model(lua_State *L)
 // GEntity:Health( )
 // GEntity:Health( newVal:Integer )
 //
+void funcBBrushDie (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
 static int g_lua_GEntity_Health(lua_State *L)
 {
 	int n = lua_gettop(L);
@@ -260,8 +261,10 @@ static int g_lua_GEntity_Health(lua_State *L)
 	if (n > 1)
 	{		
 		int newVal = luaL_checkinteger(L, 2);
-		if (newVal>0)
+		if (newVal>0) {
 			lent->e->takedamage = qtrue;
+			lent->e->die = funcBBrushDie;
+		}
 		lent->e->health = newVal;
 		return 0;
 	}

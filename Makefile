@@ -2,17 +2,20 @@
 ####################### Makefile Template ##############################
 ########################################################################
 
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
 # Compiler settings - Can be customized.
 CC = g++
-CXXFLAGS = -Wfatal-errors -Wno-narrowing -fpermissive -D__linux__ -m32 -D_JK2MP \
+CXXFLAGS = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
+	-fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
-	-DLMD_NEW_SKILLSYS -D_DEBUG -D_JK2 -DJK2AWARDS
-LDFLAGS = -shared -lm -pthread -L/home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game/lua -llua
+	-DLMD_NEW_SKILLSYS -D_DEBUG -D_JK2 -DJK2AWARDS -D_GAME
+LDFLAGS = -shared -lm -pthread -L$(ROOT_DIR)/lua -llua
 
 # Makefile settings - Can be customized.
 APPNAME = jampgamei386.so
 EXT = .c
-SRCDIR = /home/andres/Downloads/Lugormod-develop1/Lugormod-develop/game
+SRCDIR = $(ROOT_DIR)
 OBJDIR = obj
 
 ############## Do not change anything from here downwards! #############

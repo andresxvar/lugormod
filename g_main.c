@@ -1112,7 +1112,7 @@ int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int a
 		return 0;
 	case GAME_CLIENT_CONNECT:
 		return (int)ClientConnect( arg0, arg1, arg2 );
-	case GAME_CLIENT_THINK:
+	case GAME_CLIENT_THINK:		
 		ClientThink( arg0, NULL );
 		return 0;
 	case GAME_CLIENT_USERINFO_CHANGED:

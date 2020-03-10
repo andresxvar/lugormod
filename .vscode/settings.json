@@ -3,6 +3,8 @@
         "lmd_accounts_friends.h": "c",
         "g_lua.h": "c",
         "lauxlib.h": "c",
-        "lua.h": "c"
+        "lua.h": "c",
+        "namespace_begin.h": "c",
+        "g_headers.h": "c"
     }
 }
