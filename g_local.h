@@ -910,6 +910,7 @@ int BotAIStartFrame( int time );
 
 extern	level_locals_t	level;
 extern	gentity_t		g_entities[MAX_GENTITIES];
+extern 	gclient_t		g_clients[MAX_CLIENTS];
 
 //RoboPhred
 #define FOFFSET(obj, f)  ((int)&(((obj *)0)->f))

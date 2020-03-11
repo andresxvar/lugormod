@@ -92,34 +92,23 @@ static int g_lua_Game_Broadcast(lua_State * L)
 }
 
 //
-// Game.PlayEffect( effect:String, origin:Vector, direction:Vector )
 // Game.PlayEffect( effect:String, origin:Vector)
 //
 static int g_lua_Game_PlayEffect(lua_State * L)
 {
 	int n = lua_gettop(L);
 	char *effect = NULL;
-	vec_t *origin, *direction;
-
+	vec_t *origin;
+	vec3_t up = {-90,0,0}; // play effects up
 	if (n < 2)
-		return luaL_error(L, "syntax: PlayEffect( effect:String, origin:Vector, <direction:Vector> )");
+		return luaL_error(L, "syntax: PlayEffect( effect:String, origin:Vector )");
 
 	effect = (char*)luaL_checkstring(L, 1);
 
 	origin = lua_getvector(L, 2);
 	luaL_argcheck(L, origin != NULL, 2, "`QVector' expected");
-
-	if (n == 3)
-	{
-		direction = lua_getvector(L, 3);
-		luaL_argcheck(L, direction != NULL, 3, "`QVector' expected");
-	}
-	else
-	{
-		direction = vec3_origin;
-	}
-
-	G_PlayEffectID(G_EffectIndex(effect), origin, direction);
+	
+	G_PlayEffectID(G_EffectIndex(effect), origin, up);
 	return 0;
 }
 
@@ -135,9 +124,25 @@ static int g_lua_Game_ConcatArgs(lua_State * L)
 	return 1;
 }
 
+//
+// Game.Argument(index:Number)
+//
+static int g_lua_Game_Argument(lua_State * L)
+{
+	int argn;
+	char result[32];
+
+	argn = luaL_optinteger(L, 1, 0);
+	trap_Argv(argn,result,sizeof(result));
+	
+	lua_pushstring(L, result);
+	return 1;
+}
+
 static const luaL_Reg GameRegistry[] = {
 	{ "BindCommand", 	g_lua_Game_BindCommand },
     { "Broadcast", 		g_lua_Game_Broadcast },
+	{ "Argument", 		g_lua_Game_Argument },
 	{ "ConcatArgs",		g_lua_Game_ConcatArgs },
 	{ "PlayEffect", 	g_lua_Game_PlayEffect },
 

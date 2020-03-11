@@ -310,27 +310,6 @@ static int g_lua_GEntity_GenericValue(lua_State *L)
 }
 
 //
-// GEntity:cliAimOrigin()
-// GEntity:cliAimOrigin(range:Integer)
-//
-static int lua_GEntity_cliAimOrigin(lua_State *L)
-{
-	trace_t tr;
-	lua_GEntity *lent = NULL;
-	vec3_t start, end, forward;
-
-	lent = lua_getcligentity(L,1);
-	AngleVectors( lent->e->client->ps.viewangles, forward, NULL, NULL );
-	VectorSet( start, lent->e->client->ps.origin[0], lent->e->client->ps.origin[1], lent->e->client->ps.origin[2] + lent->e->client->ps.viewheight );
-	VectorMA( start, luaL_optinteger(L, 2, 131072), forward, end );
-
-	trap_Trace(&tr, start, NULL, NULL, end, lent->e->s.number, MASK_SHOT);
-
-	lua_pushvector(L, tr.endpos);
-	return 1;
-}
-
-//
 // GEntity:cliViewAngles( )
 // GEntity:cliViewAngles( newVal:QVector )
 //
@@ -348,74 +327,6 @@ static int g_lua_GEntity_cliViewAngles(lua_State *L)
 
 	lua_pushvector(L, lent->e->client->ps.viewangles);
 	return 1;
-}
-
-
-//
-// GEntity:cliName( )
-// GEntity:cliName( newVal:String )
-//
-static int lua_GEntity_cliName(lua_State *L)
-{
-	int n = lua_gettop(L);
-	lua_GEntity *lent = lua_getcligentity(L, 1);
-
-	if (n > 1) {
-		char *newVal = (char*)luaL_checkstring(L, 2);
-		Q_strncpyz(lent->e->client->pers.netname, newVal, sizeof(lent->e->client->pers.netname));
-		lent->e->client->pers.netnameTime = 0;
-		ClientUserinfoChanged(lent->e->client->ps.clientNum);
-		lent->e->client->pers.netnameTime = 0;
-		return 0;
-	}
-	else
-	{
-		lua_pushstring(L, lent->e->client->pers.netname);
-		return 1;
-	}
-}
-
-//
-// GEntity:cliWeapon( )
-//
-static int lua_GEntity_cliWeapon(lua_State *L)
-{
-	int n = lua_gettop(L);
-	lua_GEntity *lent = lua_getcligentity(L, 1);
-
-	lua_pushinteger(L, lent->e->client->ps.weapon);
-	return 1;
-}
-
-//
-// GEntity:cliPrintConsole( message:String )
-//
-static int lua_GEntity_cliPrintConsole(lua_State *L)
-{
-	int             i;
-	char            buf[1000] = { 0 };
-	int             n = lua_gettop(L);
-	lua_GEntity		*lent = lua_getcligentity(L, 1);
-
-	lua_rawgeti(L, LUA_REGISTRYINDEX, lua_toString);
-
-	for (i = 2; i <= n; i++)
-	{
-		const char *s;
-
-		lua_pushvalue(L, -1);	// function to be called
-		lua_pushvalue(L, i);	// value to print
-		lua_call(L, 1, 1);
-		s = lua_tostring(L, -1);	// get result
-
-		if (s == NULL)
-			return luaL_error(L, "`tostring' must return a string to `print'");
-
-		Q_strcat(buf, sizeof(buf), s);	
-		lua_pop(L, 1);			// pop result
-	}
-	trap_SendServerCommand(lent->e->client->ps.clientNum, va("print \"%s\"", buf));
-	return 0;
 }
 
 //
@@ -472,16 +383,12 @@ static const luaL_Reg gentity_meta[] = {
 
 	{ "BindPain", lua_GEntity_BindPain},
 	
-	{ "cliAimOrigin", lua_GEntity_cliAimOrigin },
-	{ "cliViewAngles", g_lua_GEntity_cliViewAngles },
-	{ "cliName", lua_GEntity_cliName },
-	{ "cliWeapon", lua_GEntity_cliWeapon },
-	
-	{ "cliPrintConsole", lua_GEntity_cliPrintConsole },
+	{ "cliViewAngles", g_lua_GEntity_cliViewAngles },	
 	
 	{ "Number", g_lua_GEntity_Number },
-	{ "Position", g_lua_GEntity_Position },
 	{ "Angles", g_lua_GEntity_Angles},
+	{ "Position", g_lua_GEntity_Position },
+	
 	{ "Model", g_lua_GEntity_Model},
 	{ "Health", g_lua_GEntity_Health},
 	{ "GenericValues", g_lua_GEntity_GenericValue},

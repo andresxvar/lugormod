@@ -3198,6 +3198,21 @@ void SP_fx_runner( gentity_t *ent )
 
 	VectorSet( ent->r.maxs, FX_ENT_RADIUS, FX_ENT_RADIUS, FX_ENT_RADIUS );
 	VectorScale( ent->r.maxs, -1, ent->r.mins );
+	
+	qboolean gravity;
+	G_SpawnInt("gravity", "0", &gravity);
+	if (gravity) {
+		ent->s.pos.trType = TR_GRAVITY;
+		ent->physicsObject = qtrue;
+		ent->physicsBounce = 0.5;
+		ent->s.pos.trTime = level.time;
+		ent->flags = FL_BOUNCE_HALF;
+		ent->r.svFlags = SVF_USE_CURRENT_ORIGIN;		
+		ent->bounceCount = 0;
+		ent->r.ownerNum = ent->s.number;
+		ent->r.mins[2] = -10;
+	}
+	
 	trap_LinkEntity( ent );
 }
 
