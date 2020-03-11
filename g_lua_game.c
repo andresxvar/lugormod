@@ -93,6 +93,7 @@ static int g_lua_Game_Broadcast(lua_State * L)
 
 //
 // Game.PlayEffect( effect:String, origin:Vector, direction:Vector )
+// Game.PlayEffect( effect:String, origin:Vector)
 //
 static int g_lua_Game_PlayEffect(lua_State * L)
 {
@@ -100,7 +101,7 @@ static int g_lua_Game_PlayEffect(lua_State * L)
 	char *effect = NULL;
 	vec_t *origin, *direction;
 
-	if (n < 3)
+	if (n < 2)
 		return luaL_error(L, "syntax: PlayEffect( effect:String, origin:Vector, <direction:Vector> )");
 
 	effect = (char*)luaL_checkstring(L, 1);
@@ -108,8 +109,15 @@ static int g_lua_Game_PlayEffect(lua_State * L)
 	origin = lua_getvector(L, 2);
 	luaL_argcheck(L, origin != NULL, 2, "`QVector' expected");
 
-	direction = lua_getvector(L, 3);
-	luaL_argcheck(L, direction != NULL, 3, "`QVector' expected");
+	if (n == 3)
+	{
+		direction = lua_getvector(L, 3);
+		luaL_argcheck(L, direction != NULL, 3, "`QVector' expected");
+	}
+	else
+	{
+		direction = vec3_origin;
+	}
 
 	G_PlayEffectID(G_EffectIndex(effect), origin, direction);
 	return 0;

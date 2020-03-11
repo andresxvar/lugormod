@@ -32,12 +32,60 @@ If you don't want to compile, the jampgamex86.so is included in the "build" fold
 
 Lua Features
 ------------
-- Game.BindCommand(name:String, command:Function)
-Can be used to make new commands for players, see rpg.lua example
+List of library and meta methods for game, entity and vector
 
-- Game.Broadcast( message:String )
-// Game.Broadcast( message:String, flags:Number )
-// Game.Broadcast( message:String, flags:Number, playerId:Number )
-Prints text to the chat, or screen, see rpg.lua example
+- Game functions
+library: lua ex. Game.BindCommand("class", cmd_class_f)
+	{ "BindCommand", 	g_lua_Game_BindCommand },
+    { "Broadcast", 		g_lua_Game_Broadcast },
+	{ "ConcatArgs",		g_lua_Game_ConcatArgs },
+	{ "PlayEffect", 	g_lua_Game_PlayEffect },
 
-...more features to come?
+- Entity functions:
+library: lua ex. GEntity.Register("lua_material", lua_material_sp, 0)
+    { "FromNumber", g_lua_GEntity_FromNumber },
+	{ "Place", g_lua_GEntity_Place},
+	{ "Register", g_lua_GEntity_Register },
+	{ "ReadSpawnVarInt", g_lua_GEntity_ReadSpawnVarInt},
+meta: lua ex. local fxposition = material:Position();
+	{ "BindPain", lua_GEntity_BindPain},	
+	{ "cliAimOrigin", lua_GEntity_cliAimOrigin },
+	{ "cliViewAngles", g_lua_GEntity_cliViewAngles },
+	{ "cliName", lua_GEntity_cliName },
+	{ "cliWeapon", lua_GEntity_cliWeapon },	
+	{ "cliPrintConsole", lua_GEntity_cliPrintConsole },	
+	{ "Number", g_lua_GEntity_Number },
+	{ "Position", g_lua_GEntity_Position },
+	{ "Angles", g_lua_GEntity_Angles},
+	{ "Model", g_lua_GEntity_Model},
+	{ "Health", g_lua_GEntity_Health},
+	{ "GenericValues", g_lua_GEntity_GenericValue},
+
+- vector functions
+static const luaL_Reg vector_lib[] = {
+	{"New", Vector_New},
+	{"Construct", Vector_Construct},
+	{"Set", Vector_Set},
+	{"Clear", Vector_Clear},
+	{"Add", Vector_Add},
+	{"Subtract", Vector_Subtract},
+	{"Scale", Vector_Scale},
+	{"Length", Vector_Length},
+	{"Normalize", Vector_Normalize},
+	{"NormalizeFast", Vector_NormalizeFast},
+	//{"RotatePointAround", Vector_RotatePointAround},
+	//{"Perpendicular", Vector_Perpendicular},
+	{"Snap", Vector_Snap},
+	{NULL, NULL}
+};
+static const luaL_Reg vector_meta[] = {
+	{"__index", Vector_Index},
+	{"__newindex", Vector_NewIndex},
+	{"__add", Vector_AddOperator},
+	{"__sub", Vector_SubOperator},
+	{"__mul", Vector_DotOperator},
+	{"__unm", Vector_NegateOperator},
+	{"__gc", Vector_GC},
+	{"__tostring", Vector_ToS1tring},
+	{NULL, NULL}
+};

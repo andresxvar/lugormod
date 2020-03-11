@@ -107,6 +107,20 @@ void g_lua_RegisterEntities()
 		}
 	}
 }
+
+static int g_lua_GEntity_ReadSpawnVarInt(lua_State *L)
+{
+	int n = lua_gettop(L), spref = LUA_REFNIL;
+	char *keyname;
+	int spawnInt = 0;
+
+	keyname = (char*)luaL_checkstring(L, 1);
+	G_SpawnInt( keyname, "0", &spawnInt );
+
+	lua_pushinteger(L, spawnInt);
+	return 1;
+}
+
 static int g_lua_GEntity_Register(lua_State *L)
 {
 	int n = lua_gettop(L), spref = LUA_REFNIL, logical = 0;
@@ -274,6 +288,28 @@ static int g_lua_GEntity_Health(lua_State *L)
 }
 
 //
+// GEntity:GenericValue( )
+// GEntity:GenericValue( newVal:Integer )
+//
+static int g_lua_GEntity_GenericValue(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	lent = lua_getgentity(L, 1);
+
+	if (n > 1)
+	{		
+		int newVal = luaL_checkinteger(L, 2);
+		lent->e->genericValue1 = newVal;
+		return 0;
+	}
+
+	lua_pushinteger(L, lent->e->genericValue1);
+	return 1;
+}
+
+//
 // GEntity:cliAimOrigin()
 // GEntity:cliAimOrigin(range:Integer)
 //
@@ -425,6 +461,8 @@ static const luaL_Reg gentity_ctor[] = {
 	{ "FromNumber", g_lua_GEntity_FromNumber },
 	{ "Place", g_lua_GEntity_Place},
 	{ "Register", g_lua_GEntity_Register },
+
+	{ "ReadSpawnVarInt", g_lua_GEntity_ReadSpawnVarInt},
 	
 	{ NULL, NULL }
 };
@@ -446,6 +484,7 @@ static const luaL_Reg gentity_meta[] = {
 	{ "Angles", g_lua_GEntity_Angles},
 	{ "Model", g_lua_GEntity_Model},
 	{ "Health", g_lua_GEntity_Health},
+	{ "GenericValues", g_lua_GEntity_GenericValue},
 
 	{ NULL, NULL }
 };
