@@ -29,7 +29,7 @@ static int g_lua_GEntity_FromNumber(lua_State *L)
 	if (num > MAX_GENTITIES)
 		return luaL_error(L, "number can't be more than %i", MAX_GENTITIES);
 
-	lua_pushgentity(L, &g_entities[num]);
+	g_lua_pushEntity(L, &g_entities[num]);
 	return 1;
 }
 
@@ -59,7 +59,7 @@ static int g_lua_GEntity_Place(lua_State *L)
 				Lmd_Entities_SetSaveable(result->Lmd.spawnData, qtrue);				
 		}
 
-		lua_pushgentity(L, result);
+		g_lua_pushEntity(L, result);
 	}
 	else
 		lua_pushnil(L);
@@ -82,7 +82,7 @@ void g_lua_Spawn(gentity_t *ent)
 		if (!Q_stricmp(st_lua_ents[i].name, ent->classname))
 		{
 			lua_rawgeti(g_lua, LUA_REGISTRYINDEX, st_lua_ents[i].function);
-			lua_pushgentity(g_lua, ent);
+			g_lua_pushEntity(g_lua, ent);
 			if (lua_pcall(g_lua, 1, 0, 0))
 				g_lua_reportError();
 			return;
@@ -179,7 +179,7 @@ static int g_lua_GEntity_Number(lua_State *L)
 {
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	lua_pushinteger(L, lent->e->s.number);
 	return 1;
@@ -207,7 +207,7 @@ static int g_lua_GEntity_MakeHackable(lua_State *L)
 {
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	gentity_t *zone = G_Spawn();
 	if (zone) {		
@@ -240,7 +240,7 @@ static int g_lua_GEntity_Position(lua_State *L)
 	int n = lua_gettop(L);
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
 	{
@@ -262,7 +262,7 @@ static int g_lua_GEntity_Angles(lua_State *L)
 	int n = lua_gettop(L);
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
 	{
@@ -285,7 +285,7 @@ static int g_lua_GEntity_Model(lua_State *L)
 	int n = lua_gettop(L);
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
 	{
@@ -316,7 +316,7 @@ static int g_lua_GEntity_Health(lua_State *L)
 	int n = lua_gettop(L);
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
 	{		
@@ -342,7 +342,7 @@ static int g_lua_GEntity_GenericValue(lua_State *L)
 	int n = lua_gettop(L);
 	lua_GEntity *lent;
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
 	{		
@@ -361,8 +361,8 @@ static int g_lua_GEntity_GenericValue(lua_State *L)
 void lua_pain(gentity_t *self, gentity_t *attacker, int damage)
 {
 	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_pain);
-	lua_pushgentity(g_lua, self);
-	lua_pushgentity(g_lua, attacker);
+	g_lua_pushEntity(g_lua, self);
+	g_lua_pushEntity(g_lua, attacker);
 	lua_pushinteger(g_lua, damage);
 
 	if (lua_pcall(g_lua, 3, 0, 0))
@@ -376,7 +376,7 @@ static int g_lua_GEntity_BindPain(lua_State *L)
 	if (n < 2)
 		return luaL_error(L, "syntax: BindPain( callback:Function )");
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (lua_isnil(L, 2))
 	{
@@ -400,7 +400,7 @@ static int g_lua_GEntity_BindPain(lua_State *L)
 void lua_think(gentity_t *self)
 {
 	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_think);
-	lua_pushgentity(g_lua, self);
+	g_lua_pushEntity(g_lua, self);
 
 	if (lua_pcall(g_lua, 1, 0, 0))
 		g_lua_reportError();
@@ -414,7 +414,7 @@ static int g_lua_GEntity_BindThink(lua_State *L)
 	if (n < 2)
 		return luaL_error(L, "syntax: BindThink( callback:Function )");
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (lua_isnil(L, 2))
 	{
@@ -439,9 +439,9 @@ static int g_lua_GEntity_BindThink(lua_State *L)
 void lua_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_use);
-	lua_pushgentity(g_lua, self);
-	lua_pushgentity(g_lua, other);
-	lua_pushgentity(g_lua, activator);
+	g_lua_pushEntity(g_lua, self);
+	g_lua_pushEntity(g_lua, other);
+	g_lua_pushEntity(g_lua, activator);
 
 	if (lua_pcall(g_lua, 3, 0, 0))
 		g_lua_reportError();
@@ -455,7 +455,7 @@ static int g_lua_GEntity_BindUse(lua_State *L)
 	if (n < 2)
 		return luaL_error(L, "syntax: BindUse( callback:Function )");
 
-	lent = lua_getgentity(L, 1);
+	lent = g_lua_checkEntity(L, 1);
 
 	if (lua_isnil(L, 2))
 	{
@@ -481,7 +481,7 @@ static int g_lua_GEntity_BindUse(lua_State *L)
 static int g_lua_GEntity_Free(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_GEntity *lent = lua_getgentity(L, 1);
+	lua_GEntity *lent = g_lua_checkEntity(L, 1);
 
 	lent->e->think = G_FreeEntity;
 	lent->e->nextthink = level.time + luaL_optinteger(L, 2, 0);
@@ -497,7 +497,7 @@ void BlowUpEntity (gentity_t *ent);
 static int g_lua_GEntity_Blowup(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_GEntity *lent = lua_getgentity(L, 1);
+	lua_GEntity *lent = g_lua_checkEntity(L, 1);
 
 	lent->e->think = BlowUpEntity;
 	lent->e->nextthink = level.time + luaL_optinteger(L, 2, 0);
@@ -505,6 +505,7 @@ static int g_lua_GEntity_Blowup(lua_State *L)
 	return 0;
 }
 
+// entity library methods
 static const luaL_Reg gentity_ctor[] = {
 	{ "FromNumber", g_lua_GEntity_FromNumber },
 	{ "Place", g_lua_GEntity_Place},
@@ -515,6 +516,7 @@ static const luaL_Reg gentity_ctor[] = {
 	{ NULL, NULL }
 };
 
+// entity meta methods
 static const luaL_Reg gentity_meta[] = {
 	{ "__gc", g_lua_GEntity_GC },
 
@@ -550,13 +552,13 @@ int luaopen_gentity(lua_State * L)
 	luaL_setfuncs(L, gentity_meta, 0);  /* add entity methods to new metatable */
 	lua_pop(L, 1);  /* pop new metatable */
 
-					// set global class
+	// set global class
 	lua_setglobal(L, "GEntity");
 
 	return 1;
 }
 
-void lua_pushgentity(lua_State * L, gentity_t * ent)
+void g_lua_pushEntity(lua_State * L, gentity_t * ent)
 {
 	lua_GEntity     *lent;
 
@@ -568,7 +570,7 @@ void lua_pushgentity(lua_State * L, gentity_t * ent)
 	lent->e = ent;
 }
 
-lua_GEntity	*lua_getgentity(lua_State * L, int argNum)
+lua_GEntity	*g_lua_checkEntity(lua_State * L, int argNum)
 {
 	void *ud;
 	lua_GEntity	*lent;

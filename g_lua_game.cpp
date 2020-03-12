@@ -139,6 +139,7 @@ static int g_lua_Game_Argument(lua_State * L)
 	return 1;
 }
 
+// game library methods
 static const luaL_Reg GameRegistry[] = {
 	{ "BindCommand", 	g_lua_Game_BindCommand },
     { "Broadcast", 		g_lua_Game_Broadcast },

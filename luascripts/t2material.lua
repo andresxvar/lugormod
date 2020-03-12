@@ -60,13 +60,24 @@ for i=0,31 do
 	materialInventory[i] = {0,0,0,0}
 end 
 
-function buildable_fire(player)
+function buildable_fire_sp(player)
 	local loc = player:AimOrigin(64)
 	local fire = GEntity.Place("classname,fx_runner,spawnflags,4,fxfile,env/fire,delay,100,dmg,150,gravity,1,origin,".. loc[0] .." ".. loc[1] .." ".. loc[2])
 end
 
-function buildable_sentry(player)		
-	Game.Broadcast("spawn a sentry")
+-- bomb explodes when used
+function bomb_use(material,player,activator)
+	local ply = Player.FromEntity(player)
+	if(ply:Hack(material,4000)) then
+		material:Blowup(5000)
+	end
+end
+-- spawn a hackable bomb
+function buildable_bomb_sp(player)		
+	local loc = player:AimOrigin(64)
+	local bomb = GEntity.Place("classname,misc_model_breakable,gravity,1,origin,".. loc[0] .." ".. loc[1] .." ".. loc[2] ..",spawnflags,129,model,models/map_objects/imperial/crate_banded")
+	bomb:MakeHackable()
+	bomb:BindUse(bomb_use)
 end
 
 -- table of buildables
@@ -75,12 +86,12 @@ local buildableData =
 	{
 		name = "small fire",
 		materialcost = {10,0,10,10},
-		spawn = buildable_fire,
+		spawn = buildable_fire_sp,
 	},
 	{
-		name = "sentry gun",
+		name = "bomb",
 		materialcost = {10,20,0,20},
-		spawn = buildable_sentry,
+		spawn = buildable_bomb_sp,
 	}
 }
 -- handle the "build" command
@@ -117,5 +128,15 @@ function build_f(player,argc)
 end
 
 
-Game.BindCommand("build", build_f)
+function buildall_f(player,argc)
+	local pid = player:Number()
+	materialInventory[pid][1] = 999;
+	materialInventory[pid][2] = 999;
+	materialInventory[pid][3] = 999;
+	materialInventory[pid][4] = 999;
+	return 1
+end
 
+
+Game.BindCommand("build", build_f)
+Game.BindCommand("buildall", buildall_f)

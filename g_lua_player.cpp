@@ -29,7 +29,7 @@ static int g_lua_Player_FromNumber(lua_State *L)
 	if (num > level.maxclients)
 		return luaL_error(L, "number can't be more than %i", level.maxclients);
     
-    lua_pushplayer(L, &g_clients[num]);
+    g_lua_pushPlayer(L, &g_clients[num]);
 	return 1;
 }
 
@@ -44,13 +44,13 @@ static int g_lua_Player_FromEntity(lua_State *L)
 	if (n < 1)
 		return luaL_error(L, "syntax: Player.FromEntity( ent:GEntity )");
 
-    lent = lua_getgentity(L, 1);
+    lent = g_lua_checkEntity(L, 1);
     cl = lent->e->client;
 
     if (!cl)
     	return luaL_error(L, "entity is not a player");
 
-    lua_pushplayer(L,cl);
+    g_lua_pushPlayer(L,cl);
 	return 1;
 }
 
@@ -61,7 +61,7 @@ static int g_lua_Player_FromEntity(lua_State *L)
 static int g_lua_Player_Name(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_Player *ply = lua_getplayer(L, 1);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
 
 	if (n > 1) {
 		char *newVal = (char*)luaL_checkstring(L, 2);
@@ -84,7 +84,7 @@ static int g_lua_Player_Name(lua_State *L)
 static int g_lua_Player_Number(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_Player *ply = lua_getplayer(L, 1);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
 
 	lua_pushinteger(L, ply->cl->ps.clientNum);
 	return 1;	
@@ -96,7 +96,7 @@ static int g_lua_Player_Number(lua_State *L)
 static int g_lua_Player_SiegeSpecTimer(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_Player *ply = lua_getplayer(L, 1);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
 
 	int waitTime = luaL_checkinteger(L, 2);
 
@@ -112,7 +112,7 @@ static int g_lua_Player_SiegeSpecTimer(lua_State *L)
 static int g_lua_Player_Weapon(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_Player *ply = lua_getplayer(L, 1);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
 
 	
 	lua_pushinteger(L, ply->cl->ps.weapon);
@@ -125,8 +125,8 @@ static int g_lua_Player_Weapon(lua_State *L)
 static int g_lua_Player_Hack(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_Player *ply = lua_getplayer(L, 1);
-	lua_GEntity *ent = lua_getgentity(L, 2);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+	lua_GEntity *ent = g_lua_checkEntity(L, 2);
 	int hacktime = luaL_checkinteger(L,3);
 
 	if (ply->cl->isHacking != ent->e->genericValue10)
@@ -166,7 +166,7 @@ static int g_lua_Player_AimOrigin(lua_State *L)
 	lua_Player *ply = NULL;
 	vec3_t start, end, forward;
 
-	ply = lua_getplayer(L,1);	
+	ply = g_lua_checkPlayer(L,1);	
 	AngleVectors( ply->cl->ps.viewangles, forward, NULL, NULL );
 	VectorSet( start, ply->cl->ps.origin[0], ply->cl->ps.origin[1], ply->cl->ps.origin[2] + ply->cl->ps.viewheight );
 	VectorMA( start, luaL_optinteger(L, 2, 131072), forward, end );
@@ -184,7 +184,7 @@ static int g_lua_Player_AimOrigin(lua_State *L)
 static int g_lua_Player_ViewAngles(lua_State *L)
 {
 	int n = lua_gettop(L);
-	lua_Player *ply = lua_getplayer(L, 1);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
 
 	if (n > 1)
 	{
@@ -205,7 +205,7 @@ static int g_lua_Player_PrintConsole(lua_State *L)
 	int             i;
 	char            buf[1000] = { 0 };
 	int             n = lua_gettop(L);
-	lua_Player		*ply = lua_getplayer(L, 1);
+	lua_Player		*ply = g_lua_checkPlayer(L, 1);
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, lua_toString);
 
@@ -228,6 +228,7 @@ static int g_lua_Player_PrintConsole(lua_State *L)
 	return 0;
 }
 
+// Player library methods
 static const luaL_Reg player_ctor[] = {
     { "FromEntity", g_lua_Player_FromEntity },
 	{ "FromNumber", g_lua_Player_FromNumber },
@@ -235,6 +236,7 @@ static const luaL_Reg player_ctor[] = {
 	{ NULL, NULL }
 };
 
+// Player meta methods
 static const luaL_Reg player_meta[] = {
 	{ "__gc", g_lua_Player_GC },
 	
@@ -264,13 +266,13 @@ int luaopen_player(lua_State * L)
 	luaL_setfuncs(L, player_meta, 0);  /* add entity methods to new metatable */
 	lua_pop(L, 1);  /* pop new metatable */
 
-					// set global class
+	// set global class
 	lua_setglobal(L, "Player");
 
 	return 1;
 }
 
-void lua_pushplayer(lua_State * L, gclient_t * cl)
+void g_lua_pushPlayer(lua_State * L, gclient_t * cl)
 {
 	lua_Player *ply;
 
@@ -282,7 +284,7 @@ void lua_pushplayer(lua_State * L, gclient_t * cl)
 	ply->cl = cl;
 }
 
-lua_Player *lua_getplayer(lua_State * L, int argNum)
+lua_Player *g_lua_checkPlayer(lua_State * L, int argNum)
 {
 	void *ud;
 	lua_Player *ply;

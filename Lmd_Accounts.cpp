@@ -1,6 +1,5 @@
-
 #include "g_local.h"
-
+#include "Lmd_Accounts_Data.h"
 #include "Lmd_Accounts_Core.h"
 #include "Lmd_Accounts_Stats.h"
 #include "Lmd_Commands_Auths.h"
@@ -107,9 +106,10 @@ void HiScore (gentity_t *ent, int field){
 		acc = Accounts_Get(i);
 		if(Accounts_Prof_GetProfession(acc) == PROF_ADMIN)
 			continue;
+
 		switch(field){
 			case 1:
-				valNew = Accounts_GetTime(acc);
+				valNew = Accounts_GetTime(acc);				
 				break;
 			case 2:
 				valNew = Accounts_GetCredits(acc);
@@ -137,8 +137,10 @@ void HiScore (gentity_t *ent, int field){
 		if(shiftIndex < 0)
 			continue;
 		if(shiftIndex < 9){
-			//shift list array members from shiftIndex to 9 down.
-			memcpy((list + shiftIndex + 1), list + shiftIndex, ((10 - shiftIndex) - 1) * sizeof(list[0]));
+			//shift list array members from shiftIndex to 9 down.			
+			memmove((list + shiftIndex + 1),
+				list + shiftIndex,
+				((10 - shiftIndex) - 1) * sizeof(list[0]));
 		}
 		list[shiftIndex].acc = acc;
 		list[shiftIndex].val = valNew;
@@ -151,7 +153,7 @@ void HiScore (gentity_t *ent, int field){
 	for(i = 0;i<10;i++){
 		if(!list[i].acc)
 			break;
-		ptr = Accounts_GetName(list[i].acc);
+		ptr = Accounts_GetName(list[i].acc);		
 		if(!ptr)
 			Q_strncpyz(name, "^3<^1ERROR^3>", sizeof(name));
 		else
@@ -169,7 +171,6 @@ void HiScore (gentity_t *ent, int field){
 		}
 		Disp(ent, dstr);
 	}
-
 }
 
 int Jedi_GetAccSide(Account_t *acc);
@@ -400,9 +401,7 @@ qboolean Lmd_Accounts_Player_Login(gentity_t *ent, Account_t *acc){
 			Accounts_SetCredits(acc, lmd_startingcr.integer);
 			Accounts_AddFlags(acc, ACCFLAGS_NOPROFCRLOSS);
 		}
-	}
-
-	
+	}	
 
 	Accounts_SetLogins(acc, Accounts_GetLogins(acc) + 1);
 

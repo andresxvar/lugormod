@@ -6,7 +6,8 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "make"
+            "command": "make",
+            "problemMatcher": []
         },
         {
             "label": "clean up",
@@ -18,6 +19,20 @@
             "label": "install",
             "type": "shell",
             "command": "cp jampgamei386.so /home/andres/OJK/JediAcademy_x86/lmdx/",
+            "problemMatcher": []
+        },
+        {
+            "label": "install scripts",
+            "type": "shell",
+            "command": "cp -r luascripts /home/andres/OJK/JediAcademy_x86/lmdx/",
+            "problemMatcher": []
+        },
+        {
+            "label": "build_install",
+            "dependsOn": [                
+                "install",
+                "build"
+            ],
             "problemMatcher": []
         }
     ]

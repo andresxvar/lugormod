@@ -1,7 +1,3 @@
-
-#ifdef LMD_NEW_FORCEPOWERS
-
-
 //Check TODOs on this file
 
 #include "g_local.h"
@@ -638,7 +634,8 @@ void Force_Throw_Entity(gentity_t *self, vec3_t forward, gentity_t *target, unsi
 	else if (Q_stricmp( "lightsaber", target->classname ) == 0){
 
 	}
-	else if (target->flags & FL_DROPPED_ITEM) { //Lugormod other stuff
+	else if (target->flags & FL_DROPPED_ITEM) 
+	{ 	//Lugormod other stuff
 		vec3_t pushDir;
 		//get size
 		vec3_t size;
@@ -654,11 +651,10 @@ void Force_Throw_Entity(gentity_t *self, vec3_t forward, gentity_t *target, unsi
 		if (pushPower <= 1) 
 			return;
 
-
 		if ( pull )
-			VectorSubtract( self->client->ps.origin, target->s.origin, pushDir );
+			VectorSubtract( self->client->ps.origin, target->r.currentOrigin, pushDir );
 		else
-			VectorSubtract( target->s.origin, self->client->ps.origin, pushDir );
+			VectorSubtract( target->r.currentOrigin, self->client->ps.origin, pushDir );
 		
 		VectorNormalize(pushDir);
 		VectorScale(pushDir,
@@ -772,8 +768,7 @@ void Force_Throw_Start(gentity_t *self, qboolean pull, const forceThrow_t *data)
 
 		for(e = 0; e < found; e++) {
 			ent = GetEnt(entityList[e]);
-			
-			//Ufo: was missing
+						
 			if (ent == self)
 				continue;
 
@@ -954,5 +949,3 @@ forcePower_t Force_See = {
 	FORCELEVELDATA(Force_See_Levels, forceSee_t),
 	256,
 };
-
-#endif

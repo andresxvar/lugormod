@@ -1,3 +1,9 @@
+-- functions to handle the rpg commands
+function roll_f(player,args)
+	Game.Broadcast("^2*^7" .. player:Name() .. " ^7 rolled a ^1" .. math.random(6), 16)
+	return 1
+end
+
 function do_f(player,args)
 	if args == 1 then
 		player:PrintConsole("^7Syntax: /do <text>")
@@ -27,6 +33,8 @@ function timer_f(player,args)
 	return 1
 end
 
+-- register rpg commands
 Game.BindCommand("timer",timer_f)
 Game.BindCommand("do", do_f)
 Game.BindCommand("me", me_f)
+Game.BindCommand("roll", roll_f)

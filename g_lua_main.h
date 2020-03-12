@@ -32,8 +32,8 @@ typedef struct
 	gentity_t      *e;
 } lua_GEntity;
 extern int          luaopen_gentity(lua_State * L);
-extern void         lua_pushgentity(lua_State * L, gentity_t * ent);
-extern lua_GEntity  *lua_getgentity(lua_State * L, int argNum);
+extern void         g_lua_pushEntity(lua_State * L, gentity_t * ent);
+extern lua_GEntity  *g_lua_checkEntity(lua_State * L, int argNum);
 extern lua_GEntity	*lua_getcligentity(lua_State * L, int argNum);
 // custom lua managed entities
 typedef struct st_lua_ent {
@@ -50,8 +50,8 @@ typedef struct
 	gclient_t     	*cl;
 } lua_Player;
 extern int 			luaopen_player(lua_State * L);
-extern void         lua_pushplayer(lua_State * L, gclient_t * cl);
-extern lua_Player  	*lua_getplayer(lua_State * L, int argNum);
+extern void         g_lua_pushPlayer(lua_State * L, gclient_t * cl);
+extern lua_Player  	*g_lua_checkPlayer(lua_State * L, int argNum);
 
 // g_lua_vector.c
 extern int			luaopen_vector(lua_State * L);

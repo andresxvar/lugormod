@@ -125,7 +125,7 @@ int g_lua_callClCommand(gclient_t *cl, const char *cmd)
 		if (st_lua_cmds[i].function && !Q_stricmp(st_lua_cmds[i].name, cmd))
 		{
 			lua_rawgeti(g_lua, LUA_REGISTRYINDEX, st_lua_cmds[i].function);
-			lua_pushplayer(g_lua, cl);
+			g_lua_pushPlayer(g_lua, cl);
 			lua_pushinteger(g_lua, trap_Argc());
 
 			if (lua_pcall(g_lua, 2, 1, 0))

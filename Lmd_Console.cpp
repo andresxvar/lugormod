@@ -61,7 +61,7 @@ ConsoleEscapeSeq_t consoleEscapes[] = {
 
 #endif
 
-void Disp (gentity_t *ent, const char *msg) {
+void Disp (gentity_t *ent, const char *msg) {	
 	const int bufLen = SERVERCOMMAND_MAX - 9; // -10 print "\n"
 
 	unsigned int len = strlen(msg);
