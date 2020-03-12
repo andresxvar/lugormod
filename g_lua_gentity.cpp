@@ -1,7 +1,7 @@
 extern "C" 
 {
-#include "lua/lua.h"
-#include "lua/lauxlib.h"
+	#include "lua/lua.h"
+	#include "lua/lauxlib.h"
 }
 #include "g_lua_main.h"
 
@@ -186,6 +186,52 @@ static int g_lua_GEntity_Number(lua_State *L)
 }
 
 //
+// GEntity:MakeHackable( )
+//
+void hacking_zone_think (gentity_t *ent){
+	if (!ent->parent || !ent->parent->inuse 
+		|| ent->parent->genericValue10 != ent->s.number)
+	{
+			G_FreeEntity(ent);
+			return;
+	}
+	if (!VectorCompare(ent->r.currentOrigin,ent->parent->r.currentOrigin))
+	{
+		G_SetOrigin(ent, ent->parent->r.currentOrigin);
+		trap_LinkEntity(ent);
+	}	
+
+	ent->nextthink = level.time + 5000;
+}
+static int g_lua_GEntity_MakeHackable(lua_State *L)
+{
+	lua_GEntity *lent;
+
+	lent = lua_getgentity(L, 1);
+
+	gentity_t *zone = G_Spawn();
+	if (zone) {		
+		zone->classname = "hacking_zone";
+		zone->parent = lent->e;
+		zone->think = hacking_zone_think;
+		zone->nextthink = level.time + 1000;
+		zone->s.eFlags = EF_NODRAW;
+		zone->r.contents = 0;
+		zone->clipmask = 0;
+		zone->r.maxs[0] = lent->e->r.maxs[0] + 32;
+		zone->r.maxs[1] = lent->e->r.maxs[1] + 32;
+		zone->r.maxs[2] = lent->e->r.maxs[2] + 16;
+		zone->r.mins[0] = lent->e->r.mins[0] - 32;
+		zone->r.mins[1] = lent->e->r.mins[1] - 32;
+		zone->r.mins[2] = lent->e->r.mins[2] - 16;
+		G_SetOrigin(zone, lent->e->r.currentOrigin);
+		lent->e->genericValue10 = zone->s.number;
+		trap_LinkEntity(zone);
+	}
+	return 0;	
+}
+
+//
 // GEntity:Position( )
 // GEntity:Position( newVal:QVector )
 //
@@ -310,26 +356,6 @@ static int g_lua_GEntity_GenericValue(lua_State *L)
 }
 
 //
-// GEntity:cliViewAngles( )
-// GEntity:cliViewAngles( newVal:QVector )
-//
-static int g_lua_GEntity_cliViewAngles(lua_State *L)
-{
-	int n = lua_gettop(L);
-	lua_GEntity *lent = lua_getcligentity(L, 1);
-
-	if (n > 1)
-	{
-		vec_t *newVal = lua_getvector(L, 2);
-		VectorCopy(newVal, lent->e->client->ps.viewangles);
-		return 0;
-	}
-
-	lua_pushvector(L, lent->e->client->ps.viewangles);
-	return 1;
-}
-
-//
 // GEntity:BindPain( callback:Function )
 //
 void lua_pain(gentity_t *self, gentity_t *attacker, int damage)
@@ -342,8 +368,7 @@ void lua_pain(gentity_t *self, gentity_t *attacker, int damage)
 	if (lua_pcall(g_lua, 3, 0, 0))
 		g_lua_reportError();
 }
-
-static int lua_GEntity_BindPain(lua_State *L)
+static int g_lua_GEntity_BindPain(lua_State *L)
 {
 	int n = lua_gettop(L);
 	lua_GEntity *lent;
@@ -368,6 +393,118 @@ static int lua_GEntity_BindPain(lua_State *L)
 	return 0;
 }
 
+//
+// GEntity:BindThink( callback:Function )
+//
+
+void lua_think(gentity_t *self)
+{
+	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_think);
+	lua_pushgentity(g_lua, self);
+
+	if (lua_pcall(g_lua, 1, 0, 0))
+		g_lua_reportError();
+}
+
+static int g_lua_GEntity_BindThink(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	if (n < 2)
+		return luaL_error(L, "syntax: BindThink( callback:Function )");
+
+	lent = lua_getgentity(L, 1);
+
+	if (lua_isnil(L, 2))
+	{
+		if (lent->e->lua_think > 0)
+			luaL_unref(L, LUA_REGISTRYINDEX, lent->e->lua_think);
+		lent->e->lua_think = 0;
+		lent->e->think = NULL;
+	}
+	else
+	{
+		lua_pushvalue(L, 2);
+		lent->e->lua_think = luaL_ref(L, LUA_REGISTRYINDEX);
+		lent->e->think = lua_think;
+	}
+
+	return 0;
+}
+
+//
+// GEntity:BindUse( callback:Function )
+//
+void lua_use(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
+	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_use);
+	lua_pushgentity(g_lua, self);
+	lua_pushgentity(g_lua, other);
+	lua_pushgentity(g_lua, activator);
+
+	if (lua_pcall(g_lua, 3, 0, 0))
+		g_lua_reportError();
+}
+
+static int g_lua_GEntity_BindUse(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	if (n < 2)
+		return luaL_error(L, "syntax: BindUse( callback:Function )");
+
+	lent = lua_getgentity(L, 1);
+
+	if (lua_isnil(L, 2))
+	{
+		if (lent->e->lua_use > 0)
+			luaL_unref(L, LUA_REGISTRYINDEX, lent->e->lua_use);
+		lent->e->lua_use = 0;
+		lent->e->use = NULL;
+	}
+	else
+	{
+		lua_pushvalue(L, 2);
+		lent->e->lua_use = luaL_ref(L, LUA_REGISTRYINDEX);
+		lent->e->use = lua_use;
+	}
+
+	return 0;
+}
+
+//
+// GEntity:Free()
+// GEntity:Free(delay:Integer)
+//
+static int g_lua_GEntity_Free(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = lua_getgentity(L, 1);
+
+	lent->e->think = G_FreeEntity;
+	lent->e->nextthink = level.time + luaL_optinteger(L, 2, 0);
+	
+	return 0;
+}
+
+//
+// GEntity:Blowup()
+// GEntity:Blowup(delay:Integer)
+//
+void BlowUpEntity (gentity_t *ent);
+static int g_lua_GEntity_Blowup(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = lua_getgentity(L, 1);
+
+	lent->e->think = BlowUpEntity;
+	lent->e->nextthink = level.time + luaL_optinteger(L, 2, 0);
+	
+	return 0;
+}
+
 static const luaL_Reg gentity_ctor[] = {
 	{ "FromNumber", g_lua_GEntity_FromNumber },
 	{ "Place", g_lua_GEntity_Place},
@@ -381,10 +518,15 @@ static const luaL_Reg gentity_ctor[] = {
 static const luaL_Reg gentity_meta[] = {
 	{ "__gc", g_lua_GEntity_GC },
 
-	{ "BindPain", lua_GEntity_BindPain},
-	
-	{ "cliViewAngles", g_lua_GEntity_cliViewAngles },	
-	
+	{ "Free", g_lua_GEntity_Free},
+	{ "Blowup", g_lua_GEntity_Blowup},
+
+	{ "BindPain", g_lua_GEntity_BindPain},
+	//{ "BindTouch", lua_GEntity_BindTouch},
+	//{ "BindTouch", lua_GEntity_BindDie},
+	{ "BindUse", g_lua_GEntity_BindUse},
+	{ "MakeHackable", g_lua_GEntity_MakeHackable},
+		
 	{ "Number", g_lua_GEntity_Number },
 	{ "Angles", g_lua_GEntity_Angles},
 	{ "Position", g_lua_GEntity_Position },
@@ -435,18 +577,5 @@ lua_GEntity	*lua_getgentity(lua_State * L, int argNum)
 	luaL_argcheck(L, ud != NULL, argNum, "`entity' expected");
 
 	lent = (lua_GEntity *)ud;
-	return lent;
-}
-
-lua_GEntity *lua_getcligentity(lua_State * L, int argNum)
-{
-	void *ud;
-	lua_GEntity	*lent;
-
-	ud = luaL_checkudata(L, argNum, "Game.GEntity");
-	luaL_argcheck(L, ud != NULL, argNum, "`entity' expected");
-	lent = (lua_GEntity *)ud;
-	luaL_argcheck(L, lent->e->client != NULL, argNum, "entity is not a client");
-
 	return lent;
 }

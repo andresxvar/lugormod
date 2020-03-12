@@ -253,6 +253,9 @@ struct gentity_s {
 
 	//Lua bindings
 	int		lua_pain;
+	int		lua_touch;
+	int 	lua_use;
+	int		lua_think;
 
 	//RoboPhred
 	qboolean	(*pay)(gentity_t *self, int credits, gentity_t *activator);

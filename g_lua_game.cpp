@@ -1,7 +1,7 @@
 extern "C" 
 {
-#include "lua/lua.h"
-#include "lua/lauxlib.h"
+	#include "lua/lua.h"
+	#include "lua/lauxlib.h"
 }
 #include "g_local.h"
 #include "g_lua_main.h"

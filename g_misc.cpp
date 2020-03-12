@@ -742,7 +742,7 @@ void SP_misc_model_breakable( gentity_t *ent ) {
 
 	G_SpawnInt("gravity", "0", &gravity);
 	if (gravity) {
-		ent->r.svFlags = SVF_USE_CURRENT_ORIGIN;
+		ent->r.svFlags |= SVF_USE_CURRENT_ORIGIN;
 		ent->s.pos.trType = TR_GRAVITY;
 		ent->s.pos.trTime = level.time;
 		ent->physicsObject = qtrue;

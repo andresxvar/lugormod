@@ -1,7 +1,7 @@
 extern "C" 
 {
-#include "lua/lua.h"
-#include "lua/lauxlib.h"
+	#include "lua/lua.h"
+	#include "lua/lauxlib.h"
 }
 #include "g_lua_main.h"
 
@@ -86,7 +86,7 @@ static int g_lua_Player_Number(lua_State *L)
 	int n = lua_gettop(L);
 	lua_Player *ply = lua_getplayer(L, 1);
 
-	lua_pushinteger(L, ply->cl-g_clients);
+	lua_pushinteger(L, ply->cl->ps.clientNum);
 	return 1;	
 }
 
@@ -102,7 +102,7 @@ static int g_lua_Player_SiegeSpecTimer(lua_State *L)
 
 	gentity_t *te = G_TempEntity( ply->cl->ps.origin, EV_SIEGESPEC );
 					te->s.time = level.time + waitTime * 1000;
-					te->s.owner =  ply->cl-g_clients;
+					te->s.owner =  ply->cl->ps.clientNum;
 	return 0;
 }
 
@@ -120,6 +120,43 @@ static int g_lua_Player_Weapon(lua_State *L)
 }
 
 //
+// Player:Hack(ent:GEntity,time:Intenger) 
+//
+static int g_lua_Player_Hack(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = lua_getplayer(L, 1);
+	lua_GEntity *ent = lua_getgentity(L, 2);
+	int hacktime = luaL_checkinteger(L,3);
+
+	if (ply->cl->isHacking != ent->e->genericValue10)
+	{	// start hacking
+		ply->cl->isHacking = ent->e->genericValue10;
+		ply->cl->ps.hackingTime = level.time + hacktime;
+		ply->cl->ps.hackingBaseTime = hacktime;					
+		VectorCopy(ply->cl->ps.viewangles,ply->cl->hackingAngles);
+		if(ent->e->aimDebounceTime < level.time) 
+		{
+			ent->e->aimDebounceTime = level.time + 3000;
+		}
+		
+	}
+	else if (ply->cl->ps.hackingTime < level.time)
+	{
+		// finished hacking	
+		ply->cl->isHacking = 0;
+		ply->cl->ps.hackingTime = 0;
+		ply->cl->ps.hackingBaseTime = 0;
+		lua_pushboolean(L, qtrue);
+		return 1;
+	}
+	
+	// still hacking
+	lua_pushboolean(L, qfalse);
+	return 1;	
+}
+
+//
 // Player:AimOrigin()
 // Player:AimOrigin(range:Integer)
 //
@@ -134,12 +171,31 @@ static int g_lua_Player_AimOrigin(lua_State *L)
 	VectorSet( start, ply->cl->ps.origin[0], ply->cl->ps.origin[1], ply->cl->ps.origin[2] + ply->cl->ps.viewheight );
 	VectorMA( start, luaL_optinteger(L, 2, 131072), forward, end );
 
-	trap_Trace(&tr, start, NULL, NULL, end, ply->cl-g_clients, MASK_SHOT);
+	trap_Trace(&tr, start, NULL, NULL, end, ply->cl->ps.clientNum, MASK_SHOT);
 
 	lua_pushvector(L, tr.endpos);
 	return 1;
 }
 
+//
+// Player:ViewAngles( )
+// Player:ViewAngles( newVal:QVector )
+//
+static int g_lua_Player_ViewAngles(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = lua_getplayer(L, 1);
+
+	if (n > 1)
+	{
+		vec_t *newVal = lua_getvector(L, 2);
+		VectorCopy(newVal, ply->cl->ps.viewangles);
+		return 0;
+	}
+
+	lua_pushvector(L, ply->cl->ps.viewangles);
+	return 1;
+}
 
 //
 // Player:PrintConsole( message:String )
@@ -185,8 +241,12 @@ static const luaL_Reg player_meta[] = {
 	{ "Name", g_lua_Player_Name },
 	{ "Number", g_lua_Player_Number },
 	{ "Weapon", g_lua_Player_Weapon},
+	{ "Hack", g_lua_Player_Hack},
+	
 	{ "AimOrigin", g_lua_Player_AimOrigin},
-    { "PrintConsole", g_lua_Player_PrintConsole },
+	{ "ViewAngles", g_lua_Player_ViewAngles },
+    
+	{ "PrintConsole", g_lua_Player_PrintConsole },
 	{ "SiegeSpecTimer", g_lua_Player_SiegeSpecTimer },
 	
 	{ NULL, NULL }

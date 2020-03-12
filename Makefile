@@ -14,7 +14,7 @@ LDFLAGS = -shared -lm -pthread -L$(ROOT_DIR)/lua -llua
 
 # Makefile settings - Can be customized.
 APPNAME = jampgamei386.so
-EXT = .c
+EXT = .cpp
 SRCDIR = $(ROOT_DIR)
 OBJDIR = obj
 
