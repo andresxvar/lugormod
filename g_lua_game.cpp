@@ -1,7 +1,7 @@
-extern "C" 
+extern "C"
 {
-	#include "lua/lua.h"
-	#include "lua/lauxlib.h"
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
 }
 #include "g_local.h"
 #include "g_lua_main.h"
@@ -9,7 +9,7 @@ extern "C"
 //
 // Game.BindCommand(name:String, command:Function)
 //
-static int g_lua_Game_BindCommand(lua_State * L)
+static int g_lua_Game_BindCommand(lua_State *L)
 {
 	int n = lua_gettop(L), cmdref = LUA_REFNIL;
 	int i;
@@ -19,7 +19,7 @@ static int g_lua_Game_BindCommand(lua_State * L)
 		return luaL_error(L, "syntax: BindCommand(name:String, command:Function)");
 
 	// get the first argument, must be a string
-	name = (char*)luaL_checkstring(L, 1);
+	name = (char *)luaL_checkstring(L, 1);
 
 	// check if the first argument is a string
 	luaL_argcheck(L, name != NULL, 1, "`string' expected");
@@ -65,7 +65,7 @@ static int g_lua_Game_BindCommand(lua_State * L)
 // Game.Broadcast( message:String, flags:Number )
 // Game.Broadcast( message:String, flags:Number, playerId:Number )
 //
-static int g_lua_Game_Broadcast(lua_State * L)
+static int g_lua_Game_Broadcast(lua_State *L)
 {
 	int n = lua_gettop(L);
 	char *message = NULL;
@@ -73,7 +73,7 @@ static int g_lua_Game_Broadcast(lua_State * L)
 	int playerId = -1;
 
 	// get the message to print
-	message = (char*)luaL_checkstring(L, 1);
+	message = (char *)luaL_checkstring(L, 1);
 	luaL_argcheck(L, message != NULL, 1, "`string' expected");
 
 	if (n > 1)
@@ -81,7 +81,7 @@ static int g_lua_Game_Broadcast(lua_State * L)
 	if (n > 2)
 		playerId = luaL_checkinteger(L, 3);
 
-	if (flags & 16)	// print to chat
+	if (flags & 16) // print to chat
 		trap_SendServerCommand(playerId, va("chat \"%s\"", message));
 	else if (flags & 8) // print to console
 		trap_SendServerCommand(playerId, va("print \"%s\"", message));
@@ -94,20 +94,20 @@ static int g_lua_Game_Broadcast(lua_State * L)
 //
 // Game.PlayEffect( effect:String, origin:Vector)
 //
-static int g_lua_Game_PlayEffect(lua_State * L)
+static int g_lua_Game_PlayEffect(lua_State *L)
 {
 	int n = lua_gettop(L);
 	char *effect = NULL;
 	vec_t *origin;
-	vec3_t up = {-90,0,0}; // play effects up
+	vec3_t up = {-90, 0, 0}; // play effects up
 	if (n < 2)
 		return luaL_error(L, "syntax: PlayEffect( effect:String, origin:Vector )");
 
-	effect = (char*)luaL_checkstring(L, 1);
+	effect = (char *)luaL_checkstring(L, 1);
 
 	origin = lua_getvector(L, 2);
 	luaL_argcheck(L, origin != NULL, 2, "`QVector' expected");
-	
+
 	G_PlayEffectID(G_EffectIndex(effect), origin, up);
 	return 0;
 }
@@ -115,7 +115,7 @@ static int g_lua_Game_PlayEffect(lua_State * L)
 //
 // Game.ConcatArgs(index:Integer)
 //
-static int g_lua_Game_ConcatArgs(lua_State * L)
+static int g_lua_Game_ConcatArgs(lua_State *L)
 {
 	int n;
 
@@ -127,30 +127,29 @@ static int g_lua_Game_ConcatArgs(lua_State * L)
 //
 // Game.Argument(index:Number)
 //
-static int g_lua_Game_Argument(lua_State * L)
+static int g_lua_Game_Argument(lua_State *L)
 {
 	int argn;
 	char result[32];
 
 	argn = luaL_optinteger(L, 1, 0);
-	trap_Argv(argn,result,sizeof(result));
-	
+	trap_Argv(argn, result, sizeof(result));
+
 	lua_pushstring(L, result);
 	return 1;
 }
 
 // game library methods
 static const luaL_Reg GameRegistry[] = {
-	{ "BindCommand", 	g_lua_Game_BindCommand },
-    { "Broadcast", 		g_lua_Game_Broadcast },
-	{ "Argument", 		g_lua_Game_Argument },
-	{ "ConcatArgs",		g_lua_Game_ConcatArgs },
-	{ "PlayEffect", 	g_lua_Game_PlayEffect },
+	{"BindCommand", g_lua_Game_BindCommand},
+	{"Broadcast", g_lua_Game_Broadcast},
+	{"Argument", g_lua_Game_Argument},
+	{"ConcatArgs", g_lua_Game_ConcatArgs},
+	{"PlayEffect", g_lua_Game_PlayEffect},
 
-	{ NULL, NULL }
-};
+	{NULL, NULL}};
 
-int luaopen_game(lua_State * L)
+int luaopen_game(lua_State *L)
 {
 	luaL_newlib(L, GameRegistry);
 	lua_setglobal(L, "Game");

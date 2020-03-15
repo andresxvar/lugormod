@@ -6,19 +6,16 @@ local materialData =
 		model = "models/map_objects/rift/crystal_floor",
 		effect = "effects/chunks/glassbreak",
 	},
-
 	{
 		name = "^4iron",
 		model = "models/map_objects/rift/crystal_floor",
 		effect = "effects/sparks/bluesparks",
-	},
-	
+	},	
 	{
 		name = "^2organic",
 		model = "models/map_objects/rift/crystal_floor",
 		effect = "effects/env/acid_splash",
-	},
-	
+	},	
 	{
 		name = "^1chemical",
 		model = "models/map_objects/rift/crystal_floor",
@@ -31,14 +28,17 @@ function material_pain(material, attacker, damage)
 	local ply = Player.FromEntity(attacker)
 
 	if (ply:Weapon() == 1) then
+		local plyNum = attacker:Number()
 		local fxposition = material:Position()
+		
 		fxposition[2] = fxposition[2]+32
 		materialIndex = material:GenericValues()
 		materialCount = math.random(100,200)
-		plyNum = attacker:Number()
+		
 		Game.Broadcast("^5You mined ^6" .. materialCount  .. " " .. materialData[materialIndex].name .. "^5!", 0, plyNum)
-		materialInventory[plyNum][materialIndex] = materialInventory[plyNum][materialIndex] + materialCount
 		Game.PlayEffect( materialData[materialIndex].effect, fxposition)
+
+		materialInventory[plyNum][materialIndex] = materialInventory[plyNum][materialIndex] + materialCount
 	end
 end
 
@@ -127,7 +127,6 @@ function build_f(player,argc)
 	return 1
 end
 
-
 function buildall_f(player,argc)
 	local pid = player:Number()
 	materialInventory[pid][1] = 999;
@@ -136,7 +135,6 @@ function buildall_f(player,argc)
 	materialInventory[pid][4] = 999;
 	return 1
 end
-
 
 Game.BindCommand("build", build_f)
 Game.BindCommand("buildall", buildall_f)

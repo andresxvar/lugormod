@@ -20,7 +20,7 @@ void g_lua_reportError()
 
 	Q_strncpyz(errorMsg, lua_tostring(g_lua, -1), sizeof(errorMsg));
 	luaL_where(g_lua, 1);
-	G_Printf(va("lua error: %s (%s)\n", errorMsg, lua_tostring(g_lua, -1)));
+	G_Printf("lua error: %s (%s)\n", errorMsg, lua_tostring(g_lua, -1));
 	lua_pop(g_lua, 2);
 }
 
@@ -36,7 +36,8 @@ int g_lua_loadScript(char *fileName)
 	trap_Printf(va(" > loading %s...\n", fileName));
 
 	len = trap_FS_FOpenFile(fileName, &f, FS_READ);
-	if (!f || len >= 32000) {
+	if (!f || len >= 32000)
+	{
 		return 0;
 	}
 
@@ -59,18 +60,19 @@ int g_lua_loadScript(char *fileName)
 	return 1;
 }
 
+// g_lua_init: initialize lua variables and load scripts
 st_lua_cmd_t st_lua_cmds[MAX_LUA_CMDS];
 void g_lua_init()
 {
-    G_Printf("-------- Lua Initialization ---------\n");
-    G_Printf("- creating lua instance...\n");
+	G_Printf("-------- Lua Initialization ---------\n");
+	G_Printf("- creating lua instance...\n");
 
-    int i;
-    int numGlobalScripts, globalScriptlen;
+	int i;
+	int numGlobalScripts, globalScriptlen;
 	char lstGlobalScripts[2048], *globalScriptPtr;
-	
-    // intialize lua commands
-    for (i = 0; i < MAX_LUA_CMDS; i++)
+
+	// intialize lua commands
+	for (i = 0; i < MAX_LUA_CMDS; i++)
 	{
 		memset(&st_lua_cmds[i], 0, sizeof(st_lua_cmd_t));
 		st_lua_cmds[i].name = 0;
@@ -85,18 +87,18 @@ void g_lua_init()
 		st_lua_ents[i].function = 0;
 	}
 
-    // initialize lua
-    g_lua = luaL_newstate();
+	// initialize lua
+	g_lua = luaL_newstate();
 
-    // initialize librarys
-    luaL_openlibs(g_lua);
-    luaopen_game(g_lua);
-    luaopen_gentity(g_lua);
+	// initialize librarys
+	luaL_openlibs(g_lua);
+	luaopen_game(g_lua);
+	luaopen_gentity(g_lua);
 	luaopen_player(g_lua);
 	luaopen_vector(g_lua);
 
-
-    numGlobalScripts = trap_FS_GetFileList("luascripts", ".lua", lstGlobalScripts, sizeof(lstGlobalScripts));
+	// load lua scripts
+	numGlobalScripts = trap_FS_GetFileList("luascripts", ".lua", lstGlobalScripts, sizeof(lstGlobalScripts));
 	globalScriptPtr = lstGlobalScripts;
 	for (i = 0; i < numGlobalScripts; i++, globalScriptPtr += globalScriptlen + 1)
 	{
@@ -105,19 +107,21 @@ void g_lua_init()
 		strcpy(filename, "luascripts/");
 		strcat(filename, globalScriptPtr);
 		g_lua_loadScript(filename);
-	}    
+	}
 
-    lua_getglobal(g_lua, "tostring");
+	lua_getglobal(g_lua, "tostring");
 	lua_toString = luaL_ref(g_lua, LUA_REGISTRYINDEX);
 
 	g_lua_RegisterEntities();
 }
 
+// g_lua_shutdown: close lua
 void g_lua_shutdown()
 {
 	lua_close(g_lua);
 }
 
+// g_lua_callClCommand:
 int g_lua_callClCommand(gclient_t *cl, const char *cmd)
 {
 	for (int i = 0; i < MAX_LUA_CMDS; ++i)
@@ -144,9 +148,9 @@ int g_lua_callClCommand(gclient_t *cl, const char *cmd)
 }
 
 int g_lua_clientCommand(int clientId)
-{	
+{
 	gentity_t *ent = g_entities + clientId;
-	char	cmd[MAX_TOKEN_CHARS] = { 0 };
+	char cmd[MAX_TOKEN_CHARS] = {0};
 
 	if (ent->client && ent->client->pers.connected == CON_CONNECTED)
 	{

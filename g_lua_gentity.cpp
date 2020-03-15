@@ -1,14 +1,14 @@
-extern "C" 
+extern "C"
 {
-	#include "lua/lua.h"
-	#include "lua/lauxlib.h"
+#include "lua/lua.h"
+#include "lua/lauxlib.h"
 }
 #include "g_lua_main.h"
 
 #include "g_local.h"
 #include "Lmd_EntityCore.h"
 
-static int g_lua_GEntity_GC(lua_State * L)
+static int g_lua_GEntity_GC(lua_State *L)
 {
 	//G_Printf("Lua says bye to entity = %p\n", lua_getentity(L));
 	return 0;
@@ -47,7 +47,7 @@ static int g_lua_GEntity_Place(lua_State *L)
 	if (n < 1)
 		return luaL_error(L, "syntax: Place( Spawnstring:String )");
 
-	spawnString = (char*)luaL_checkstring(L, 1);
+	spawnString = (char *)luaL_checkstring(L, 1);
 	result = trySpawn(spawnString);
 
 	if (result)
@@ -56,7 +56,7 @@ static int g_lua_GEntity_Place(lua_State *L)
 		{
 			int canSave = luaL_checkinteger(L, 2);
 			if (canSave != 0)
-				Lmd_Entities_SetSaveable(result->Lmd.spawnData, qtrue);				
+				Lmd_Entities_SetSaveable(result->Lmd.spawnData, qtrue);
 		}
 
 		g_lua_pushEntity(L, result);
@@ -70,12 +70,12 @@ static int g_lua_GEntity_Place(lua_State *L)
 //
 // GEntity.Register( name:string, spawn:function, logical:bool)
 //
-// g_lua_Spawn 
+// g_lua_Spawn
 // Handler for spawning custom lua entities
 st_lua_ent_t st_lua_ents[MAX_LUA_ENTS];
 void Lmd_AddSpawnableEntry(spawn_t spawnData);
 void g_lua_Spawn(gentity_t *ent)
-{	
+{
 	// pick the right spawning function
 	for (int i = 0; i < MAX_LUA_ENTS; ++i)
 	{
@@ -98,7 +98,7 @@ void g_lua_RegisterEntities()
 	{
 		if (st_lua_ents[i].function)
 		{
-			spawn_t data = { st_lua_ents[i].name,g_lua_Spawn, st_lua_ents[i].logical, NULL };
+			spawn_t data = {st_lua_ents[i].name, g_lua_Spawn, st_lua_ents[i].logical, NULL};
 			Lmd_AddSpawnableEntry(data);
 		}
 		else
@@ -114,8 +114,8 @@ static int g_lua_GEntity_ReadSpawnVarInt(lua_State *L)
 	char *keyname;
 	int spawnInt = 0;
 
-	keyname = (char*)luaL_checkstring(L, 1);
-	G_SpawnInt( keyname, "0", &spawnInt );
+	keyname = (char *)luaL_checkstring(L, 1);
+	G_SpawnInt(keyname, "0", &spawnInt);
 
 	lua_pushinteger(L, spawnInt);
 	return 1;
@@ -131,7 +131,7 @@ static int g_lua_GEntity_Register(lua_State *L)
 		return luaL_error(L, "syntax: Register(name:String, spawn:Function, islogical:Boolean)");
 
 	// get the first argument, must be a string
-	name = (char*)luaL_checkstring(L, 1);
+	name = (char *)luaL_checkstring(L, 1);
 
 	// check if the second argument is a function
 	if (!lua_isfunction(L, 2))
@@ -143,10 +143,10 @@ static int g_lua_GEntity_Register(lua_State *L)
 
 	// get the third argument
 	logical = luaL_checkinteger(L, 3);
-	
+
 	// find if the function has already been registered
 	for (i = 0; i < MAX_LUA_ENTS; ++i)
-	{		
+	{
 		if (st_lua_ents[i].function && st_lua_ents[i].function == spref)
 		{
 			lua_pushinteger(L, spref);
@@ -188,18 +188,18 @@ static int g_lua_GEntity_Number(lua_State *L)
 //
 // GEntity:MakeHackable( )
 //
-void hacking_zone_think (gentity_t *ent){
-	if (!ent->parent || !ent->parent->inuse 
-		|| ent->parent->genericValue10 != ent->s.number)
+void hacking_zone_think(gentity_t *ent)
+{
+	if (!ent->parent || !ent->parent->inuse || ent->parent->genericValue10 != ent->s.number)
 	{
-			G_FreeEntity(ent);
-			return;
+		G_FreeEntity(ent);
+		return;
 	}
-	if (!VectorCompare(ent->r.currentOrigin,ent->parent->r.currentOrigin))
+	if (!VectorCompare(ent->r.currentOrigin, ent->parent->r.currentOrigin))
 	{
 		G_SetOrigin(ent, ent->parent->r.currentOrigin);
 		trap_LinkEntity(ent);
-	}	
+	}
 
 	ent->nextthink = level.time + 5000;
 }
@@ -210,7 +210,8 @@ static int g_lua_GEntity_MakeHackable(lua_State *L)
 	lent = g_lua_checkEntity(L, 1);
 
 	gentity_t *zone = G_Spawn();
-	if (zone) {		
+	if (zone)
+	{
 		zone->classname = "hacking_zone";
 		zone->parent = lent->e;
 		zone->think = hacking_zone_think;
@@ -228,7 +229,7 @@ static int g_lua_GEntity_MakeHackable(lua_State *L)
 		lent->e->genericValue10 = zone->s.number;
 		trap_LinkEntity(zone);
 	}
-	return 0;	
+	return 0;
 }
 
 //
@@ -292,12 +293,12 @@ static int g_lua_GEntity_Model(lua_State *L)
 		lent->e->s.eFlags &= ~(EF_NODRAW);
 		lent->e->s.modelGhoul2 = 0;
 		lent->e->s.pos.trType = TR_STATIONARY;
-		char *newVal = (char*)luaL_checkstring(L, 2);
+		char *newVal = (char *)luaL_checkstring(L, 2);
 		lent->e->model = G_NewString(newVal);
-		G_SetOrigin( lent->e, lent->e->s.origin );
-		VectorCopy(lent->e->s.origin, lent->e->s.pos.trBase );
-		VectorCopy( lent->e->s.angles, lent->e->s.apos.trBase );
-		SpawnEntModel(lent->e,qtrue,qfalse);
+		G_SetOrigin(lent->e, lent->e->s.origin);
+		VectorCopy(lent->e->s.origin, lent->e->s.pos.trBase);
+		VectorCopy(lent->e->s.angles, lent->e->s.apos.trBase);
+		SpawnEntModel(lent->e, qtrue, qfalse);
 		trap_LinkEntity(lent->e);
 		return 0;
 	}
@@ -310,7 +311,7 @@ static int g_lua_GEntity_Model(lua_State *L)
 // GEntity:Health( )
 // GEntity:Health( newVal:Integer )
 //
-void funcBBrushDie (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
+void funcBBrushDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
 static int g_lua_GEntity_Health(lua_State *L)
 {
 	int n = lua_gettop(L);
@@ -319,9 +320,10 @@ static int g_lua_GEntity_Health(lua_State *L)
 	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
-	{		
+	{
 		int newVal = luaL_checkinteger(L, 2);
-		if (newVal>0) {
+		if (newVal > 0)
+		{
 			lent->e->takedamage = qtrue;
 			lent->e->die = funcBBrushDie;
 		}
@@ -345,7 +347,7 @@ static int g_lua_GEntity_GenericValue(lua_State *L)
 	lent = g_lua_checkEntity(L, 1);
 
 	if (n > 1)
-	{		
+	{
 		int newVal = luaL_checkinteger(L, 2);
 		lent->e->genericValue1 = newVal;
 		return 0;
@@ -485,7 +487,7 @@ static int g_lua_GEntity_Free(lua_State *L)
 
 	lent->e->think = G_FreeEntity;
 	lent->e->nextthink = level.time + luaL_optinteger(L, 2, 0);
-	
+
 	return 0;
 }
 
@@ -493,7 +495,7 @@ static int g_lua_GEntity_Free(lua_State *L)
 // GEntity:Blowup()
 // GEntity:Blowup(delay:Integer)
 //
-void BlowUpEntity (gentity_t *ent);
+void BlowUpEntity(gentity_t *ent);
 static int g_lua_GEntity_Blowup(lua_State *L)
 {
 	int n = lua_gettop(L);
@@ -501,56 +503,54 @@ static int g_lua_GEntity_Blowup(lua_State *L)
 
 	lent->e->think = BlowUpEntity;
 	lent->e->nextthink = level.time + luaL_optinteger(L, 2, 0);
-	
+
 	return 0;
 }
 
 // entity library methods
 static const luaL_Reg gentity_ctor[] = {
-	{ "FromNumber", g_lua_GEntity_FromNumber },
-	{ "Place", g_lua_GEntity_Place},
-	{ "Register", g_lua_GEntity_Register },
+	{"FromNumber", g_lua_GEntity_FromNumber},
+	{"Place", g_lua_GEntity_Place},
+	{"Register", g_lua_GEntity_Register},
 
-	{ "ReadSpawnVarInt", g_lua_GEntity_ReadSpawnVarInt},
-	
-	{ NULL, NULL }
-};
+	{"ReadSpawnVarInt", g_lua_GEntity_ReadSpawnVarInt},
+
+	{NULL, NULL}};
 
 // entity meta methods
 static const luaL_Reg gentity_meta[] = {
-	{ "__gc", g_lua_GEntity_GC },
+	{"__gc", g_lua_GEntity_GC},
 
-	{ "Free", g_lua_GEntity_Free},
-	{ "Blowup", g_lua_GEntity_Blowup},
+	{"Free", g_lua_GEntity_Free},
+	{"Blowup", g_lua_GEntity_Blowup},
 
-	{ "BindPain", g_lua_GEntity_BindPain},
+	{"BindPain", g_lua_GEntity_BindPain},
 	//{ "BindTouch", lua_GEntity_BindTouch},
 	//{ "BindTouch", lua_GEntity_BindDie},
-	{ "BindUse", g_lua_GEntity_BindUse},
-	{ "MakeHackable", g_lua_GEntity_MakeHackable},
-		
-	{ "Number", g_lua_GEntity_Number },
-	{ "Angles", g_lua_GEntity_Angles},
-	{ "Position", g_lua_GEntity_Position },
-	
-	{ "Model", g_lua_GEntity_Model},
-	{ "Health", g_lua_GEntity_Health},
-	{ "GenericValues", g_lua_GEntity_GenericValue},
+	{"BindUse", g_lua_GEntity_BindUse},
+	{"MakeHackable", g_lua_GEntity_MakeHackable},
 
-	{ NULL, NULL }
-};
+	{"Number", g_lua_GEntity_Number},
+	{"Angles", g_lua_GEntity_Angles},
+	{"Position", g_lua_GEntity_Position},
 
-int luaopen_gentity(lua_State * L)
+	{"Model", g_lua_GEntity_Model},
+	{"Health", g_lua_GEntity_Health},
+	{"GenericValues", g_lua_GEntity_GenericValue},
+
+	{NULL, NULL}};
+
+int luaopen_gentity(lua_State *L)
 {
 	// set GEntity object functions
 	luaL_newlib(L, gentity_ctor);
 
 	// set GEntity class metatable
-	luaL_newmetatable(L, "Game.GEntity");  /* create metatable for entities */
-	lua_pushvalue(L, -1);  /* push metatable */
-	lua_setfield(L, -2, "__index");  /* metatable.__index = metatable */
-	luaL_setfuncs(L, gentity_meta, 0);  /* add entity methods to new metatable */
-	lua_pop(L, 1);  /* pop new metatable */
+	luaL_newmetatable(L, "Game.GEntity"); /* create metatable for entities */
+	lua_pushvalue(L, -1);				  /* push metatable */
+	lua_setfield(L, -2, "__index");		  /* metatable.__index = metatable */
+	luaL_setfuncs(L, gentity_meta, 0);	/* add entity methods to new metatable */
+	lua_pop(L, 1);						  /* pop new metatable */
 
 	// set global class
 	lua_setglobal(L, "GEntity");
@@ -558,11 +558,11 @@ int luaopen_gentity(lua_State * L)
 	return 1;
 }
 
-void g_lua_pushEntity(lua_State * L, gentity_t * ent)
+void g_lua_pushEntity(lua_State *L, gentity_t *ent)
 {
-	lua_GEntity     *lent;
+	lua_GEntity *lent;
 
-	lent = (lua_GEntity*)lua_newuserdata(L, sizeof(lua_GEntity));
+	lent = (lua_GEntity *)lua_newuserdata(L, sizeof(lua_GEntity));
 
 	luaL_getmetatable(L, "Game.GEntity");
 	lua_setmetatable(L, -2);
@@ -570,10 +570,10 @@ void g_lua_pushEntity(lua_State * L, gentity_t * ent)
 	lent->e = ent;
 }
 
-lua_GEntity	*g_lua_checkEntity(lua_State * L, int argNum)
+lua_GEntity *g_lua_checkEntity(lua_State *L, int argNum)
 {
 	void *ud;
-	lua_GEntity	*lent;
+	lua_GEntity *lent;
 
 	ud = luaL_checkudata(L, argNum, "Game.GEntity");
 	luaL_argcheck(L, ud != NULL, argNum, "`entity' expected");
