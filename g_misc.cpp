@@ -26,23 +26,26 @@ Used to group brushes together just for editor convenience.  They are turned int
 /*QUAKED info_camp (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
 */
-void SP_info_camp( gentity_t *self ) {
-	G_SetOrigin( self, self->s.origin );
+void SP_info_camp(gentity_t *self)
+{
+	G_SetOrigin(self, self->s.origin);
 }
 
 /*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for calculations in the utilities (spotlights, etc), but removed during gameplay.
 */
-void SP_info_null( gentity_t *self ) {
-	G_FreeEntity( self );
+void SP_info_null(gentity_t *self)
+{
+	G_FreeEntity(self);
 }
 
 /*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as a positional target for in-game calculation, like jumppad targets.
 target_position does the same thing
 */
-void SP_info_notnull( gentity_t *self ){
-	G_SetOrigin( self, self->s.origin );
+void SP_info_notnull(gentity_t *self)
+{
+	G_SetOrigin(self, self->s.origin);
 }
 
 /*QUAKED lightJunior (0 0.7 0.3) (-8 -8 -8) (8 8 8) nonlinear angle negative_spot negative_point
@@ -84,79 +87,81 @@ greater than 1 is brighter, between 0 and 1 is dimmer.
 12 FAST PULSE FOR JEREMY
 13 Test Blending
 */
-static void misc_lightstyle_set ( gentity_t *ent)
+static void misc_lightstyle_set(gentity_t *ent)
 {
 	const int mLightStyle = ent->count;
 	const int mLightSwitchStyle = ent->bounceCount;
 	const int mLightOffStyle = ent->fly_sound_debounce_time;
 	if (!ent->alt_fire)
-	{	//turn off
-		if (mLightOffStyle)	//i have a light style i'd like to use when off
+	{						//turn off
+		if (mLightOffStyle) //i have a light style i'd like to use when off
 		{
 			char lightstyle[32];
-			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightOffStyle*3)+0, lightstyle, 32);
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+0, lightstyle);
+			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightOffStyle * 3) + 0, lightstyle, 32);
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 0, lightstyle);
 
-			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightOffStyle*3)+1, lightstyle, 32);
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+1, lightstyle);
+			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightOffStyle * 3) + 1, lightstyle, 32);
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 1, lightstyle);
 
-			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightOffStyle*3)+2, lightstyle, 32);
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+2, lightstyle);
-		}else
-		{
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+0, "a");
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+1, "a");
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+2, "a");
-		}
-	}
-	else
-	{	//Turn myself on now
-		if (mLightSwitchStyle)	//i have a light style i'd like to use when on
-		{
-			char lightstyle[32];
-			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightSwitchStyle*3)+0, lightstyle, 32);
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+0, lightstyle);
-
-			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightSwitchStyle*3)+1, lightstyle, 32);
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+1, lightstyle);
-
-			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightSwitchStyle*3)+2, lightstyle, 32);
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+2, lightstyle);
+			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightOffStyle * 3) + 2, lightstyle, 32);
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 2, lightstyle);
 		}
 		else
 		{
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+0, "z");
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+1, "z");
-			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle*3)+2, "z");
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 0, "a");
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 1, "a");
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 2, "a");
+		}
+	}
+	else
+	{						   //Turn myself on now
+		if (mLightSwitchStyle) //i have a light style i'd like to use when on
+		{
+			char lightstyle[32];
+			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightSwitchStyle * 3) + 0, lightstyle, 32);
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 0, lightstyle);
+
+			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightSwitchStyle * 3) + 1, lightstyle, 32);
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 1, lightstyle);
+
+			trap_GetConfigstring(CS_LIGHT_STYLES + (mLightSwitchStyle * 3) + 2, lightstyle, 32);
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 2, lightstyle);
+		}
+		else
+		{
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 0, "z");
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 1, "z");
+			trap_SetConfigstring(CS_LIGHT_STYLES + (mLightStyle * 3) + 2, "z");
 		}
 	}
 }
 
-void misc_dlight_use ( gentity_t *ent, gentity_t *other, gentity_t *activator )
+void misc_dlight_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	//RoboPhred: hopefully I never have a case of a map using lights to run scripts.
 	//light ent can be logical without this
-	G_ActivateBehavior(ent,BSET_USE);
+	G_ActivateBehavior(ent, BSET_USE);
 
-	ent->alt_fire = !ent->alt_fire;	//toggle
-	misc_lightstyle_set (ent);
+	ent->alt_fire = !ent->alt_fire; //toggle
+	misc_lightstyle_set(ent);
 }
 
-void SP_light( gentity_t *self ) {
-	if (!self->targetname )
-	{//if i don't have a light style switch, then i go away
-		G_FreeEntity( self );
+void SP_light(gentity_t *self)
+{
+	if (!self->targetname)
+	{ //if i don't have a light style switch, then i go away
+		G_FreeEntity(self);
 		return;
 	}
 
-	G_SpawnInt( "style", "0", &self->count );
-	G_SpawnInt( "switch_style", "0", &self->bounceCount );
-	G_SpawnInt( "style_off", "0", &self->fly_sound_debounce_time );
-	G_SetOrigin( self, self->s.origin );
+	G_SpawnInt("style", "0", &self->count);
+	G_SpawnInt("switch_style", "0", &self->bounceCount);
+	G_SpawnInt("style_off", "0", &self->fly_sound_debounce_time);
+	G_SetOrigin(self, self->s.origin);
 
 	//RoboPhred: hopefully I never have a case of a map using lights to run scripts.
 	//light ent can be logical without this
-	trap_LinkEntity( self );
+	trap_LinkEntity(self);
 
 	self->use = misc_dlight_use;
 
@@ -164,11 +169,11 @@ void SP_light( gentity_t *self ) {
 	self->alt_fire = qfalse;
 	self->r.svFlags |= SVF_NOCLIENT;
 
-	if ( !(self->spawnflags & 4) )
-	{	//turn myself on now
+	if (!(self->spawnflags & 4))
+	{ //turn myself on now
 		self->alt_fire = qtrue;
 	}
-	misc_lightstyle_set (self);
+	misc_lightstyle_set(self);
 }
 
 /*
@@ -180,63 +185,73 @@ TELEPORTERS
 */
 
 //RoboPhred
-void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles, qboolean noEvent) {
-//void TeleportPlayer( gentity_t *player, vec3_t origin, vec3_t angles) {
-	gentity_t	*tent;
-	qboolean	isNPC = qfalse;
+void TeleportPlayer(gentity_t *player, vec3_t origin, vec3_t angles, qboolean noEvent)
+{
+	gentity_t *tent;
+	qboolean isNPC = qfalse;
+
+	qboolean noAngles;
+
 	if (player->s.eType == ET_NPC)
 	{
 		isNPC = qtrue;
 	}
 
+	noAngles = (angles[0] > 999999.0) ? qtrue : qfalse;
+
 	// use temp events at source and destination to prevent the effect
 	// from getting dropped by a second player event
-	if (!noEvent && player->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		tent = G_TempEntity( player->client->ps.origin, EV_PLAYER_TELEPORT_OUT );
-		//RoboPhred
-		if(tent)
+	if (!noEvent && player->client->sess.sessionTeam != TEAM_SPECTATOR)
+	{
+		tent = G_TempEntity(player->client->ps.origin, EV_PLAYER_TELEPORT_OUT);
+		if (tent)
 			tent->s.clientNum = player->s.clientNum;
 
-		tent = G_TempEntity( origin, EV_PLAYER_TELEPORT_IN );
-		//RoboPhred
-		if(tent)
+		tent = G_TempEntity(origin, EV_PLAYER_TELEPORT_IN);
+		if (tent)
 			tent->s.clientNum = player->s.clientNum;
 	}
 
 	// unlink to make sure it can't possibly interfere with G_KillBox
-	trap_UnlinkEntity (player);
+	trap_UnlinkEntity(player);
 
-	VectorCopy ( origin, player->client->ps.origin );
+	VectorCopy(origin, player->client->ps.origin);
 	player->client->ps.origin[2] += 1;
 
 	// spit the player out
-	AngleVectors( angles, player->client->ps.velocity, NULL, NULL );
-	VectorScale( player->client->ps.velocity, 400, player->client->ps.velocity );
-	player->client->ps.pm_time = 160;		// hold time
-	player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+	if (!noAngles)
+	{
+		AngleVectors(angles, player->client->ps.velocity, NULL, NULL);
+		VectorScale(player->client->ps.velocity, 400, player->client->ps.velocity);
+		player->client->ps.pm_time = 160; // hold time
+		player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
+
+		// set angles
+		SetClientViewAngle(player, angles);
+	}
 
 	// toggle the teleport bit so the client knows to not lerp
 	player->client->ps.eFlags ^= EF_TELEPORT_BIT;
 
-	// set angles
-	SetClientViewAngle( player, angles );
-
 	// kill anything at the destination
-	if ( player->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		G_KillBox (player);
+	if (player->client->sess.sessionTeam != TEAM_SPECTATOR)
+	{
+		G_KillBox(player);
 	}
 
 	// save results of pmove
-	BG_PlayerStateToEntityState( &player->client->ps, &player->s, qtrue );
-	if (isNPC) {
+	BG_PlayerStateToEntityState(&player->client->ps, &player->s, qtrue);
+	if (isNPC)
+	{
 		player->s.eType = ET_NPC;
 	}
 
 	// use the precise origin for linking
-	VectorCopy( player->client->ps.origin, player->r.currentOrigin );
+	VectorCopy(player->client->ps.origin, player->r.currentOrigin);
 
-	if ( player->client->sess.sessionTeam != TEAM_SPECTATOR ) {
-		trap_LinkEntity (player);
+	if (player->client->sess.sessionTeam != TEAM_SPECTATOR)
+	{
+		trap_LinkEntity(player);
 	}
 }
 
@@ -245,7 +260,8 @@ Point teleporters at these.
 Now that we don't have teleport destination pads, this is just
 an info_notnull
 */
-void SP_misc_teleporter_dest( gentity_t *ent ) {
+void SP_misc_teleporter_dest(gentity_t *ent)
+{
 }
 
 //===========================================================
@@ -254,7 +270,8 @@ void SP_misc_teleporter_dest( gentity_t *ent ) {
 "model"		arbitrary .md3 or .ase file to display
 turns into map triangles - not solid
 */
-void SP_misc_model( gentity_t *ent ) {
+void SP_misc_model(gentity_t *ent)
+{
 #if 0
 	ent->s.modelindex = G_ModelIndex( ent->model );
 	VectorSet (ent->r.mins, -16, -16, -16);
@@ -264,7 +281,7 @@ void SP_misc_model( gentity_t *ent ) {
 	G_SetOrigin( ent, ent->s.origin );
 	VectorCopy( ent->s.angles, ent->s.apos.trBase );
 #else
-	G_FreeEntity( ent );
+	G_FreeEntity(ent);
 #endif
 }
 
@@ -348,16 +365,18 @@ gentity_t* create_body_double (gentity_t *ent)
 }
 */
 
-gentity_t* attachPlayerToBody(gentity_t *player);
+gentity_t *attachPlayerToBody(gentity_t *player);
 void removePlayerFromBody(gentity_t *player);
 
-void camera_disconnect(gentity_t *camera, gentity_t *player, gentity_t *body, vec3_t origin){
+void camera_disconnect(gentity_t *camera, gentity_t *player, gentity_t *body, vec3_t origin)
+{
 	vec3_t dest; //cannot trust origin, might be a pointer to body, which is cleared
-	if(!origin)
+	if (!origin)
 		VectorCopy(player->client->ps.origin, dest);
 	else
 		VectorCopy(origin, dest);
-	if(player && player->client && player->client->pers.connected == CON_CONNECTED){
+	if (player && player->client && player->client->pers.connected == CON_CONNECTED)
+	{
 		removePlayerFromBody(player);
 		player->client->ps.pm_time = 160;
 		player->client->ps.pm_flags |= PMF_TIME_KNOCKBACK;
@@ -378,74 +397,85 @@ void camera_disconnect(gentity_t *camera, gentity_t *player, gentity_t *body, ve
 		player->client->Lmd.flags &= ~SNF_FREEZE;
 		player->r.ownerNum = ENTITYNUM_NONE;
 
-		if(player->target4 && player->target4[0])
+		if (player->target4 && player->target4[0])
 			G_UseTargets2(camera, player, player->target4);
 
 		trap_LinkEntity(player);
 	}
-	if(camera){
+	if (camera)
+	{
 		camera->activator = NULL;
 		camera->genericValue1 = 0;
 		camera->think = NULL;
 	}
-	if(body){
+	if (body)
+	{
 		G_FreeEntity(body);
 	}
 }
-void FakeBodyThink_Camera(gentity_t *self){
+void FakeBodyThink_Camera(gentity_t *self)
+{
 	gentity_t *camera = &g_entities[self->genericValue1];
-	if(!camera->inuse || (self->message && Q_stricmp(camera->classname, self->message) != 0))
+	if (!camera->inuse || (self->message && Q_stricmp(camera->classname, self->message) != 0))
 		camera = NULL;
-	if(!camera || !self->activator->inuse || !self->activator->client || self->activator->client->pers.connected != CON_CONNECTED){
+	if (!camera || !self->activator->inuse || !self->activator->client || self->activator->client->pers.connected != CON_CONNECTED)
+	{
 		camera_disconnect(camera, self->activator, self, self->r.currentOrigin);
 		return;
 	}
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void misc_camera_think (gentity_t *self){
-	if(!self->activator || !self->activator->client || self->activator->health <= 0 ||
+void misc_camera_think(gentity_t *self)
+{
+	if (!self->activator || !self->activator->client || self->activator->health <= 0 ||
 		self->activator->client->pers.connected != CON_CONNECTED ||
 		//see if player manually ejects
 		(self->delay < level.time && (self->activator->client->pers.cmd.buttons & BUTTON_USE ||
-		self->activator->client->pers.cmd.rightmove != 0 || self->activator->client->pers.cmd.forwardmove != 0 ||
-		self->activator->client->pers.cmd.upmove != 0))){
-			camera_disconnect(self, self->activator, &g_entities[self->genericValue1], g_entities[self->genericValue1].r.currentOrigin);
-			return;
+									  self->activator->client->pers.cmd.rightmove != 0 || self->activator->client->pers.cmd.forwardmove != 0 ||
+									  self->activator->client->pers.cmd.upmove != 0)))
+	{
+		camera_disconnect(self, self->activator, &g_entities[self->genericValue1], g_entities[self->genericValue1].r.currentOrigin);
+		return;
 	}
-	if(self->delay < level.time && self->painDebounceTime < level.time) {
-		if(self->activator->client->pers.cmd.buttons & BUTTON_ATTACK) {
+	if (self->delay < level.time && self->painDebounceTime < level.time)
+	{
+		if (self->activator->client->pers.cmd.buttons & BUTTON_ATTACK)
+		{
 			G_UseTargets2(self, self->activator, self->target2);
 			self->painDebounceTime = level.time + self->wait;
 		}
-		if(self->activator->client->pers.cmd.buttons & BUTTON_ALT_ATTACK) {
+		if (self->activator->client->pers.cmd.buttons & BUTTON_ALT_ATTACK)
+		{
 			self->painDebounceTime = level.time + self->wait;
 			G_UseTargets2(self, self->activator, self->target3);
 		}
 	}
-	if(!g_entities[self->genericValue1].inuse || Q_stricmp(g_entities[self->genericValue1].classname, "fakebody") != 0){
+	if (!g_entities[self->genericValue1].inuse || Q_stricmp(g_entities[self->genericValue1].classname, "fakebody") != 0)
+	{
 		camera_disconnect(self, self->activator, NULL, self->s.origin2);
 		return;
 	}
 	self->nextthink = level.time + FRAMETIME;
 }
 
-void misc_camera_use(gentity_t *self, gentity_t *other, gentity_t *activator){
+void misc_camera_use(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
 	if (self->activator) //someone is already using me
 		return;
 
 	if (!activator->client)
 		return;
 
-	if(activator->client->ps.forceHandExtend != HANDEXTEND_NONE) //don't use if busy doing something else
+	if (activator->client->ps.forceHandExtend != HANDEXTEND_NONE) //don't use if busy doing something else
 		return;
 
-	G_ActivateBehavior( self, BSET_USE );
-	if(self->target && self->target[0])
-		G_UseTargets( self, activator );
+	G_ActivateBehavior(self, BSET_USE);
+	if (self->target && self->target[0])
+		G_UseTargets(self, activator);
 
-	gentity_t *body = attachPlayerToBody(activator);//create_body_double(activator);
-	if(!body)
+	gentity_t *body = attachPlayerToBody(activator); //create_body_double(activator);
+	if (!body)
 		return;
 
 	activator->r.svFlags |= SVF_NOCLIENT;
@@ -474,13 +504,15 @@ void misc_camera_use(gentity_t *self, gentity_t *other, gentity_t *activator){
 	return;
 }
 
-void SP_misc_camera (gentity_t *ent){
+void SP_misc_camera(gentity_t *ent)
+{
 	//G_FreeEntity(ent);
 	//return;
 	ent->use = misc_camera_use;
 	ent->think = NULL;
 	//RoboPhred:
-	if(!ent->model){
+	if (!ent->model)
+	{
 		ent->s.modelindex = G_ModelIndex("models/map_objects/kejim/impcam.md3");
 		VectorSet(ent->r.mins, -5, -5, -5);
 		VectorSet(ent->r.maxs, 5, 5, 2);
@@ -488,7 +520,7 @@ void SP_misc_camera (gentity_t *ent){
 	else
 		SpawnEntModel(ent, qtrue, qfalse);
 
-	if(ent->wait <= 0)
+	if (ent->wait <= 0)
 		ent->wait = 1.0f;
 	ent->wait *= 1000.0f;
 
@@ -510,18 +542,21 @@ G_ActivateBehavior( self, BSET_USE );
 qboolean PlayerUseableCheck(gentity_t *self, gentity_t *activator);
 void PlayerUsableGetKeys(gentity_t *ent);
 
-void misc_security_panel_use (gentity_t *self, gentity_t *other, gentity_t *activator){
-	if (self->genericValue1 > level.time) {
+void misc_security_panel_use(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
+	if (self->genericValue1 > level.time)
+	{
 		return;
 	}
-	if(!PlayerUseableCheck(self, activator))
+	if (!PlayerUseableCheck(self, activator))
 		return;
 
 	self->genericValue1 = level.time + 2000;
 	G_UseTargets(self, activator);
 }
 
-void SP_misc_security_panel (gentity_t *ent) {
+void SP_misc_security_panel(gentity_t *ent)
+{
 	VectorSet(ent->r.maxs, 8, 8, 8);
 	VectorSet(ent->r.mins, -8, -8, -8);
 
@@ -534,7 +569,7 @@ void SP_misc_security_panel (gentity_t *ent) {
 	ent->s.eFlags &= ~(EF_NODRAW);
 	ent->s.modelGhoul2 = 0;
 	ent->s.pos.trType = TR_STATIONARY;
-	G_SetOrigin( ent, ent->s.origin );
+	G_SetOrigin(ent, ent->s.origin);
 	ent->r.contents = CONTENTS_SOLID;
 	ent->genericValue1 = level.time;
 	trap_LinkEntity(ent);
@@ -542,59 +577,70 @@ void SP_misc_security_panel (gentity_t *ent) {
 
 //void funcBBrushUse (gentity_t *self, gentity_t *other, gentity_t *activator);
 
-void funcBBrushDie (gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
+void funcBBrushDie(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod);
 void funcBBrushPain(gentity_t *self, gentity_t *attacker, int damage);
 
-void misc_model_breakable_touch (gentity_t *self, gentity_t *other, trace_t *trace){
-	if (self->genericValue10 > level.time) {
+void misc_model_breakable_touch(gentity_t *self, gentity_t *other, trace_t *trace)
+{
+	if (self->genericValue10 > level.time)
+	{
 		return;
 	}
-	if (self->wait == -1) {
+	if (self->wait == -1)
+	{
 		self->use = NULL;
 	}
 	self->genericValue10 = level.time + (self->wait * 1000);
 
-	G_ActivateBehavior( self, BSET_USE );
+	G_ActivateBehavior(self, BSET_USE);
 	G_UseTargets(self, other);
 }
 
-void misc_model_breakable_use (gentity_t *self, gentity_t *other, gentity_t *activator){
-	if (self->genericValue10 > level.time) {
+void misc_model_breakable_use(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
+	if (self->genericValue10 > level.time)
+	{
 		return;
 	}
-	if (!activator || !activator->client) {
+	if (!activator || !activator->client)
+	{
 		return;
 	}
 
-	if(!PlayerUseableCheck(self, activator))
+	if (!PlayerUseableCheck(self, activator))
 		return;
 
-	G_ActivateBehavior( self, BSET_USE );
+	G_ActivateBehavior(self, BSET_USE);
 	//Using it doesn't break it, makes it use it's targets
-	if(self->spawnflags & 64)
+	if (self->spawnflags & 64)
 		G_UseTargets(self, activator);
 	else
 		funcBBrushDie(self, other, activator, self->health, MOD_UNKNOWN);
 
-	if (self->wait == -1) {
+	if (self->wait == -1)
+	{
 		self->use = NULL;
 	}
 	self->genericValue10 = level.time + (self->wait * 1000);
 
 	//RoboPhred
-	if(self->message && !(self->spawnflags & 8192))
+	if (self->message && !(self->spawnflags & 8192))
 		trap_SendServerCommand(activator->s.number, va("cp \"%s\"", self->message));
 }
 
-void misc_model_breakable_pay (gentity_t *self, gentity_t *other, gentity_t *activator){
-	if (self->genericValue10 > level.time) {
+void misc_model_breakable_pay(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
+	if (self->genericValue10 > level.time)
+	{
 		return;
 	}
-	if (duelInProgress(&activator->client->ps)) {
+	if (duelInProgress(&activator->client->ps))
+	{
 		return;
 	}
 
-	if(!PlayerUseableCheck(self, activator)){
+	if (!PlayerUseableCheck(self, activator))
+	{
 		PlayerAcc_SetCredits(activator, PlayerAcc_GetCredits(activator) + self->genericValue5);
 		self->genericValue5 = 0;
 		return;
@@ -602,38 +648,45 @@ void misc_model_breakable_pay (gentity_t *self, gentity_t *other, gentity_t *act
 
 	self->genericValue10 = level.time + (self->wait * 1000);
 
-	if (other->client->pers.cmd.buttons & BUTTON_USE ) {
-		if (self->message) {
-			trap_SendServerCommand(other-g_entities,
-				va("cp \"%s\nUse the command \\pay on this.\nThe cost is CR %i.\"", self->message,self->count));
-		} else {
-			trap_SendServerCommand(other-g_entities,
-				va("cp \"Use the command \\pay on this.\nThe cost is CR %i.\"", self->count));
+	if (other->client->pers.cmd.buttons & BUTTON_USE)
+	{
+		if (self->message)
+		{
+			trap_SendServerCommand(other - g_entities,
+								   va("cp \"%s\nUse the command \\pay on this.\nThe cost is CR %i.\"", self->message, self->count));
+		}
+		else
+		{
+			trap_SendServerCommand(other - g_entities,
+								   va("cp \"Use the command \\pay on this.\nThe cost is CR %i.\"", self->count));
 		}
 		return;
 	}
 
-	if(self->genericValue5 < self->count){
+	if (self->genericValue5 < self->count)
+	{
 		Disp(activator, va("^3This costs ^2CR %i^3.", self->count));
 		PlayerAcc_SetCredits(activator, PlayerAcc_GetCredits(activator) + self->genericValue5);
 		self->genericValue5 = 0;
 		return;
 	}
-	if(self->genericValue5 > self->count){
+	if (self->genericValue5 > self->count)
+	{
 		PlayerAcc_SetCredits(activator, PlayerAcc_GetCredits(activator) + self->genericValue5 - self->count);
 	}
 	self->genericValue5 = 0;
 
-	G_ActivateBehavior( self, BSET_USE );
+	G_ActivateBehavior(self, BSET_USE);
 	G_UseTargets(self, activator);
-	if (self->wait == -1) {
+	if (self->wait == -1)
+	{
 		self->use = NULL;
 	}
 }
 
-void animate_model (gentity_t *self);
+void animate_model(gentity_t *self);
 
-void FixBox(vec3_t mins,vec3_t maxs, vec3_t angles);
+void FixBox(vec3_t mins, vec3_t maxs, vec3_t angles);
 
 /*
 misc_model_breakable
@@ -652,7 +705,8 @@ START_OFF     512
 ??           2048
 */
 
-void SP_misc_model_breakable( gentity_t *ent ) {
+void SP_misc_model_breakable(gentity_t *ent)
+{
 	qboolean gravity;
 	int t;
 
@@ -671,31 +725,35 @@ void SP_misc_model_breakable( gentity_t *ent ) {
 	}
 	*/
 
-	if (!ent->wait) {
+	if (!ent->wait)
+	{
 		ent->wait = 1;
 	}
 
 	//RoboPhred
-	if(ent->spawnflags & 512)
+	if (ent->spawnflags & 512)
 		ent->flags |= FL_INACTIVE;
 
 	ent->use = misc_model_breakable_use;
 	ent->genericValue10 = level.time + 500;
 
-	if (ent->spawnflags & (128|32)) {
+	if (ent->spawnflags & (128 | 32))
+	{
 		ent->r.svFlags |= SVF_PLAYER_USABLE;
 	}
 
-	if (ent->spawnflags & 1024) {
+	if (ent->spawnflags & 1024)
+	{
 		ent->s.isPortalEnt = qtrue;
 	}
-	if (ent->spawnflags & 8192) {
+	if (ent->spawnflags & 8192)
+	{
 		ent->use = misc_model_breakable_pay;
 		ent->flags |= FL_PAY;
 		ent->r.svFlags |= SVF_PLAYER_USABLE;
 	}
 
-	G_SpawnInt( "showhealth", "0", &t );
+	G_SpawnInt("showhealth", "0", &t);
 
 	if (t)
 	{ //a non-0 maxhealth value will mean we want to show the health on the hud
@@ -718,7 +776,8 @@ void SP_misc_model_breakable( gentity_t *ent ) {
 	}
 	*/
 
-	if (ent->health) {
+	if (ent->health)
+	{
 		ent->takedamage = qtrue;
 		ent->die = funcBBrushDie;
 		ent->pain = funcBBrushPain;
@@ -731,29 +790,32 @@ void SP_misc_model_breakable( gentity_t *ent ) {
 	//RoboPhred: copied model stuff to func
 	SpawnEntModel(ent, ent->spawnflags & 1, ent->spawnflags & 2);
 
-	if (ent->spawnflags & 4096) {
+	if (ent->spawnflags & 4096)
+	{
 		ent->touch = misc_model_breakable_touch;
 		ent->r.contents = CONTENTS_TRIGGER;
 	}
 
-	G_SetOrigin( ent, ent->s.origin );
-	VectorCopy(ent->s.origin, ent->s.pos.trBase );
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
+	G_SetOrigin(ent, ent->s.origin);
+	VectorCopy(ent->s.origin, ent->s.pos.trBase);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
 
 	G_SpawnInt("gravity", "0", &gravity);
-	if (gravity) {
+	if (gravity)
+	{
 		ent->r.svFlags |= SVF_USE_CURRENT_ORIGIN;
 		ent->s.pos.trType = TR_GRAVITY;
 		ent->s.pos.trTime = level.time;
 		ent->physicsObject = qtrue;
 		ent->physicsBounce = 0;
-		ent->flags = FL_DROPPED_ITEM|FL_BOUNCE;
+		ent->flags = FL_DROPPED_ITEM | FL_BOUNCE;
 		ent->clipmask = MASK_PLAYERSOLID;
 		ent->r.contents = CONTENTS_SOLID;
 		ent->bounceCount = 0;
 		ent->r.ownerNum = ent->s.number;
 	}
-	if(!(ent->spawnflags & 8321 || gravity || ent->health)){
+	if (!(ent->spawnflags & 8321 || gravity || ent->health))
+	{
 		ent->r.contents = 0;
 		//RoboPhred: why?  Did lugor mean to unlink it?
 		//trap_LinkEntity(ent);
@@ -766,46 +828,56 @@ void SP_misc_model_breakable( gentity_t *ent ) {
 	trap_LinkEntity(ent);
 }
 
-void misc_slotmachine_use (gentity_t *ent, gentity_t *other, gentity_t *activator){
+void misc_slotmachine_use(gentity_t *ent, gentity_t *other, gentity_t *activator)
+{
 	vec3_t dir;
 	int diff;
 	int win = 0;
 
-	if (!other || !other->client) {
+	if (!other || !other->client)
+	{
 		return;
 	}
-	if (duelInProgress(&other->client->ps)) {
+	if (duelInProgress(&other->client->ps))
+	{
 		return;
 	}
 
 	VectorSubtract(other->client->ps.origin, ent->r.currentOrigin, dir);
-	vectoangles(dir,dir);
-	if(dir[YAW] > 180){
+	vectoangles(dir, dir);
+	if (dir[YAW] > 180)
+	{
 		dir[YAW] -= 360;
 	}
 	diff = (int)Q_fabs(dir[YAW] - ent->s.apos.trBase[YAW]);
-	if (diff > 180) {
-		diff = 360 - diff; }
+	if (diff > 180)
+	{
+		diff = 360 - diff;
+	}
 
-	if(diff > 40){
+	if (diff > 40)
+	{
 		//face the front
 		PlayerAcc_SetCredits(other, PlayerAcc_GetCredits(other) + ent->genericValue5);
 		ent->genericValue5 = 0;
 		return;
 	}
-	if (other->client->pers.cmd.buttons & BUTTON_USE ){
+	if (other->client->pers.cmd.buttons & BUTTON_USE)
+	{
 		trap_SendServerCommand(other->s.number, "cp \"^2Slot Machine\n^3Use the command ^2\\pay^3 on this machine.\n\"");
 		return;
 	}
 
-	if(ent->genericValue6 == 0){
+	if (ent->genericValue6 == 0)
+	{
 		Disp(other, "The machine is out of cash.");
 		PlayerAcc_SetCredits(other, PlayerAcc_GetCredits(other) + ent->genericValue5);
 		ent->genericValue5 = 0;
 		return;
 	}
 
-	if (ent->genericValue5%10 || ent->genericValue5 > 200) {
+	if (ent->genericValue5 % 10 || ent->genericValue5 > 200)
+	{
 		Disp(other, "^3You must bet multiples of ^2CR 10^3 up to ^2CR 200^3.");
 		PlayerAcc_SetCredits(other, PlayerAcc_GetCredits(other) + ent->genericValue5);
 		ent->genericValue5 = 0;
@@ -813,14 +885,17 @@ void misc_slotmachine_use (gentity_t *ent, gentity_t *other, gentity_t *activato
 	}
 	ent->genericValue6 += ent->genericValue5;
 
-	if (Q_irand(0,99) < 25){
+	if (Q_irand(0, 99) < 25)
+	{
 		win = ent->genericValue5 * 2;
-		while(Q_irand(0,99) < 33){
+		while (Q_irand(0, 99) < 33)
+		{
 			win += ent->genericValue5;
 		}
 	}
 
-	if (!Q_irand(0,399) && ent->genericValue6 > ent->count * 1.05) {
+	if (!Q_irand(0, 399) && ent->genericValue6 > ent->count * 1.05)
+	{
 		trap_SendServerCommand(other->s.number, "cp \"^2You hit the Jackpot!\"");
 		ent->count *= 1.05;
 		win = ent->genericValue6 - ent->count;
@@ -828,34 +903,39 @@ void misc_slotmachine_use (gentity_t *ent, gentity_t *other, gentity_t *activato
 
 	ent->genericValue5 = 0;
 
-	if (win && win > ent->genericValue6){
+	if (win && win > ent->genericValue6)
+	{
 		win = ent->genericValue6;
 	}
 
-	if(win){
+	if (win)
+	{
 		trap_SendServerCommand(other->s.number, va("cp \"^3You won CR ^2%i^3.\"", win));
 		G_Sound(other, CHAN_AUTO, G_SoundIndex("sound/interface/secret_area.wav"));
 		PlayerAcc_SetCredits(other, PlayerAcc_GetCredits(other) + win);
 		ent->genericValue6 -= win;
 	}
-	else{
+	else
+	{
 		trap_SendServerCommand(other->s.number, "cp \"^3You lost, please try again.\"");
 	}
 }
 
-void SP_misc_slotmachine(gentity_t *ent){
+void SP_misc_slotmachine(gentity_t *ent)
+{
 	ent->spawnflags = 1;
 	G_Free(ent->model);
 	ent->model = "map_objects/imperial/con1";
 	SP_misc_model_breakable(ent);
-	VectorSet(ent->r.maxs,20,20,60);
-	VectorSet(ent->r.mins,-20,-20,0);
+	VectorSet(ent->r.maxs, 20, 20, 60);
+	VectorSet(ent->r.mins, -20, -20, 0);
 	ent->use = misc_slotmachine_use;
 	ent->flags |= FL_PAY;
 	ent->r.svFlags |= SVF_PLAYER_USABLE;
 
 	ent->wait = 2;
-	if (ent->count < 100) {
+	if (ent->count < 100)
+	{
 		ent->count = 100;
 	}
 
@@ -865,19 +945,21 @@ void SP_misc_slotmachine(gentity_t *ent){
 	trap_LinkEntity(ent);
 }
 
-void SP_misc_exploding_crate (gentity_t *ent){
+void SP_misc_exploding_crate(gentity_t *ent)
+{
 	//ent->model = "models/map_objects/imperial/crate_xplode.md3";
-	G_SpawnString("model","map_objects/imperial/crate_xplode",&ent->model);
+	G_SpawnString("model", "map_objects/imperial/crate_xplode", &ent->model);
 	ent->spawnflags |= 1;
 	SP_misc_model_breakable(ent);
 	ent->die = funcBBrushDie;
 	ent->pain = funcBBrushPain;
 	ent->takedamage = qtrue;
-	if (ent->health < 1) {
+	if (ent->health < 1)
+	{
 		ent->health = 1;
 	}
-	VectorSet(ent->r.maxs,  24, 24, 64);
-	VectorSet(ent->r.mins, -24, -24, 0 );
+	VectorSet(ent->r.maxs, 24, 24, 64);
+	VectorSet(ent->r.mins, -24, -24, 0);
 	trap_LinkEntity(ent);
 }
 
@@ -896,13 +978,14 @@ bsp space!
 */
 void SP_misc_model_static(gentity_t *ent)
 {
-	G_FreeEntity( ent );
+	G_FreeEntity(ent);
 }
 
 /*QUAKED misc_G2model (1 0 0) (-16 -16 -16) (16 16 16)
 "model"		arbitrary .glm file to display
 */
-void SP_misc_G2model( gentity_t *ent ) {
+void SP_misc_G2model(gentity_t *ent)
+{
 #if 0
 	char name1[200] = "models/players/kyle/modelmp.glm";
 	trap_G2API_InitGhoul2Model(&ent->s, name1, G_ModelIndex( name1 ), 0, 0, 0, 0);
@@ -915,73 +998,87 @@ void SP_misc_G2model( gentity_t *ent ) {
 	G_SetOrigin( ent, ent->s.origin );
 	VectorCopy( ent->s.angles, ent->s.apos.trBase );
 #else
-	G_FreeEntity( ent );
+	G_FreeEntity(ent);
 #endif
 }
 
 //===========================================================
 
-void locateCamera( gentity_t *ent ) {
-	vec3_t		dir;
-	gentity_t	*target;
-	gentity_t	*owner;
+void locateCamera(gentity_t *ent)
+{
+	vec3_t dir;
+	gentity_t *target;
+	gentity_t *owner;
 
-	owner = G_PickTarget( ent->target );
-	if ( !owner ) {
-		G_Printf( "Couldn't find target for misc_partal_surface\n" );
-		G_FreeEntity( ent );
+	owner = G_PickTarget(ent->target);
+	if (!owner)
+	{
+		G_Printf("Couldn't find target for misc_partal_surface\n");
+		G_FreeEntity(ent);
 		return;
 	}
 	ent->r.ownerNum = owner->s.number;
 
 	// frame holds the rotate speed
-	if ( owner->spawnflags & 1 ) {
+	if (owner->spawnflags & 1)
+	{
 		ent->s.frame = 25;
-	} else if ( owner->spawnflags & 2 ) {
+	}
+	else if (owner->spawnflags & 2)
+	{
 		ent->s.frame = 75;
 	}
 
 	// swing camera ?
-	if ( owner->spawnflags & 4 ) {
+	if (owner->spawnflags & 4)
+	{
 		// set to 0 for no rotation at all
 		ent->s.powerups = 0;
 	}
-	else {
+	else
+	{
 		ent->s.powerups = 1;
 	}
 
 	// clientNum holds the rotate offset
 	ent->s.clientNum = owner->s.clientNum;
 
-	VectorCopy( owner->s.origin, ent->s.origin2 );
+	VectorCopy(owner->s.origin, ent->s.origin2);
 
 	// see if the portal_camera has a target
-	target = G_PickTarget( owner->target );
-	if ( target ) {
-		VectorSubtract( target->s.origin, owner->s.origin, dir );
-		VectorNormalize( dir );
-	} else {
-		G_SetMovedir( owner->s.angles, dir );
+	target = G_PickTarget(owner->target);
+	if (target)
+	{
+		VectorSubtract(target->s.origin, owner->s.origin, dir);
+		VectorNormalize(dir);
+	}
+	else
+	{
+		G_SetMovedir(owner->s.angles, dir);
 	}
 
-	ent->s.eventParm = DirToByte( dir );
+	ent->s.eventParm = DirToByte(dir);
 }
 
 /*QUAKED misc_portal_surface (0 0 1) (-8 -8 -8) (8 8 8)
 The portal surface nearest this entity will show a view from the targeted misc_portal_camera, or a mirror view if untargeted.
 This must be within 64 world units of the surface!
 */
-void SP_misc_portal_surface(gentity_t *ent) {
-	VectorClear( ent->r.mins );
-	VectorClear( ent->r.maxs );
-	trap_LinkEntity (ent);
+void SP_misc_portal_surface(gentity_t *ent)
+{
+	VectorClear(ent->r.mins);
+	VectorClear(ent->r.maxs);
+	trap_LinkEntity(ent);
 
 	ent->r.svFlags = SVF_PORTAL;
 	ent->s.eType = ET_PORTAL;
 
-	if ( !ent->target ) {
-		VectorCopy( ent->s.origin, ent->s.origin2 );
-	} else {
+	if (!ent->target)
+	{
+		VectorCopy(ent->s.origin, ent->s.origin2);
+	}
+	else
+	{
 		ent->think = locateCamera;
 		ent->nextthink = level.time + 100;
 	}
@@ -991,18 +1088,19 @@ void SP_misc_portal_surface(gentity_t *ent) {
 The target for a misc_portal_director.  You can set either angles or target another entity to determine the direction of view.
 "roll" an angle modifier to orient the camera around the target vector;
 */
-void SP_misc_portal_camera(gentity_t *ent) {
-	float	roll;
+void SP_misc_portal_camera(gentity_t *ent)
+{
+	float roll;
 
-	VectorClear( ent->r.mins );
-	VectorClear( ent->r.maxs );
+	VectorClear(ent->r.mins);
+	VectorClear(ent->r.maxs);
 
 	//RoboPhred: this isnt needed, and never run, since misc_portal_camera is a logical ent.
 	//trap_LinkEntity (ent);
 
-	G_SpawnFloat( "roll", "0", &roll );
+	G_SpawnFloat("roll", "0", &roll);
 
-	ent->s.clientNum = roll/360.0 * 256;
+	ent->s.clientNum = roll / 360.0 * 256;
 }
 
 /*QUAKED misc_bsp (1 0 0) (-16 -16 -16) (16 16 16)
@@ -1013,15 +1111,15 @@ void G_SubBSP_SpawnEntitiesFromString(void);
 extern qboolean disablesenabled;
 void SP_misc_bsp(gentity_t *ent)
 {
-	char	temp[MAX_QPATH];
-	char	*out = NULL;
-	float	newAngle;
-	int		tempint;
+	char temp[MAX_QPATH];
+	char *out = NULL;
+	float newAngle;
+	int tempint;
 
 	//RoboPhred
 	qboolean OLDdisablesenabled = disablesenabled;
 
-	G_SpawnFloat( "angle", "0", &newAngle );
+	G_SpawnFloat("angle", "0", &newAngle);
 	if (newAngle != 0.0)
 	{
 		ent->s.angles[1] = newAngle;
@@ -1031,7 +1129,8 @@ void SP_misc_bsp(gentity_t *ent)
 	ent->s.angles[2] = 0.0;
 
 	//RoboPhred: dont spawn if empty
-	if(G_SpawnString("bspmodel", "", &out) == qfalse) {
+	if (G_SpawnString("bspmodel", "", &out) == qfalse)
+	{
 		G_FreeEntity(ent);
 		return;
 	}
@@ -1039,13 +1138,13 @@ void SP_misc_bsp(gentity_t *ent)
 	ent->s.eFlags = EF_PERMANENT;
 
 	// Mainly for debugging
-	G_SpawnInt( "spacing", "0", &tempint);
+	G_SpawnInt("spacing", "0", &tempint);
 	ent->s.time2 = tempint;
-	G_SpawnInt( "flatten", "0", &tempint);
+	G_SpawnInt("flatten", "0", &tempint);
 	ent->s.time = tempint;
 
 	Com_sprintf(temp, MAX_QPATH, "#%s", out);
-	trap_SetBrushModel( ent, temp );  // SV_SetBrushModel -- sets mins and maxs
+	trap_SetBrushModel(ent, temp); // SV_SetBrushModel -- sets mins and maxs
 	G_BSPIndex(temp);
 
 	level.mNumBSPInstances++;
@@ -1062,17 +1161,17 @@ void SP_misc_bsp(gentity_t *ent)
 	G_SpawnString("teamfilter", "", &out);
 	strcpy(level.mTeamFilter, out);
 
-	VectorCopy( ent->s.origin, ent->s.pos.trBase );
-	VectorCopy( ent->s.origin, ent->r.currentOrigin );
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
-	VectorCopy( ent->s.angles, ent->r.currentAngles );
+	VectorCopy(ent->s.origin, ent->s.pos.trBase);
+	VectorCopy(ent->s.origin, ent->r.currentOrigin);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
+	VectorCopy(ent->s.angles, ent->r.currentAngles);
 
 	ent->s.eType = ET_MOVER;
 
-	trap_LinkEntity (ent);
+	trap_LinkEntity(ent);
 
 	trap_SetActiveSubBSP(ent->s.modelindex);
-	if(!(ent->spawnflags & 1))
+	if (!(ent->spawnflags & 1))
 		G_SubBSP_SpawnEntitiesFromString();
 	trap_SetActiveSubBSP(-1);
 
@@ -1113,24 +1212,24 @@ densityMap - how dense the client models are packed
 
 */
 void AddSpawnField(char *field, char *value);
-#define MAX_INSTANCE_TYPES		16
+#define MAX_INSTANCE_TYPES 16
 void SP_terrain(gentity_t *ent)
 {
-	char				temp[MAX_INFO_STRING];
-	char				final[MAX_QPATH];
-	char				seed[MAX_QPATH];
-	char				missionType[MAX_QPATH];
+	char temp[MAX_INFO_STRING];
+	char final[MAX_QPATH];
+	char seed[MAX_QPATH];
+	char missionType[MAX_QPATH];
 	//char				soundSet[MAX_QPATH];
-	int					shaderNum, i;
-	char				*value = NULL;
-	int					terrainID;
+	int shaderNum, i;
+	char *value = NULL;
+	int terrainID;
 
 	//Force it to 1 when there is terrain on the level.
 	trap_Cvar_Set("RMG", "1");
 	g_RMG.integer = 1;
 
-	VectorClear (ent->s.angles);
-	trap_SetBrushModel( ent, ent->model );
+	VectorClear(ent->s.angles);
+	trap_SetBrushModel(ent, ent->model);
 
 	// Get the shader from the top of the brush
 	//	shaderNum = gi.CM_GetShaderNum(s.modelindex);
@@ -1195,10 +1294,10 @@ void SP_terrain(gentity_t *ent)
 
 	Info_SetValueForKey(temp, "missionType", missionType);
 
-	for(i = 0; i < MAX_INSTANCE_TYPES; i++)
+	for (i = 0; i < MAX_INSTANCE_TYPES; i++)
 	{
 		trap_Cvar_VariableStringBuffer(va("RMG_instance%d", i), final, MAX_QPATH);
-		if(strlen(final))
+		if (strlen(final))
 		{
 			Info_SetValueForKey(temp, va("inst%d", i), final);
 		}
@@ -1237,7 +1336,7 @@ void SP_terrain(gentity_t *ent)
 	trap_LinkEntity(ent);
 
 	// If running RMG then initialize the terrain and handle team skins
-	if ( g_RMG.integer )
+	if (g_RMG.integer)
 	{
 		trap_RMG_Init(terrainID);
 
@@ -1287,7 +1386,7 @@ void G_PortalifyEntities(gentity_t *ent)
 			if (tr.fraction == 1.0 || (tr.entityNum == scan->s.number && tr.entityNum != ENTITYNUM_NONE && tr.entityNum != ENTITYNUM_WORLD))
 			{
 				if (!scan->client || scan->s.eType == ET_NPC)
-				{ //making a client a portal entity would be bad.
+				{								 //making a client a portal entity would be bad.
 					scan->s.isPortalEnt = qtrue; //he's flagged now
 				}
 			}
@@ -1309,7 +1408,7 @@ to the regular view position.
 
 "modelscale"			the scale at which to scale positions
 */
-void SP_misc_skyportal_orient (gentity_t *ent)
+void SP_misc_skyportal_orient(gentity_t *ent)
 {
 	//RoboPhred: not anymore, we want to save
 	//G_FreeEntity(ent);
@@ -1328,24 +1427,24 @@ is in the same PVS as them (only once otherwise, but still once no matter
 where the client is). In other words, don't go overboard with it or everything
 will explode.
 */
-void SP_misc_skyportal (gentity_t *ent)
+void SP_misc_skyportal(gentity_t *ent)
 {
-	char	*fov = NULL;
-	vec3_t	fogv;	//----(SA)
-	int		fogn;	//----(SA)
-	int		fogf;	//----(SA)
-	int		isfog = 0;	// (SA)
+	char *fov = NULL;
+	vec3_t fogv;   //----(SA)
+	int fogn;	  //----(SA)
+	int fogf;	  //----(SA)
+	int isfog = 0; // (SA)
 
-	float	fov_x;
+	float fov_x;
 
-	G_SpawnString ("fov", "80", &fov);
-	fov_x = atof (fov);
+	G_SpawnString("fov", "80", &fov);
+	fov_x = atof(fov);
 
-	isfog += G_SpawnVector ("fogcolor", "0 0 0", fogv);
-	isfog += G_SpawnInt ("fognear", "0", &fogn);
-	isfog += G_SpawnInt ("fogfar", "300", &fogf);
+	isfog += G_SpawnVector("fogcolor", "0 0 0", fogv);
+	isfog += G_SpawnInt("fognear", "0", &fogn);
+	isfog += G_SpawnInt("fogfar", "300", &fogf);
 
-	trap_SetConfigstring( CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2], fov_x, (int)isfog, fogv[0], fogv[1], fogv[2], fogn, fogf ) );
+	trap_SetConfigstring(CS_SKYBOXORG, va("%.2f %.2f %.2f %.1f %i %.2f %.2f %.2f %i %i", ent->s.origin[0], ent->s.origin[1], ent->s.origin[2], fov_x, (int)isfog, fogv[0], fogv[1], fogv[2], fogn, fogf));
 
 	ent->think = G_PortalifyEntities;
 	ent->nextthink = level.time + 1050; //give it some time first so that all other entities are spawned.
@@ -1374,32 +1473,32 @@ SABERTHROW = 17
 */
 
 char *holocronTypeModels[] = {
-	"models/map_objects/mp/lt_heal.md3",//FP_HEAL,
-	"models/map_objects/mp/force_jump.md3",//FP_LEVITATION,
-	"models/map_objects/mp/force_speed.md3",//FP_SPEED,
-	"models/map_objects/mp/force_push.md3",//FP_PUSH,
-	"models/map_objects/mp/force_pull.md3",//FP_PULL,
-	"models/map_objects/mp/lt_telepathy.md3",//FP_TELEPATHY,
-	"models/map_objects/mp/dk_grip.md3",//FP_GRIP,
-	"models/map_objects/mp/dk_lightning.md3",//FP_LIGHTNING,
-	"models/map_objects/mp/dk_rage.md3",//FP_RAGE,
-	"models/map_objects/mp/lt_protect.md3",//FP_PROTECT,
-	"models/map_objects/mp/lt_absorb.md3",//FP_ABSORB,
-	"models/map_objects/mp/lt_healother.md3",//FP_TEAM_HEAL,
-	"models/map_objects/mp/dk_powerother.md3",//FP_TEAM_FORCE,
-	"models/map_objects/mp/dk_drain.md3",//FP_DRAIN,
-	"models/map_objects/mp/force_sight.md3",//FP_SEE
-	"models/map_objects/mp/saber_attack.md3",//FP_SABER_OFFENSE
-	"models/map_objects/mp/saber_defend.md3",//FP_SABER_DEFENSE
-	"models/map_objects/mp/saber_throw.md3"//FP_SABERTHROW
+	"models/map_objects/mp/lt_heal.md3",	   //FP_HEAL,
+	"models/map_objects/mp/force_jump.md3",	//FP_LEVITATION,
+	"models/map_objects/mp/force_speed.md3",   //FP_SPEED,
+	"models/map_objects/mp/force_push.md3",	//FP_PUSH,
+	"models/map_objects/mp/force_pull.md3",	//FP_PULL,
+	"models/map_objects/mp/lt_telepathy.md3",  //FP_TELEPATHY,
+	"models/map_objects/mp/dk_grip.md3",	   //FP_GRIP,
+	"models/map_objects/mp/dk_lightning.md3",  //FP_LIGHTNING,
+	"models/map_objects/mp/dk_rage.md3",	   //FP_RAGE,
+	"models/map_objects/mp/lt_protect.md3",	//FP_PROTECT,
+	"models/map_objects/mp/lt_absorb.md3",	 //FP_ABSORB,
+	"models/map_objects/mp/lt_healother.md3",  //FP_TEAM_HEAL,
+	"models/map_objects/mp/dk_powerother.md3", //FP_TEAM_FORCE,
+	"models/map_objects/mp/dk_drain.md3",	  //FP_DRAIN,
+	"models/map_objects/mp/force_sight.md3",   //FP_SEE
+	"models/map_objects/mp/saber_attack.md3",  //FP_SABER_OFFENSE
+	"models/map_objects/mp/saber_defend.md3",  //FP_SABER_DEFENSE
+	"models/map_objects/mp/saber_throw.md3"	//FP_SABERTHROW
 };
 
 void HolocronRespawn(gentity_t *self)
 {
-	self->s.modelindex = G_ModelIndex(holocronTypeModels[self->count]);//(ent->count - 128);
-	//if (self->parent && self->parent->inuse) {
-	//turn item cone on
-	//}
+	self->s.modelindex = G_ModelIndex(holocronTypeModels[self->count]); //(ent->count - 128);
+																		//if (self->parent && self->parent->inuse) {
+																		//turn item cone on
+																		//}
 }
 
 void HolocronPopOut(gentity_t *self)
@@ -1482,7 +1581,7 @@ void HolocronTouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 
 	if (hasall)
-	{ //once we pick up this holocron we'll have all of them, so give us super special best prize!
+	{   //once we pick up this holocron we'll have all of them, so give us super special best prize!
 		//G_Printf("You deserve a pat on the back.\n");
 	}
 
@@ -1638,18 +1737,24 @@ void SP_misc_holocron(gentity_t *ent)
 	vec3_t dest;
 	trace_t tr;
 
-	if (g_gametype.integer != GT_HOLOCRON){
+	if (g_gametype.integer != GT_HOLOCRON)
+	{
 		//RoboPhred: if we are in holocron gametype, use it.  Admins just have to build holocron while playing holocron
-		if (!Lmd_Entities_IsSaveable(ent)) {
+		if (!Lmd_Entities_IsSaveable(ent))
+		{
 			G_FreeEntity(ent);
 			return;
-		} else {
+		}
+		else
+		{
 			ent->s.eFlags = EF_NODRAW;
 			ent->r.contents = 0;
 			ent->clipmask = 0;
 			return;
 		}
-	} else {
+	}
+	else
+	{
 		ent->s.eFlags &= ~EF_NODRAW;
 		ent->r.contents = CONTENTS_TRIGGER;
 		ent->clipmask = MASK_SOLID;
@@ -1671,19 +1776,19 @@ void SP_misc_holocron(gentity_t *ent)
 
 	ent->s.isJediMaster = qtrue;
 
-	VectorSet( ent->r.maxs, 8, 8, 8 );
-	VectorSet( ent->r.mins, -8, -8, -8 );
+	VectorSet(ent->r.maxs, 8, 8, 8);
+	VectorSet(ent->r.mins, -8, -8, -8);
 
 	//ent->s.origin[2] += 0.1;
 	ent->s.origin[2] -= ent->r.mins[2] - 8.1;
 	ent->r.maxs[2] -= 0.1;
 
-	VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
-	trap_Trace( &tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
-	if ( tr.startsolid )
+	VectorSet(dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096);
+	trap_Trace(&tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID);
+	if (tr.startsolid)
 	{
-		G_Printf ("SP_misc_holocron: misc_holocron startsolid at %s\n", vtos(ent->s.origin));
-		G_FreeEntity( ent );
+		G_Printf("SP_misc_holocron: misc_holocron startsolid at %s\n", vtos(ent->s.origin));
+		G_FreeEntity(ent);
 		return;
 	}
 
@@ -1693,7 +1798,7 @@ void SP_misc_holocron(gentity_t *ent)
 	// allow to ride movers
 	//	ent->s.groundEntityNum = tr.entityNum;
 
-	G_SetOrigin( ent, tr.endpos );
+	G_SetOrigin(ent, tr.endpos);
 	/*
 	gentity_t *base;
 	if (base = G_Spawn()) {
@@ -1715,7 +1820,7 @@ void SP_misc_holocron(gentity_t *ent)
 
 	if (ent->count >= NUM_FORCE_POWERS)
 	{
-		ent->count = NUM_FORCE_POWERS-1;
+		ent->count = NUM_FORCE_POWERS - 1;
 	}
 	/*
 	if (g_forcePowerDisable.integer &&
@@ -1732,7 +1837,7 @@ void SP_misc_holocron(gentity_t *ent)
 
 	ent->flags = FL_BOUNCE_HALF;
 
-	ent->s.modelindex = G_ModelIndex(holocronTypeModels[ent->count]);//(ent->count - 128);
+	ent->s.modelindex = G_ModelIndex(holocronTypeModels[ent->count]); //(ent->count - 128);
 	ent->s.eType = ET_HOLOCRON;
 	ent->s.pos.trType = TR_GRAVITY;
 	ent->s.pos.trTime = level.time;
@@ -1772,72 +1877,82 @@ SHOOTERS
 ======================================================================
 */
 
-void Use_Shooter( gentity_t *ent, gentity_t *other, gentity_t *activator ) {
-	vec3_t		dir;
-	float		deg;
-	vec3_t		up, right;
+void Use_Shooter(gentity_t *ent, gentity_t *other, gentity_t *activator)
+{
+	vec3_t dir;
+	float deg;
+	vec3_t up, right;
 
 	// see if we have a target
-	if ( ent->enemy ) {
-		VectorSubtract( ent->enemy->r.currentOrigin, ent->s.origin, dir );
-		VectorNormalize( dir );
-	} else {
-		VectorCopy( ent->movedir, dir );
+	if (ent->enemy)
+	{
+		VectorSubtract(ent->enemy->r.currentOrigin, ent->s.origin, dir);
+		VectorNormalize(dir);
+	}
+	else
+	{
+		VectorCopy(ent->movedir, dir);
 	}
 
 	// randomize a bit
-	PerpendicularVector( up, dir );
-	CrossProduct( up, dir, right );
+	PerpendicularVector(up, dir);
+	CrossProduct(up, dir, right);
 
 	deg = crandom() * ent->random;
-	VectorMA( dir, deg, up, dir );
+	VectorMA(dir, deg, up, dir);
 
 	deg = crandom() * ent->random;
-	VectorMA( dir, deg, right, dir );
+	VectorMA(dir, deg, right, dir);
 
-	VectorNormalize( dir );
+	VectorNormalize(dir);
 
-	switch ( ent->s.weapon ) {
+	switch (ent->s.weapon)
+	{
 	case WP_BLASTER:
-		WP_FireBlasterMissile( ent, ent->s.origin, dir, qfalse );
+		WP_FireBlasterMissile(ent, ent->s.origin, dir, qfalse);
 		break;
 	}
 
-	G_AddEvent( ent, EV_FIRE_WEAPON, 0 );
+	G_AddEvent(ent, EV_FIRE_WEAPON, 0);
 }
 
-static void InitShooter_Finish( gentity_t *ent ) {
-	ent->enemy = G_PickTarget( ent->target );
+static void InitShooter_Finish(gentity_t *ent)
+{
+	ent->enemy = G_PickTarget(ent->target);
 	ent->think = 0;
 	ent->nextthink = 0;
 }
 
-void InitShooter( gentity_t *ent, int weapon ) {
+void InitShooter(gentity_t *ent, int weapon)
+{
 	ent->use = Use_Shooter;
 	ent->s.weapon = weapon;
 
-	RegisterItem( BG_FindItemForWeapon( weapon ) );
+	RegisterItem(BG_FindItemForWeapon(weapon));
 
-	G_SetMovedir( ent->s.angles, ent->movedir );
+	G_SetMovedir(ent->s.angles, ent->movedir);
 
-	if ( !ent->random ) {
+	if (!ent->random)
+	{
 		ent->random = 1.0;
 	}
-	ent->random = sin( M_PI * ent->random / 180 );
+	ent->random = sin(M_PI * ent->random / 180);
 	// target might be a moving object, so we can't set movedir for it
-	if ( ent->target ) {
+	if (ent->target)
+	{
 		ent->think = InitShooter_Finish;
 		ent->nextthink = level.time + 500;
 	}
-	trap_LinkEntity( ent );
+	trap_LinkEntity(ent);
 }
 
 /*QUAKED shooter_blaster (1 0 0) (-16 -16 -16) (16 16 16)
 Fires at either the target or the current direction.
 "random" is the number of degrees of deviance from the taget. (1.0 default)
 */
-void SP_shooter_blaster( gentity_t *ent ) {
-	InitShooter( ent, WP_BLASTER);
+void SP_shooter_blaster(gentity_t *ent)
+{
+	InitShooter(ent, WP_BLASTER);
 }
 
 void check_recharge(gentity_t *ent)
@@ -1881,10 +1996,13 @@ void EnergyShieldStationSettings(gentity_t *ent)
 {
 	//Lugormod
 	if (g_gametype.integer == GT_FFA ||
-		g_gametype.integer == GT_TEAM) {
-			G_SpawnInt( "count", "100", &ent->count );
-	} else {
-		G_SpawnInt( "count", "200", &ent->count );
+		g_gametype.integer == GT_TEAM)
+	{
+		G_SpawnInt("count", "100", &ent->count);
+	}
+	else
+	{
+		G_SpawnInt("count", "200", &ent->count);
 	}
 
 	G_SpawnInt("chargerate", "0", &ent->genericValue5);
@@ -1893,8 +2011,9 @@ void EnergyShieldStationSettings(gentity_t *ent)
 	{
 		ent->genericValue5 = STATION_RECHARGE_TIME;
 		if (g_gametype.integer == GT_FFA ||
-			g_gametype.integer == GT_TEAM) {
-				ent->genericValue5 *= 12;
+			g_gametype.integer == GT_TEAM)
+		{
+			ent->genericValue5 *= 12;
 		}
 	}
 }
@@ -1904,9 +2023,9 @@ void EnergyShieldStationSettings(gentity_t *ent)
 shield_power_converter_use
 ================
 */
-void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *activator)
+void shield_power_converter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	int dif,add;
+	int dif, add;
 	int stop = 1;
 
 	if (!activator || !activator->client)
@@ -1914,14 +2033,12 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 		return;
 	}
 
-	if ( (g_gametype.integer == GT_SIEGE ||
-		g_gametype.integer == GT_BATTLE_GROUND)
-		&& other
-		&& other->client
-		&& other->client->siegeClass )
+	if ((g_gametype.integer == GT_SIEGE ||
+		 g_gametype.integer == GT_BATTLE_GROUND) &&
+		other && other->client && other->client->siegeClass)
 	{
-		if ( !bgSiegeClasses[other->client->siegeClass].maxarmor )
-		{//can't use it!
+		if (!bgSiegeClasses[other->client->siegeClass].maxarmor)
+		{ //can't use it!
 			G_Sound(self, CHAN_AUTO, G_SoundIndex("sound/interface/shieldcon_empty"));
 			return;
 		}
@@ -1929,7 +2046,7 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 
 	if (self->setTime < level.time)
 	{
-		int	maxArmor;
+		int maxArmor;
 		if (!self->s.loopSound)
 		{
 			self->s.loopSound = G_SoundIndex("sound/interface/shieldcon_run");
@@ -1937,11 +2054,9 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 		}
 		self->setTime = level.time + 100;
 
-		if ( (g_gametype.integer == GT_SIEGE ||
-			g_gametype.integer == GT_BATTLE_GROUND)
-			&& other
-			&& other->client
-			&& other->client->siegeClass != -1 )
+		if ((g_gametype.integer == GT_SIEGE ||
+			 g_gametype.integer == GT_BATTLE_GROUND) &&
+			other && other->client && other->client->siegeClass != -1)
 		{
 			maxArmor = bgSiegeClasses[other->client->siegeClass].maxarmor;
 		}
@@ -1951,9 +2066,9 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 		}
 		dif = maxArmor - activator->client->ps.stats[STAT_ARMOR];
 
-		if (dif > 0)					// Already at full armor?
+		if (dif > 0) // Already at full armor?
 		{
-			if (dif >MAX_AMMO_GIVE)
+			if (dif > MAX_AMMO_GIVE)
 			{
 				add = MAX_AMMO_GIVE;
 			}
@@ -1962,7 +2077,7 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 				add = dif;
 			}
 
-			if (self->count<add)
+			if (self->count < add)
 			{
 				add = self->count;
 			}
@@ -2001,7 +2116,7 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 		self->s.loopIsSoundset = qfalse;
 		if (self->setTime < level.time)
 		{
-			self->setTime = level.time + self->genericValue5+100;
+			self->setTime = level.time + self->genericValue5 + 100;
 		}
 	}
 }
@@ -2009,7 +2124,7 @@ void shield_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 //dispense generic ammo
 //RoboPhred
 int MaxAmmo(gentity_t *ent, int ammo);
-void ammo_generic_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *activator)
+void ammo_generic_power_converter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	int /*dif,*/ add;
 	//int ammoType;
@@ -2104,58 +2219,67 @@ void ammo_generic_power_converter_use( gentity_t *self, gentity_t *other, gentit
 		//Lugormod
 		int ammomax;
 		float addamnt;
-		if ((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM)) {
+		if ((g_gametype.integer == GT_FFA || g_gametype.integer == GT_TEAM))
+		{
 			ammomax = AMMO_ROCKETS;
 			addamnt = 0.02;
 		}
-		else {
+		else
+		{
 			ammomax = AMMO_MAX;
 			addamnt = 0.05;
 		}
 
 		//while (i < AMMO_MAX)
-		while (i < ammomax){
+		while (i < ammomax)
+		{
 			//RoboPhred
 			int max = MaxAmmo(activator, i);
 			//add = ammoData[i].max*0.05;
-			add = max*addamnt;
-			if (add < 1){
+			add = max * addamnt;
+			if (add < 1)
+			{
 				add = 1;
 			}
-			if (activator->client->ps.ammo[i] < max || ((activator->client->ps.eFlags & EF_DOUBLE_AMMO) && activator->client->ps.ammo[i] < max * 2)) {
-					gaveSome = qtrue;
-					if ( (g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND) && i == AMMO_ROCKETS && activator->client->ps.ammo[i] >= 10 )
-					{ //this stuff is already a freaking mess, so..
-						gaveSome = qfalse;
+			if (activator->client->ps.ammo[i] < max || ((activator->client->ps.eFlags & EF_DOUBLE_AMMO) && activator->client->ps.ammo[i] < max * 2))
+			{
+				gaveSome = qtrue;
+				if ((g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND) && i == AMMO_ROCKETS && activator->client->ps.ammo[i] >= 10)
+				{ //this stuff is already a freaking mess, so..
+					gaveSome = qfalse;
+				}
+				activator->client->ps.ammo[i] += add;
+				if ((g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND) && i == AMMO_ROCKETS && activator->client->ps.ammo[i] >= 10)
+				{ // fixme - this should SERIOUSLY be externed.
+					activator->client->ps.ammo[i] = 10;
+				}
+				else if (activator->client->ps.eFlags & EF_DOUBLE_AMMO)
+				{
+					if (activator->client->ps.ammo[i] >= max * 2)
+					{ // yuck.
+						activator->client->ps.ammo[i] = max * 2;
 					}
-					activator->client->ps.ammo[i] += add;
-					if ( (g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND) && i == AMMO_ROCKETS && activator->client->ps.ammo[i] >= 10 )
-					{	// fixme - this should SERIOUSLY be externed.
-						activator->client->ps.ammo[i] = 10;
+					else
+					{
+						stop = 0;
 					}
-					else if ( activator->client->ps.eFlags & EF_DOUBLE_AMMO ) {
-						if (activator->client->ps.ammo[i] >= max * 2) {	// yuck.
-							activator->client->ps.ammo[i] = max * 2;
-						}
-						else {
-							stop = 0;
-						}
+				}
+				else
+				{
+					if (activator->client->ps.ammo[i] >= max)
+					{
+						activator->client->ps.ammo[i] = max;
 					}
-					else {
-						if (activator->client->ps.ammo[i] >= max)
-						{
-							activator->client->ps.ammo[i] = max;
-						}
-						else
-						{
-							stop = 0;
-						}
+					else
+					{
+						stop = 0;
 					}
+				}
 			}
 			i++;
 			if (!self->genericValue12 && gaveSome)
 			{
-				int sub = (add*0.2);
+				int sub = (add * 0.2);
 				if (sub < 1)
 				{
 					sub = 1;
@@ -2188,7 +2312,7 @@ void ammo_generic_power_converter_use( gentity_t *self, gentity_t *other, gentit
 		self->s.loopIsSoundset = qfalse;
 		if (self->setTime < level.time)
 		{
-			self->setTime = level.time + self->genericValue5+100;
+			self->setTime = level.time + self->genericValue5 + 100;
 		}
 	}
 }
@@ -2206,24 +2330,25 @@ void SP_misc_ammo_floor_unit(gentity_t *ent)
 	vec3_t dest;
 	trace_t tr;
 
-	VectorSet( ent->r.mins, -16, -16, 0 );
-	VectorSet( ent->r.maxs, 16, 16, 40 );
+	VectorSet(ent->r.mins, -16, -16, 0);
+	VectorSet(ent->r.maxs, 16, 16, 40);
 
 	//RoboPhred
-	if(Lmd_Entities_IsSaveable(ent) == qfalse || ent->spawnflags & 1) {
+	if (Lmd_Entities_IsSaveable(ent) == qfalse || ent->spawnflags & 1)
+	{
 		ent->s.origin[2] += 0.1f;
 		ent->r.maxs[2] -= 0.1f;
 
-		VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
+		VectorSet(dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096);
 		//RoboPhred: needs MASK_PLAYERSOLID for non-bmodel solids.
-		trap_Trace( &tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID | MASK_PLAYERSOLID );
+		trap_Trace(&tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID | MASK_PLAYERSOLID);
 		//trap_Trace( &tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
 		//RoboPhred
-		if (Lmd_Entities_IsSaveable(ent) == qfalse && tr.startsolid )
+		if (Lmd_Entities_IsSaveable(ent) == qfalse && tr.startsolid)
 		//if ( tr.startsolid )
 		{
-			G_Printf ("SP_misc_ammo_floor_unit: misc_ammo_floor_unit startsolid at %s\n", vtos(ent->s.origin));
-			G_FreeEntity( ent );
+			G_Printf("SP_misc_ammo_floor_unit: misc_ammo_floor_unit startsolid at %s\n", vtos(ent->s.origin));
+			G_FreeEntity(ent);
 			return;
 		}
 
@@ -2233,7 +2358,7 @@ void SP_misc_ammo_floor_unit(gentity_t *ent)
 		// allow to ride movers
 		ent->s.groundEntityNum = tr.entityNum;
 
-		G_SetOrigin( ent, tr.endpos );
+		G_SetOrigin(ent, tr.endpos);
 	}
 
 	if (!ent->health)
@@ -2246,7 +2371,7 @@ void SP_misc_ammo_floor_unit(gentity_t *ent)
 		ent->model = "/models/items/a_pwr_converter.md3";
 	}
 
-	ent->s.modelindex = G_ModelIndex( ent->model );
+	ent->s.modelindex = G_ModelIndex(ent->model);
 
 	ent->s.eFlags = 0;
 	ent->r.svFlags |= SVF_PLAYER_USABLE;
@@ -2267,19 +2392,18 @@ void SP_misc_ammo_floor_unit(gentity_t *ent)
 	ent->s.shouldtarget = qtrue;
 	ent->s.teamowner = 0;
 	ent->s.owner = ENTITYNUM_NONE;
-	ent->nextthink = level.time + 200;// + STATION_RECHARGE_TIME;
+	ent->nextthink = level.time + 200; // + STATION_RECHARGE_TIME;
 	ent->use = ammo_generic_power_converter_use;
 
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
-	trap_LinkEntity (ent);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
+	trap_LinkEntity(ent);
 
 	G_SoundIndex("sound/interface/ammocon_run");
 	ent->genericValue7 = G_SoundIndex("sound/interface/ammocon_done");
 	G_SoundIndex("sound/interface/ammocon_empty");
 
-	if ((g_gametype.integer == GT_SIEGE
-		|| g_gametype.integer == GT_BATTLE_GROUND //Lugormod could get messy on radar
-		))
+	if ((g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND //Lugormod could get messy on radar
+		 ))
 	{ //show on radar from everywhere
 		ent->r.svFlags |= SVF_BROADCAST;
 		ent->s.eFlags |= EF_RADAROBJECT;
@@ -2295,7 +2419,7 @@ Gives shield energy when used.
 "chargerate" - rechage 1 point every this many milliseconds (default 3000)
 "nodrain" - don't drain power from me
 */
-void SP_misc_shield_floor_unit( gentity_t *ent )
+void SP_misc_shield_floor_unit(gentity_t *ent)
 {
 	/* Lugormod no, why ??
 	if (g_gametype.integer != GT_CTF &&
@@ -2306,23 +2430,24 @@ void SP_misc_shield_floor_unit( gentity_t *ent )
 	return;
 	}
 	*/
-	VectorSet( ent->r.mins, -16, -16, 0 );
-	VectorSet( ent->r.maxs, 16, 16, 40 );
+	VectorSet(ent->r.mins, -16, -16, 0);
+	VectorSet(ent->r.maxs, 16, 16, 40);
 
-	if(Lmd_Entities_IsSaveable(ent) == qfalse || ent->spawnflags & 1) {
+	if (Lmd_Entities_IsSaveable(ent) == qfalse || ent->spawnflags & 1)
+	{
 		vec3_t dest;
 		trace_t tr;
 		ent->s.origin[2] += 0.1;
 		ent->r.maxs[2] -= 0.1;
 
-		VectorSet( dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096 );
+		VectorSet(dest, ent->s.origin[0], ent->s.origin[1], ent->s.origin[2] - 4096);
 		//RoboPhred: needs MASK_PLAYERSOLID for non-bmodel solids.
-		trap_Trace( &tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID | MASK_PLAYERSOLID );
+		trap_Trace(&tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID | MASK_PLAYERSOLID);
 		//trap_Trace( &tr, ent->s.origin, ent->r.mins, ent->r.maxs, dest, ent->s.number, MASK_SOLID );
-		if ( tr.startsolid )
+		if (tr.startsolid)
 		{
-			G_Printf ("SP_misc_shield_floor_unit: misc_shield_floor_unit startsolid at %s\n", vtos(ent->s.origin));
-			G_FreeEntity( ent );
+			G_Printf("SP_misc_shield_floor_unit: misc_shield_floor_unit startsolid at %s\n", vtos(ent->s.origin));
+			G_FreeEntity(ent);
 			return;
 		}
 
@@ -2332,7 +2457,7 @@ void SP_misc_shield_floor_unit( gentity_t *ent )
 		// allow to ride movers
 		ent->s.groundEntityNum = tr.entityNum;
 
-		G_SetOrigin( ent, tr.endpos );
+		G_SetOrigin(ent, tr.endpos);
 	}
 
 	if (!ent->health)
@@ -2345,7 +2470,7 @@ void SP_misc_shield_floor_unit( gentity_t *ent )
 		ent->model = "/models/items/a_shield_converter.md3";
 	}
 
-	ent->s.modelindex = G_ModelIndex( ent->model );
+	ent->s.modelindex = G_ModelIndex(ent->model);
 
 	ent->s.eFlags = 0;
 	ent->r.svFlags |= SVF_PLAYER_USABLE;
@@ -2366,18 +2491,17 @@ void SP_misc_shield_floor_unit( gentity_t *ent )
 	ent->s.shouldtarget = qtrue;
 	ent->s.teamowner = 0;
 	ent->s.owner = ENTITYNUM_NONE;
-	ent->nextthink = level.time + 200;// + STATION_RECHARGE_TIME;
+	ent->nextthink = level.time + 200; // + STATION_RECHARGE_TIME;
 	ent->use = shield_power_converter_use;
 
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
-	trap_LinkEntity (ent);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
+	trap_LinkEntity(ent);
 
 	G_SoundIndex("sound/interface/shieldcon_run");
 	ent->genericValue7 = G_SoundIndex("sound/interface/shieldcon_done");
 	G_SoundIndex("sound/interface/shieldcon_empty");
 
-	if (g_gametype.integer == GT_SIEGE
-		|| g_gametype.integer == GT_BATTLE_GROUND)
+	if (g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND)
 	{ //show on radar from everywhere
 		ent->r.svFlags |= SVF_BROADCAST;
 		ent->s.eFlags |= EF_RADAROBJECT;
@@ -2392,20 +2516,20 @@ Gives shield energy when used.
 "count" - the amount of ammo given when used (default 200)
 */
 //------------------------------------------------------------
-void SP_misc_model_shield_power_converter( gentity_t *ent )
+void SP_misc_model_shield_power_converter(gentity_t *ent)
 {
 	if (!ent->health)
 	{
 		ent->health = 60;
 	}
 
-	VectorSet (ent->r.mins, -16, -16, -16);
-	VectorSet (ent->r.maxs, 16, 16, 16);
+	VectorSet(ent->r.mins, -16, -16, -16);
+	VectorSet(ent->r.maxs, 16, 16, 16);
 
 	//RoboPhred
-	if(!ent->model)
+	if (!ent->model)
 		ent->model = G_NewString2("models/items/power_converter.md3");
-	ent->s.modelindex = G_ModelIndex( ent->model );
+	ent->s.modelindex = G_ModelIndex(ent->model);
 
 	ent->s.eFlags = 0;
 	ent->r.svFlags |= SVF_PLAYER_USABLE;
@@ -2421,16 +2545,16 @@ void SP_misc_model_shield_power_converter( gentity_t *ent )
 	ent->s.shouldtarget = qtrue;
 	ent->s.teamowner = 0;
 	ent->s.owner = ENTITYNUM_NONE;
-	ent->nextthink = level.time + 200;// + STATION_RECHARGE_TIME;
+	ent->nextthink = level.time + 200; // + STATION_RECHARGE_TIME;
 	ent->use = shield_power_converter_use;
 
-	G_SetOrigin( ent, ent->s.origin );
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
-	trap_LinkEntity (ent);
+	G_SetOrigin(ent, ent->s.origin);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
+	trap_LinkEntity(ent);
 
 	//G_SoundIndex("sound/movers/objects/useshieldstation.wav");
 
-	ent->s.modelindex2 = G_ModelIndex("/models/items/psd_big.md3");	// Precache model
+	ent->s.modelindex2 = G_ModelIndex("/models/items/psd_big.md3"); // Precache model
 }
 
 /*
@@ -2440,7 +2564,7 @@ EnergyAmmoShieldStationSettings
 */
 void EnergyAmmoStationSettings(gentity_t *ent)
 {
-	G_SpawnInt( "count", "200", &ent->count );
+	G_SpawnInt("count", "200", &ent->count);
 }
 
 /*
@@ -2448,12 +2572,12 @@ void EnergyAmmoStationSettings(gentity_t *ent)
 ammo_power_converter_use
 ================
 */
-void ammo_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *activator)
+void ammo_power_converter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	int			add = 0.0f;//,highest;
-	qboolean	overcharge;
+	int add = 0.0f; //,highest;
+	qboolean overcharge;
 	//	int			difBlaster,difPowerCell,difMetalBolts;
-	int			stop = 1;
+	int stop = 1;
 
 	if (!activator || !activator->client)
 	{
@@ -2471,12 +2595,12 @@ void ammo_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *act
 
 		self->setTime = level.time + 100;
 
-		if (self->count)	// Has it got any power left?
+		if (self->count) // Has it got any power left?
 		{
 			int i = AMMO_BLASTER;
 			while (i < AMMO_MAX)
 			{
-				add = ammoData[i].max*0.1;
+				add = ammoData[i].max * 0.1;
 				if (add < 1)
 				{
 					add = 1;
@@ -2558,21 +2682,21 @@ Gives ammo energy when used.
 "nodrain" - don't drain power from me
 */
 //------------------------------------------------------------
-void SP_misc_model_ammo_power_converter( gentity_t *ent )
+void SP_misc_model_ammo_power_converter(gentity_t *ent)
 {
 	if (!ent->health)
 	{
 		ent->health = 60;
 	}
 
-	VectorSet (ent->r.mins, -16, -16, -16);
-	VectorSet (ent->r.maxs, 16, 16, 16);
+	VectorSet(ent->r.mins, -16, -16, -16);
+	VectorSet(ent->r.maxs, 16, 16, 16);
 
 	//RoboPhred: no crashy.
-	if(!ent->model)
+	if (!ent->model)
 		ent->model = G_NewString("");
 
-	ent->s.modelindex = G_ModelIndex( ent->model );
+	ent->s.modelindex = G_ModelIndex(ent->model);
 
 	ent->s.eFlags = 0;
 	ent->r.svFlags |= SVF_PLAYER_USABLE;
@@ -2594,11 +2718,11 @@ void SP_misc_model_ammo_power_converter( gentity_t *ent )
 	ent->s.shouldtarget = qtrue;
 	ent->s.teamowner = 0;
 	ent->s.owner = ENTITYNUM_NONE;
-	ent->nextthink = level.time + 200;// + STATION_RECHARGE_TIME;
+	ent->nextthink = level.time + 200; // + STATION_RECHARGE_TIME;
 
-	G_SetOrigin( ent, ent->s.origin );
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
-	trap_LinkEntity (ent);
+	G_SetOrigin(ent, ent->s.origin);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
+	trap_LinkEntity(ent);
 
 	//G_SoundIndex("sound/movers/objects/useshieldstation.wav");
 }
@@ -2610,7 +2734,7 @@ EnergyHealthStationSettings
 */
 void EnergyHealthStationSettings(gentity_t *ent)
 {
-	G_SpawnInt( "count", "200", &ent->count );
+	G_SpawnInt("count", "200", &ent->count);
 }
 
 /*
@@ -2618,9 +2742,9 @@ void EnergyHealthStationSettings(gentity_t *ent)
 health_power_converter_use
 ================
 */
-void health_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *activator)
+void health_power_converter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	int dif,add;
+	int dif, add;
 	int stop = 1;
 
 	if (!activator || !activator->client)
@@ -2638,18 +2762,18 @@ void health_power_converter_use( gentity_t *self, gentity_t *other, gentity_t *a
 
 		dif = activator->client->ps.stats[STAT_MAX_HEALTH] - activator->health;
 
-		if (dif > 0)					// Already at full armor?
+		if (dif > 0) // Already at full armor?
 		{
-			if (dif >/*MAX_AMMO_GIVE*/5)
+			if (dif > /*MAX_AMMO_GIVE*/ 5)
 			{
-				add = 5;//MAX_AMMO_GIVE;
+				add = 5; //MAX_AMMO_GIVE;
 			}
 			else
 			{
 				add = dif;
 			}
 
-			if (self->count<add)
+			if (self->count < add)
 			{
 				add = self->count;
 			}
@@ -2678,19 +2802,19 @@ Gives ammo energy when used.
 "count" - the amount of ammo given when used (default 200)
 */
 //------------------------------------------------------------
-void SP_misc_model_health_power_converter( gentity_t *ent )
+void SP_misc_model_health_power_converter(gentity_t *ent)
 {
 	if (!ent->health)
 	{
 		ent->health = 60;
 	}
 	G_SpawnString("model", "models/items/power_converter.md3",
-		&ent->model);
+				  &ent->model);
 
-	VectorSet (ent->r.mins, -16, -16, -16);
-	VectorSet (ent->r.maxs, 16, 16, 16);
+	VectorSet(ent->r.mins, -16, -16, -16);
+	VectorSet(ent->r.maxs, 16, 16, 16);
 
-	ent->s.modelindex = G_ModelIndex( ent->model );
+	ent->s.modelindex = G_ModelIndex(ent->model);
 
 	ent->s.eFlags = 0;
 	ent->r.svFlags |= SVF_PLAYER_USABLE;
@@ -2709,18 +2833,17 @@ void SP_misc_model_health_power_converter( gentity_t *ent )
 	ent->s.teamowner = 0;
 	ent->s.owner = ENTITYNUM_NONE;
 
-	ent->nextthink = level.time + 200;// + STATION_RECHARGE_TIME;
+	ent->nextthink = level.time + 200; // + STATION_RECHARGE_TIME;
 
-	G_SetOrigin( ent, ent->s.origin );
-	VectorCopy( ent->s.angles, ent->s.apos.trBase );
-	trap_LinkEntity (ent);
+	G_SetOrigin(ent, ent->s.origin);
+	VectorCopy(ent->s.angles, ent->s.apos.trBase);
+	trap_LinkEntity(ent);
 
 	//G_SoundIndex("sound/movers/objects/useshieldstation.wav");
 	G_SoundIndex("sound/player/pickuphealth.wav");
 	ent->genericValue7 = G_SoundIndex("sound/interface/shieldcon_done");
 
-	if (g_gametype.integer == GT_SIEGE
-		|| g_gametype.integer == GT_BATTLE_GROUND)
+	if (g_gametype.integer == GT_SIEGE || g_gametype.integer == GT_BATTLE_GROUND)
 	{ //show on radar from everywhere
 		ent->r.svFlags |= SVF_BROADCAST;
 		ent->s.eFlags |= EF_RADAROBJECT;
@@ -2961,14 +3084,14 @@ DAMAGE - does radius damage around effect every "delay" milliseonds
 */
 #define FX_RUNNER_RESERVED 0x800000
 #define FX_ENT_RADIUS 32
-extern int	BMS_START;
-extern int	BMS_MID;
-extern int	BMS_END;
+extern int BMS_START;
+extern int BMS_MID;
+extern int BMS_END;
 //----------------------------------------------------------
-void fx_runner_think( gentity_t *ent )
+void fx_runner_think(gentity_t *ent)
 {
-	BG_EvaluateTrajectory( &ent->s.pos, level.time, ent->r.currentOrigin );
-	BG_EvaluateTrajectory( &ent->s.apos, level.time, ent->r.currentAngles );
+	BG_EvaluateTrajectory(&ent->s.pos, level.time, ent->r.currentOrigin);
+	BG_EvaluateTrajectory(&ent->s.apos, level.time, ent->r.currentAngles);
 
 	// call the effect with the desired position and orientation
 	if (ent->s.isPortalEnt)
@@ -2988,20 +3111,20 @@ void fx_runner_think( gentity_t *ent )
 
 	ent->nextthink = level.time + ent->delay + random() * ent->random;
 
-	if ( ent->spawnflags & 4 ) // damage
+	if (ent->spawnflags & 4) // damage
 	{
-		G_RadiusDamage( ent->r.currentOrigin, ent, ent->splashDamage, ent->splashRadius, ent, ent, MOD_UNKNOWN );
+		G_RadiusDamage(ent->r.currentOrigin, ent, ent->splashDamage, ent->splashRadius, ent, ent, MOD_UNKNOWN);
 	}
 
-	if ( ent->target2 && ent->target2[0] )
+	if (ent->target2 && ent->target2[0])
 	{
 		// let our target know that we have spawned an effect
-		G_UseTargets2( ent, ent, ent->target2 );
+		G_UseTargets2(ent, ent, ent->target2);
 	}
 
-	if ( !(ent->spawnflags & 2 ) && !ent->s.loopSound ) // NOT ONESHOT...this is an assy thing to do
+	if (!(ent->spawnflags & 2) && !ent->s.loopSound) // NOT ONESHOT...this is an assy thing to do
 	{
-		if ( ent->soundSet && ent->soundSet[0] )
+		if (ent->soundSet && ent->soundSet[0])
 		{
 			ent->s.soundSetIndex = G_SoundSetIndex(ent->soundSet);
 			ent->s.loopIsSoundset = qtrue;
@@ -3011,20 +3134,20 @@ void fx_runner_think( gentity_t *ent )
 }
 
 //----------------------------------------------------------
-void fx_runner_use( gentity_t *self, gentity_t *other, gentity_t *activator )
+void fx_runner_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
 	if (self->s.isPortalEnt)
 	{ //rww - mark it as broadcast upon first use if it's within the area of a skyportal
 		self->r.svFlags |= SVF_BROADCAST;
 	}
 
-	if ( self->spawnflags & 2 ) // ONESHOT
+	if (self->spawnflags & 2) // ONESHOT
 	{
 		// call the effect with the desired position and orientation, as a safety thing,
 		//	make sure we aren't thinking at all.
-		int		saveState = self->s.modelindex2 + 1;
+		int saveState = self->s.modelindex2 + 1;
 
-		fx_runner_think( self );
+		fx_runner_think(self);
 		self->nextthink = -1;
 		// one shot indicator
 		self->s.modelindex2 = saveState;
@@ -3034,16 +3157,16 @@ void fx_runner_use( gentity_t *self, gentity_t *other, gentity_t *activator )
 			self->s.modelindex2 = FX_STATE_ONE_SHOT;
 		}
 
-		if ( self->target2 )
+		if (self->target2)
 		{
 			// let our target know that we have spawned an effect
-			G_UseTargets2( self, self, self->target2 );
+			G_UseTargets2(self, self, self->target2);
 		}
 
-		if ( self->soundSet && self->soundSet[0] )
+		if (self->soundSet && self->soundSet[0])
 		{
 			self->s.soundSetIndex = G_SoundSetIndex(self->soundSet);
-			G_AddEvent( self, EV_BMODEL_SOUND, BMS_START);
+			G_AddEvent(self, EV_BMODEL_SOUND, BMS_START);
 		}
 	}
 	else
@@ -3052,16 +3175,16 @@ void fx_runner_use( gentity_t *self, gentity_t *other, gentity_t *activator )
 		self->think = fx_runner_think;
 
 		// toggle our state
-		if ( self->nextthink == -1 )
+		if (self->nextthink == -1)
 		{
 			// NOTE: we fire the effect immediately on use, the fx_runner_think func will set
 			//	up the nextthink time.
-			fx_runner_think( self );
+			fx_runner_think(self);
 
-			if ( self->soundSet && self->soundSet[0] )
+			if (self->soundSet && self->soundSet[0])
 			{
 				self->s.soundSetIndex = G_SoundSetIndex(self->soundSet);
-				G_AddEvent( self, EV_BMODEL_SOUND, BMS_START);
+				G_AddEvent(self, EV_BMODEL_SOUND, BMS_START);
 				self->s.loopSound = BMS_MID;
 				self->s.loopIsSoundset = qtrue;
 			}
@@ -3074,10 +3197,10 @@ void fx_runner_use( gentity_t *self, gentity_t *other, gentity_t *activator )
 			// turn off fx on client
 			self->s.modelindex2 = FX_STATE_OFF;
 
-			if ( self->soundSet && self->soundSet[0] )
+			if (self->soundSet && self->soundSet[0])
 			{
 				self->s.soundSetIndex = G_SoundSetIndex(self->soundSet);
-				G_AddEvent( self, EV_BMODEL_SOUND, BMS_END );
+				G_AddEvent(self, EV_BMODEL_SOUND, BMS_END);
 				self->s.loopSound = 0;
 				self->s.loopIsSoundset = qfalse;
 			}
@@ -3086,56 +3209,56 @@ void fx_runner_use( gentity_t *self, gentity_t *other, gentity_t *activator )
 }
 
 //----------------------------------------------------------
-void fx_runner_link( gentity_t *ent )
+void fx_runner_link(gentity_t *ent)
 {
-	vec3_t	dir;
+	vec3_t dir;
 
-	if ( ent->target && ent->target[0] )
+	if (ent->target && ent->target[0])
 	{
 		// try to use the target to override the orientation
-		gentity_t	*target = NULL;
+		gentity_t *target = NULL;
 
-		target = G_Find( target, FOFS(targetname), ent->target );
+		target = G_Find(target, FOFS(targetname), ent->target);
 
-		if ( !target )
+		if (!target)
 		{
 			// Bah, no good, dump a warning, but continue on and use the UP vector
-			Com_Printf( "fx_runner_link: target specified but not found: %s\n", ent->target );
-			Com_Printf( "  -assuming UP orientation.\n" );
+			Com_Printf("fx_runner_link: target specified but not found: %s\n", ent->target);
+			Com_Printf("  -assuming UP orientation.\n");
 		}
 		else
 		{
 			// Our target is valid so let's override the default UP vector
-			VectorSubtract( target->s.origin, ent->s.origin, dir );
-			VectorNormalize( dir );
-			vectoangles( dir, ent->s.angles );
+			VectorSubtract(target->s.origin, ent->s.origin, dir);
+			VectorNormalize(dir);
+			vectoangles(dir, ent->s.angles);
 		}
 	}
 
 	// don't really do anything with this right now other than do a check to warn the designers if the target2 is bogus
-	if ( ent->target2 && ent->target2[0] )
+	if (ent->target2 && ent->target2[0])
 	{
-		gentity_t	*target = NULL;
+		gentity_t *target = NULL;
 
-		target = G_Find( target, FOFS(targetname), ent->target2 );
+		target = G_Find(target, FOFS(targetname), ent->target2);
 
-		if ( !target )
+		if (!target)
 		{
 			// Target2 is bogus, but we can still continue
-			Com_Printf( "fx_runner_link: target2 was specified but is not valid: %s\n", ent->target2 );
+			Com_Printf("fx_runner_link: target2 was specified but is not valid: %s\n", ent->target2);
 		}
 	}
 
-	G_SetAngles( ent, ent->s.angles );
+	G_SetAngles(ent, ent->s.angles);
 
-	if ( ent->spawnflags & 1 || ent->spawnflags & 2 ) // STARTOFF || ONESHOT
+	if (ent->spawnflags & 1 || ent->spawnflags & 2) // STARTOFF || ONESHOT
 	{
 		// We won't even consider thinking until we are used
 		ent->nextthink = -1;
 	}
 	else
 	{
-		if ( ent->soundSet && ent->soundSet[0] )
+		if (ent->soundSet && ent->soundSet[0])
 		{
 			ent->s.soundSetIndex = G_SoundSetIndex(ent->soundSet);
 			ent->s.loopSound = BMS_MID;
@@ -3148,40 +3271,40 @@ void fx_runner_link( gentity_t *ent )
 	}
 
 	// make us useable if we can be targeted
-	if ( ent->targetname && ent->targetname[0] )
+	if (ent->targetname && ent->targetname[0])
 	{
 		ent->use = fx_runner_use;
 	}
 }
 
 //----------------------------------------------------------
-void SP_fx_runner( gentity_t *ent )
+void SP_fx_runner(gentity_t *ent)
 {
 	char *fxFile;
-	G_SpawnString( "fxFile", "", &fxFile );
+	G_SpawnString("fxFile", "", &fxFile);
 	// Get our defaults
-	G_SpawnInt( "delay", "200", &ent->delay );
-	G_SpawnFloat( "random", "0", &ent->random );
-	G_SpawnInt( "splashRadius", "16", &ent->splashRadius );
-	G_SpawnInt( "splashDamage", "5", &ent->splashDamage );
+	G_SpawnInt("delay", "200", &ent->delay);
+	G_SpawnFloat("random", "0", &ent->random);
+	G_SpawnInt("splashRadius", "16", &ent->splashRadius);
+	G_SpawnInt("splashDamage", "5", &ent->splashDamage);
 
 	if (!ent->s.angles[0] && !ent->s.angles[1] && !ent->s.angles[2])
 	{
 		// didn't have angles, so give us the default of up
-		VectorSet( ent->s.angles, -90, 0, 0 );
+		VectorSet(ent->s.angles, -90, 0, 0);
 	}
 
-	if ( !fxFile || !fxFile[0] )
+	if (!fxFile || !fxFile[0])
 	{
-		Com_Printf( S_COLOR_RED"ERROR: fx_runner %s at %s has no fxFile specified\n", ent->targetname, vtos(ent->s.origin) );
-		Com_Printf( "info: fx_runner %s at %s has no fxFile specified\n", ent->targetname, vtos(ent->s.origin) );
-		G_FreeEntity( ent );
+		Com_Printf(S_COLOR_RED "ERROR: fx_runner %s at %s has no fxFile specified\n", ent->targetname, vtos(ent->s.origin));
+		Com_Printf("info: fx_runner %s at %s has no fxFile specified\n", ent->targetname, vtos(ent->s.origin));
+		G_FreeEntity(ent);
 		return;
 	}
 
 	// Try and associate an effect file, unfortunately we won't know if this worked or not
 	//	until the CGAME trys to register it...
-	ent->s.modelindex = G_EffectIndex( fxFile );
+	ent->s.modelindex = G_EffectIndex(fxFile);
 
 	// important info transmitted
 	ent->s.eType = ET_FX;
@@ -3194,26 +3317,27 @@ void SP_fx_runner( gentity_t *ent )
 	ent->nextthink = level.time + 400;
 
 	// Save our position and link us up!
-	G_SetOrigin( ent, ent->s.origin );
+	G_SetOrigin(ent, ent->s.origin);
 
-	VectorSet( ent->r.maxs, FX_ENT_RADIUS, FX_ENT_RADIUS, FX_ENT_RADIUS );
-	VectorScale( ent->r.maxs, -1, ent->r.mins );
-	
+	VectorSet(ent->r.maxs, FX_ENT_RADIUS, FX_ENT_RADIUS, FX_ENT_RADIUS);
+	VectorScale(ent->r.maxs, -1, ent->r.mins);
+
 	qboolean gravity;
 	G_SpawnInt("gravity", "0", &gravity);
-	if (gravity) {
+	if (gravity)
+	{
 		ent->s.pos.trType = TR_GRAVITY;
 		ent->physicsObject = qtrue;
 		ent->physicsBounce = 0.5;
 		ent->s.pos.trTime = level.time;
 		ent->flags = FL_BOUNCE_HALF;
-		ent->r.svFlags = SVF_USE_CURRENT_ORIGIN;		
+		ent->r.svFlags = SVF_USE_CURRENT_ORIGIN;
 		ent->bounceCount = 0;
 		ent->r.ownerNum = ent->s.number;
 		ent->r.mins[2] = -10;
 	}
-	
-	trap_LinkEntity( ent );
+
+	trap_LinkEntity(ent);
 }
 
 /*QUAKED fx_spacedust (1 0 0) (-16 -16 -16) (16 16 16)
@@ -3222,7 +3346,7 @@ This world effect will spawn space dust globally into the level.
 "count" the number of snow particles (default of 1000)
 */
 //----------------------------------------------------------
-void SP_CreateSpaceDust( gentity_t *ent )
+void SP_CreateSpaceDust(gentity_t *ent)
 {
 	G_EffectIndex(va("*spacedust %i", ent->count));
 	//G_EffectIndex("*constantwind ( 10 -10 0 )");
@@ -3234,7 +3358,7 @@ This world effect will spawn snow globally into the level.
 "count" the number of snow particles (default of 1000)
 */
 //----------------------------------------------------------
-void SP_CreateSnow( gentity_t *ent )
+void SP_CreateSnow(gentity_t *ent)
 {
 	G_EffectIndex("*snow");
 	G_EffectIndex("*fog");
@@ -3247,38 +3371,43 @@ This world effect will spawn rain globally into the level.
 "count" the number of rain particles (default of 500)
 */
 //----------------------------------------------------------
-void SP_CreateRain( gentity_t *ent )
+void SP_CreateRain(gentity_t *ent)
 {
-	if (g_dontLoadNPC.integer) {
+	if (g_dontLoadNPC.integer)
+	{
 		G_FreeEntity(ent);
 		return;
 	}
 
-	if (!ent->count) { //Lugormod (where else would it be done???)
+	if (!ent->count)
+	{ //Lugormod (where else would it be done???)
 		ent->count = 500;
 	}
-	if (ent->spawnflags&4) {
+	if (ent->spawnflags & 4)
+	{
 		G_EffectIndex("*heavyrainfog");
 	}
 	G_EffectIndex(va("*rain init %i", ent->count));
 }
 
-void SP_CreateWind( gentity_t *ent )
+void SP_CreateWind(gentity_t *ent)
 {
-	if (!ent->speed) { //Lugormod (where else would it be done???)
+	if (!ent->speed)
+	{ //Lugormod (where else would it be done???)
 		ent->speed = 100;
 	}
 	vec3_t dir;
 	AngleVectors(ent->s.angles, dir, NULL, NULL);
 	VectorNormalize(dir);
 	VectorScale(dir, ent->speed, dir);
-	if (ent->spawnflags&2) {
+	if (ent->spawnflags & 2)
+	{
 		G_EffectIndex("*outsideshake");
 	}
 	G_EffectIndex(va("*constantwind %s", vtos(dir)));
 }
 
-void Use_Target_Screenshake( gentity_t *ent, gentity_t *other, gentity_t *activator )
+void Use_Target_Screenshake(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	qboolean bGlobal = qfalse;
 
@@ -3292,20 +3421,20 @@ void Use_Target_Screenshake( gentity_t *ent, gentity_t *other, gentity_t *activa
 
 void SP_target_screenshake(gentity_t *ent)
 {
-	G_SpawnFloat( "intensity", "10", &ent->speed );
+	G_SpawnFloat("intensity", "10", &ent->speed);
 	//intensity of the shake
-	G_SpawnInt( "duration", "800", &ent->genericValue5 );
+	G_SpawnInt("duration", "800", &ent->genericValue5);
 	//duration of the shake
-	G_SpawnInt( "globalshake", "1", &ent->genericValue6 );
+	G_SpawnInt("globalshake", "1", &ent->genericValue6);
 	//non-0 if shake should be global (all clients). Otherwise, only in the PVS.
 
 	ent->use = Use_Target_Screenshake;
 }
 
-void LogExit( const char *string );
+void LogExit(const char *string);
 qboolean gEscaping = qfalse;
 int gEscapeTime = 0;
-void Use_Target_Escapetrig( gentity_t *ent, gentity_t *other, gentity_t *activator )
+void Use_Target_Escapetrig(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	if (!ent->genericValue6)
 	{
@@ -3332,7 +3461,7 @@ void Use_Target_Escapetrig( gentity_t *ent, gentity_t *other, gentity_t *activat
 		}
 
 		//RoboPhred
-		if(!(ent->spawnflags & 1))
+		if (!(ent->spawnflags & 1))
 			LogExit("Escaped!");
 	}
 }
@@ -3345,9 +3474,9 @@ void SP_target_escapetrig(gentity_t *ent)
 		return;
 	}
 
-	G_SpawnInt( "escapetime", "60000", &ent->genericValue5);
+	G_SpawnInt("escapetime", "60000", &ent->genericValue5);
 	//time given (in ms) for the escape
-	G_SpawnInt( "escapegoal", "0", &ent->genericValue6);
+	G_SpawnInt("escapegoal", "0", &ent->genericValue6);
 	//if non-0, when used, will end an ongoing escape instead of start it
 
 	//RoboPhred
@@ -3368,59 +3497,59 @@ NOTE: place these half-way in the door to make it flush with the door's surface.
 void maglock_die(gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int damage, int mod)
 {
 	//unlock our door if we're the last lock pointed at the door
-	if ( self->activator )
+	if (self->activator)
 	{
 		self->activator->lockCount--;
-		if ( !self->activator->lockCount )
+		if (!self->activator->lockCount)
 		{
 			self->activator->flags &= ~FL_INACTIVE;
 		}
 	}
 
 	//use targets
-	G_UseTargets( self, attacker );
+	G_UseTargets(self, attacker);
 	//die
 	//rwwFIXMEFIXME - weap expl func
 	//	WP_Explode( self );
 }
 
-void maglock_link( gentity_t *self );
-gentity_t *G_FindDoorTrigger( gentity_t *ent );
+void maglock_link(gentity_t *self);
+gentity_t *G_FindDoorTrigger(gentity_t *ent);
 
-void SP_misc_maglock ( gentity_t *self )
+void SP_misc_maglock(gentity_t *self)
 {
 	//NOTE: May have to make these only work on doors that are either untargeted
 	//		or are targeted by a trigger, not doors fired off by scripts, counters
 	//		or other such things?
-	self->s.modelindex = G_ModelIndex( "models/map_objects/imp_detention/door_lock.md3" );
-	self->genericValue1 = G_EffectIndex( "maglock/explosion" );
+	self->s.modelindex = G_ModelIndex("models/map_objects/imp_detention/door_lock.md3");
+	self->genericValue1 = G_EffectIndex("maglock/explosion");
 
-	G_SetOrigin( self, self->s.origin );
+	G_SetOrigin(self, self->s.origin);
 
 	self->think = maglock_link;
 	//FIXME: for some reason, when you re-load a level, these fail to find their doors...?  Random?  Testing an additional 200ms after the START_TIME_FIND_LINKS
-	self->nextthink = level.time + START_TIME_FIND_LINKS+200;//START_TIME_FIND_LINKS;//because we need to let the doors link up and spawn their triggers first!
+	self->nextthink = level.time + START_TIME_FIND_LINKS + 200; //START_TIME_FIND_LINKS;//because we need to let the doors link up and spawn their triggers first!
 }
-void maglock_link( gentity_t *self )
+void maglock_link(gentity_t *self)
 {
 	//find what we're supposed to be attached to
-	vec3_t	forward, start, end;
-	trace_t	trace;
+	vec3_t forward, start, end;
+	trace_t trace;
 	gentity_t *traceEnt;
 
-	AngleVectors( self->s.angles, forward, NULL, NULL );
-	VectorMA( self->s.origin, 128, forward, end );
-	VectorMA( self->s.origin, -4, forward, start );
+	AngleVectors(self->s.angles, forward, NULL, NULL);
+	VectorMA(self->s.origin, 128, forward, end);
+	VectorMA(self->s.origin, -4, forward, start);
 
-	trap_Trace( &trace, start, vec3_origin, vec3_origin, end, self->s.number, MASK_SHOT );
+	trap_Trace(&trace, start, vec3_origin, vec3_origin, end, self->s.number, MASK_SHOT);
 
-	if ( trace.allsolid || trace.startsolid )
+	if (trace.allsolid || trace.startsolid)
 	{
-		Com_Error( ERR_DROP,"misc_maglock at %s in solid\n", vtos(self->s.origin) );
-		G_FreeEntity( self );
+		Com_Error(ERR_DROP, "misc_maglock at %s in solid\n", vtos(self->s.origin));
+		G_FreeEntity(self);
 		return;
 	}
-	if ( trace.fraction == 1.0 )
+	if (trace.fraction == 1.0)
 	{
 		self->think = maglock_link;
 		self->nextthink = level.time + 100;
@@ -3431,7 +3560,7 @@ void maglock_link( gentity_t *self )
 		return;
 	}
 	traceEnt = &g_entities[trace.entityNum];
-	if ( trace.entityNum >= ENTITYNUM_WORLD || !traceEnt || Q_stricmp( "func_door", traceEnt->classname ) )
+	if (trace.entityNum >= ENTITYNUM_WORLD || !traceEnt || Q_stricmp("func_door", traceEnt->classname))
 	{
 		self->think = maglock_link;
 		self->nextthink = level.time + 100;
@@ -3442,8 +3571,8 @@ void maglock_link( gentity_t *self )
 
 	//check the traceEnt, make sure it's a door and give it a lockCount and deactivate it
 	//find the trigger for the door
-	self->activator = G_FindDoorTrigger( traceEnt );
-	if ( !self->activator )
+	self->activator = G_FindDoorTrigger(traceEnt);
+	if (!self->activator)
 	{
 		self->activator = traceEnt;
 	}
@@ -3451,25 +3580,25 @@ void maglock_link( gentity_t *self )
 	self->activator->flags |= FL_INACTIVE;
 
 	//now position and orient it
-	vectoangles( trace.plane.normal, end );
-	G_SetOrigin( self, trace.endpos );
-	G_SetAngles( self, end );
+	vectoangles(trace.plane.normal, end);
+	G_SetOrigin(self, trace.endpos);
+	G_SetAngles(self, end);
 
 	//make it hittable
 	//FIXME: if rotated/inclined this bbox may be off... but okay if we're a ghoul model?
 	//self->s.modelindex = G_ModelIndex( "models/map_objects/imp_detention/door_lock.md3" );
-	VectorSet( self->r.mins, -8, -8, -8 );
-	VectorSet( self->r.maxs, 8, 8, 8 );
+	VectorSet(self->r.mins, -8, -8, -8);
+	VectorSet(self->r.maxs, 8, 8, 8);
 	self->r.contents = CONTENTS_CORPSE;
 
 	//make it destroyable
-	self->flags |= FL_SHIELDED;//only damagable by lightsabers
+	self->flags |= FL_SHIELDED; //only damagable by lightsabers
 	self->takedamage = qtrue;
 	self->health = 10;
 	self->die = maglock_die;
 	//self->fxID = G_EffectIndex( "maglock/explosion" );
 
-	trap_LinkEntity( self );
+	trap_LinkEntity(self);
 }
 
 void faller_touch(gentity_t *self, gentity_t *other, trace_t *trace)
@@ -3531,7 +3660,7 @@ void faller_think(gentity_t *ent)
 	ent->nextthink = level.time + 25;
 }
 
-void misc_faller_create( gentity_t *ent, gentity_t *other, gentity_t *activator )
+void misc_faller_create(gentity_t *ent, gentity_t *other, gentity_t *activator)
 {
 	gentity_t *faller = G_Spawn();
 
@@ -3548,10 +3677,10 @@ void misc_faller_create( gentity_t *ent, gentity_t *other, gentity_t *activator 
 	faller->s.modelindex = G_ModelIndex("models/players/stormtrooper/model.glm");
 	faller->s.g2radius = 100;
 
-	faller->s.customRGBA[0]=Q_irand(1,255);
-	faller->s.customRGBA[1]=Q_irand(1,255);
-	faller->s.customRGBA[2]=Q_irand(1,255);
-	faller->s.customRGBA[3]=255;
+	faller->s.customRGBA[0] = Q_irand(1, 255);
+	faller->s.customRGBA[1] = Q_irand(1, 255);
+	faller->s.customRGBA[2] = Q_irand(1, 255);
+	faller->s.customRGBA[3] = 255;
 
 	VectorSet(faller->r.mins, -15, -15, DEFAULT_MINS_2);
 	VectorSet(faller->r.maxs, 15, 15, DEFAULT_MAXS_2);
@@ -3559,7 +3688,7 @@ void misc_faller_create( gentity_t *ent, gentity_t *other, gentity_t *activator 
 	faller->clipmask = MASK_PLAYERSOLID;
 	faller->r.contents = MASK_PLAYERSOLID;
 
-	faller->s.eFlags = (EF_RAG|EF_CLIENTSMOOTH);
+	faller->s.eFlags = (EF_RAG | EF_CLIENTSMOOTH);
 
 	faller->think = faller_think;
 	faller->nextthink = level.time;
@@ -3610,7 +3739,7 @@ void SP_misc_faller(gentity_t *ent)
 }
 
 //rww - ref tag stuff ported from SP (and C-ified)
-#define	TAG_GENERIC_NAME	"__WORLD__"	//If a designer chooses this name, cut a finger off as an example to the others
+#define TAG_GENERIC_NAME "__WORLD__" //If a designer chooses this name, cut a finger off as an example to the others
 
 //MAX_TAG_OWNERS is 16 for now in order to not use too much VM memory.
 //Each tag owner has preallocated space for tags up to MAX_TAGS.
@@ -3623,9 +3752,9 @@ void SP_misc_faller(gentity_t *ent)
 
 typedef struct tagOwner_s
 {
-	char			name[MAX_REFNAME];
-	reference_tag_t	tags[MAX_TAGS];
-	qboolean		inuse;
+	char name[MAX_REFNAME];
+	reference_tag_t tags[MAX_TAGS];
+	qboolean inuse;
 } tagOwner_t;
 
 tagOwner_t refTagOwnerMap[MAX_TAG_OWNERS];
@@ -3672,7 +3801,7 @@ TAG_Init
 -------------------------
 */
 
-void TAG_Init( void )
+void TAG_Init(void)
 {
 	int i = 0;
 	int x = 0;
@@ -3695,7 +3824,7 @@ TAG_FindOwner
 -------------------------
 */
 
-tagOwner_t	*TAG_FindOwner( const char *owner )
+tagOwner_t *TAG_FindOwner(const char *owner)
 {
 	int i = 0;
 
@@ -3717,9 +3846,9 @@ TAG_Find
 -------------------------
 */
 
-reference_tag_t	*TAG_Find( const char *owner, const char *name )
+reference_tag_t *TAG_Find(const char *owner, const char *name)
 {
-	tagOwner_t	*tagOwner = NULL;
+	tagOwner_t *tagOwner = NULL;
 	int i = 0;
 
 	if (owner && owner[0])
@@ -3734,7 +3863,7 @@ reference_tag_t	*TAG_Find( const char *owner, const char *name )
 	//Not found...
 	if (!tagOwner)
 	{
-		tagOwner = TAG_FindOwner( TAG_GENERIC_NAME );
+		tagOwner = TAG_FindOwner(TAG_GENERIC_NAME);
 
 		if (!tagOwner)
 		{
@@ -3752,7 +3881,7 @@ reference_tag_t	*TAG_Find( const char *owner, const char *name )
 	}
 
 	//Try the generic owner instead
-	tagOwner = TAG_FindOwner( TAG_GENERIC_NAME );
+	tagOwner = TAG_FindOwner(TAG_GENERIC_NAME);
 
 	if (!tagOwner)
 	{
@@ -3778,31 +3907,31 @@ TAG_Add
 -------------------------
 */
 
-reference_tag_t	*TAG_Add( const char *name, const char *owner, vec3_t origin, vec3_t angles, int radius, int flags )
+reference_tag_t *TAG_Add(const char *name, const char *owner, vec3_t origin, vec3_t angles, int radius, int flags)
 {
-	reference_tag_t	*tag = NULL;
-	tagOwner_t	*tagOwner = NULL;
+	reference_tag_t *tag = NULL;
+	tagOwner_t *tagOwner = NULL;
 
 	//Make sure this tag's name isn't alread in use
-	if ( TAG_Find( owner, name ) )
+	if (TAG_Find(owner, name))
 	{
-		Com_Printf(S_COLOR_RED"Duplicate tag name \"%s\"\n", name );
+		Com_Printf(S_COLOR_RED "Duplicate tag name \"%s\"\n", name);
 		return NULL;
 	}
 
 	//Attempt to add this to the owner's list
-	if ( !owner || !owner[0] )
+	if (!owner || !owner[0])
 	{
 		//If the owner isn't found, use the generic world name
 		owner = TAG_GENERIC_NAME;
 	}
 
-	tagOwner = TAG_FindOwner( owner );
+	tagOwner = TAG_FindOwner(owner);
 
 	if (!tagOwner)
 	{
 		//Create a new owner list
-		tagOwner = FirstFreeTagOwner();//new	tagOwner_t;
+		tagOwner = FirstFreeTagOwner(); //new	tagOwner_t;
 
 		if (!tagOwner)
 		{
@@ -3822,24 +3951,24 @@ reference_tag_t	*TAG_Add( const char *name, const char *owner, vec3_t origin, ve
 	}
 
 	//Copy the information
-	VectorCopy( origin, tag->origin );
-	VectorCopy( angles, tag->angles );
+	VectorCopy(origin, tag->origin);
+	VectorCopy(angles, tag->angles);
 	tag->radius = radius;
-	tag->flags	= flags;
+	tag->flags = flags;
 
-	if ( !name || !name[0] )
+	if (!name || !name[0])
 	{
-		Com_Printf(S_COLOR_RED"ERROR: Nameless ref_tag found at (%i %i %i)\n", (int)origin[0], (int)origin[1], (int)origin[2]);
+		Com_Printf(S_COLOR_RED "ERROR: Nameless ref_tag found at (%i %i %i)\n", (int)origin[0], (int)origin[1], (int)origin[2]);
 		return NULL;
 	}
 
 	//Copy the name
-	Q_strncpyz( (char *) tagOwner->name, owner, MAX_REFNAME );
-	Q_strlwr( (char *) tagOwner->name );	//NOTENOTE: For case insensitive searches on a map
+	Q_strncpyz((char *)tagOwner->name, owner, MAX_REFNAME);
+	Q_strlwr((char *)tagOwner->name); //NOTENOTE: For case insensitive searches on a map
 
 	//Copy the name
-	Q_strncpyz( (char *) tag->name, name, MAX_REFNAME );
-	Q_strlwr( (char *) tag->name );	//NOTENOTE: For case insensitive searches on a map
+	Q_strncpyz((char *)tag->name, name, MAX_REFNAME);
+	Q_strlwr((char *)tag->name); //NOTENOTE: For case insensitive searches on a map
 
 	tagOwner->inuse = qtrue;
 	tag->inuse = qtrue;
@@ -3853,9 +3982,9 @@ TAG_GetOrigin
 -------------------------
 */
 
-int	TAG_GetOrigin( const char *owner, const char *name, vec3_t origin )
+int TAG_GetOrigin(const char *owner, const char *name, vec3_t origin)
 {
-	reference_tag_t	*tag = TAG_Find( owner, name );
+	reference_tag_t *tag = TAG_Find(owner, name);
 
 	if (!tag)
 	{
@@ -3863,7 +3992,7 @@ int	TAG_GetOrigin( const char *owner, const char *name, vec3_t origin )
 		return 0;
 	}
 
-	VectorCopy( tag->origin, origin );
+	VectorCopy(tag->origin, origin);
 
 	return 1;
 }
@@ -3875,16 +4004,16 @@ Had to get rid of that damn assert for dev
 -------------------------
 */
 
-int	TAG_GetOrigin2( const char *owner, const char *name, vec3_t origin )
+int TAG_GetOrigin2(const char *owner, const char *name, vec3_t origin)
 {
-	reference_tag_t	*tag = TAG_Find( owner, name );
+	reference_tag_t *tag = TAG_Find(owner, name);
 
-	if( tag == NULL )
+	if (tag == NULL)
 	{
 		return 0;
 	}
 
-	VectorCopy( tag->origin, origin );
+	VectorCopy(tag->origin, origin);
 
 	return 1;
 }
@@ -3894,9 +4023,9 @@ TAG_GetAngles
 -------------------------
 */
 
-int	TAG_GetAngles( const char *owner, const char *name, vec3_t angles )
+int TAG_GetAngles(const char *owner, const char *name, vec3_t angles)
 {
-	reference_tag_t	*tag = TAG_Find( owner, name );
+	reference_tag_t *tag = TAG_Find(owner, name);
 
 	if (!tag)
 	{
@@ -3905,7 +4034,7 @@ int	TAG_GetAngles( const char *owner, const char *name, vec3_t angles )
 		return 0;
 	}
 
-	VectorCopy( tag->angles, angles );
+	VectorCopy(tag->angles, angles);
 
 	return 1;
 }
@@ -3916,9 +4045,9 @@ TAG_GetRadius
 -------------------------
 */
 
-int TAG_GetRadius( const char *owner, const char *name )
+int TAG_GetRadius(const char *owner, const char *name)
 {
-	reference_tag_t	*tag = TAG_Find( owner, name );
+	reference_tag_t *tag = TAG_Find(owner, name);
 
 	if (!tag)
 	{
@@ -3935,9 +4064,9 @@ TAG_GetFlags
 -------------------------
 */
 
-int TAG_GetFlags( const char *owner, const char *name )
+int TAG_GetFlags(const char *owner, const char *name)
 {
-	reference_tag_t	*tag = TAG_Find( owner, name );
+	reference_tag_t *tag = TAG_Find(owner, name);
 
 	if (!tag)
 	{
@@ -4009,44 +4138,45 @@ ownername	- the owner of this tag
 target		- use to point the tag at something for angles
 */
 
-void ref_link ( gentity_t *ent )
+void ref_link(gentity_t *ent)
 {
-	reference_tag_t	*tag;
+	reference_tag_t *tag;
 
-	if ( ent->target )
+	if (ent->target)
 	{
 		//TODO: Find the target and set our angles to that direction
-		gentity_t	*target = G_Find( NULL, FOFS(targetname), ent->target );
-		vec3_t	dir;
+		gentity_t *target = G_Find(NULL, FOFS(targetname), ent->target);
+		vec3_t dir;
 
-		if ( target )
+		if (target)
 		{
 			//Find the direction to the target
-			VectorSubtract( target->s.origin, ent->s.origin, dir );
-			VectorNormalize( dir );
-			vectoangles( dir, ent->s.angles );
+			VectorSubtract(target->s.origin, ent->s.origin, dir);
+			VectorNormalize(dir);
+			vectoangles(dir, ent->s.angles);
 
 			//FIXME: Does pitch get flipped?
 		}
 		else
 		{
-			Com_Printf( S_COLOR_RED"ERROR: ref_tag (%s) has invalid target (%s)", ent->targetname, ent->target );
+			Com_Printf(S_COLOR_RED "ERROR: ref_tag (%s) has invalid target (%s)", ent->targetname, ent->target);
 		}
 	}
 
 	//Add the tag
-	tag = TAG_Add( ent->targetname, ent->ownername, ent->s.origin, ent->s.angles, 16, 0 );
+	tag = TAG_Add(ent->targetname, ent->ownername, ent->s.origin, ent->s.angles, 16, 0);
 
 	//Delete immediately, cannot be refered to as an entity again
 	//NOTE: this means if you wanted to link them in a chain for, say, a path, you can't
-	if (!Lmd_Entities_IsSaveable(ent)) { //Lugormod so that it can be saved
-		G_FreeEntity( ent );
+	if (!Lmd_Entities_IsSaveable(ent))
+	{ //Lugormod so that it can be saved
+		G_FreeEntity(ent);
 	}
 }
 
-void SP_reference_tag ( gentity_t *ent )
+void SP_reference_tag(gentity_t *ent)
 {
-	if ( ent->target )
+	if (ent->target)
 	{
 		//Init cannot occur until all entities have been spawned
 		ent->think = ref_link;
@@ -4054,7 +4184,7 @@ void SP_reference_tag ( gentity_t *ent )
 	}
 	else
 	{
-		ref_link( ent );
+		ref_link(ent);
 	}
 }
 
@@ -4102,8 +4232,8 @@ qboolean		inuse;
 //Lugormod version
 gclient_t *G_ClientForShooter(void)
 {
-	gclient_t *cl = (gclient_t*)G_Alloc(sizeof(gclient_t));
-	memset (cl,0,sizeof(gclient_t));
+	gclient_t *cl = (gclient_t *)G_Alloc(sizeof(gclient_t));
+	memset(cl, 0, sizeof(gclient_t));
 	return cl;
 }
 
@@ -4146,25 +4276,25 @@ i++;
 }
 }
 */
-void misc_weapon_shooter_aim( gentity_t *self );
+void misc_weapon_shooter_aim(gentity_t *self);
 
-void misc_weapon_shooter_fire( gentity_t *self )
+void misc_weapon_shooter_fire(gentity_t *self)
 {
 	//Lugormod
-	misc_weapon_shooter_aim (self);
+	misc_weapon_shooter_aim(self);
 
-	FireWeapon( self, (self->spawnflags&1) );
-	if ( (self->spawnflags&2) )
-	{//repeat
+	FireWeapon(self, (self->spawnflags & 1));
+	if ((self->spawnflags & 2))
+	{ //repeat
 		self->think = misc_weapon_shooter_fire;
 		self->nextthink = level.time + self->wait;
 	}
 }
 
-void misc_weapon_shooter_use ( gentity_t *self, gentity_t *other, gentity_t *activator )
+void misc_weapon_shooter_use(gentity_t *self, gentity_t *other, gentity_t *activator)
 {
-	if ( self->think == misc_weapon_shooter_fire )
-	{//repeating fire, stop
+	if (self->think == misc_weapon_shooter_fire)
+	{ //repeating fire, stop
 		/*
 		G_FreeClientForShooter(self->client);
 		self->think = G_FreeEntity;
@@ -4177,30 +4307,30 @@ void misc_weapon_shooter_use ( gentity_t *self, gentity_t *other, gentity_t *act
 		return;
 	}
 	//otherwise, fire
-	misc_weapon_shooter_fire( self );
+	misc_weapon_shooter_fire(self);
 }
 
-void misc_weapon_shooter_aim( gentity_t *self )
+void misc_weapon_shooter_aim(gentity_t *self)
 {
 	//update my aim
 
-	if (self->enemy && self->enemy->inuse
-		&& Q_stricmp(self->target,self->enemy->targetname) == 0)
-	{//Lugormod
-		VectorSubtract( self->enemy->r.currentOrigin, self->r.currentOrigin, self->pos1 );
-		vectoangles( self->pos1, self->client->ps.viewangles );
-		SetClientViewAngle( self, self->client->ps.viewangles );
-	} else if ( self->target )
+	if (self->enemy && self->enemy->inuse && Q_stricmp(self->target, self->enemy->targetname) == 0)
+	{ //Lugormod
+		VectorSubtract(self->enemy->r.currentOrigin, self->r.currentOrigin, self->pos1);
+		vectoangles(self->pos1, self->client->ps.viewangles);
+		SetClientViewAngle(self, self->client->ps.viewangles);
+	}
+	else if (self->target)
 	{
-		gentity_t *targ = G_Find( NULL, FOFS(targetname), self->target );
-		if ( targ )
+		gentity_t *targ = G_Find(NULL, FOFS(targetname), self->target);
+		if (targ)
 		{
 			self->enemy = targ;
-			VectorSubtract( targ->r.currentOrigin, self->r.currentOrigin, self->pos1 );
+			VectorSubtract(targ->r.currentOrigin, self->r.currentOrigin, self->pos1);
 			//Lugormod eh?
 			//VectorCopy( targ->r.currentOrigin, self->pos1 );
-			vectoangles( self->pos1, self->client->ps.viewangles );
-			SetClientViewAngle( self, self->client->ps.viewangles );
+			vectoangles(self->pos1, self->client->ps.viewangles);
+			SetClientViewAngle(self, self->client->ps.viewangles);
 			//FIXME: don't keep doing this unless target is a moving target?
 			//self->nextthink = level.time + FRAMETIME;
 		}
@@ -4215,46 +4345,46 @@ void misc_weapon_shooter_aim( gentity_t *self )
 extern stringID_table_t WPTable[];
 #include "../namespace_end.h"
 
-void SP_misc_weapon_shooter( gentity_t *self )
+void SP_misc_weapon_shooter(gentity_t *self)
 {
 	char *s = NULL;
 
 	//alloc a client just for the weapon code to use
-	self->client = G_ClientForShooter();//(gclient_s *)gi.Malloc(sizeof(gclient_s), TAG_G_ALLOC, qtrue);
+	self->client = G_ClientForShooter(); //(gclient_s *)gi.Malloc(sizeof(gclient_s), TAG_G_ALLOC, qtrue);
 
 	G_SpawnString("weapon", "", &s);
 
 	//set weapon
 	self->s.weapon = self->client->ps.weapon = WP_BLASTER;
-	if ( s && s[0] )
-	{//use a different weapon
-		self->s.weapon = self->client->ps.weapon = GetIDForString( WPTable, s );
+	if (s && s[0])
+	{ //use a different weapon
+		self->s.weapon = self->client->ps.weapon = GetIDForString(WPTable, s);
 	}
 
 	RegisterItem(BG_FindItemForWeapon(self->s.weapon));
 
 	//set where our muzzle is
-	VectorCopy( self->s.origin, self->client->renderInfo.muzzlePoint );
+	VectorCopy(self->s.origin, self->client->renderInfo.muzzlePoint);
 	//permanently updated (don't need for MP)
 	//self->client->renderInfo.mPCalcTime = Q3_INFINITE;
 
 	//set up to link
-	if ( self->target )
+	if (self->target)
 	{
 		//Lugormod
 		//self->think = misc_weapon_shooter_aim;
 		//self->nextthink = level.time + START_TIME_LINK_ENTS;
 	}
 	else
-	{//just set aim angles
-		VectorCopy( self->s.angles, self->client->ps.viewangles );
-		AngleVectors( self->s.angles, self->pos1, NULL, NULL );
+	{ //just set aim angles
+		VectorCopy(self->s.angles, self->client->ps.viewangles);
+		AngleVectors(self->s.angles, self->pos1, NULL, NULL);
 	}
 
 	//set up to fire when used
 	self->use = misc_weapon_shooter_use;
 
-	if ( !self->wait )
+	if (!self->wait)
 	{
 		self->wait = 500;
 	}
@@ -4263,7 +4393,7 @@ void SP_misc_weapon_shooter( gentity_t *self )
 /*QUAKED misc_weather_zone (0 .5 .8) ?
 Determines a region to check for weather contents - will significantly reduce load time
 */
-void SP_misc_weather_zone( gentity_t *ent )
+void SP_misc_weather_zone(gentity_t *ent)
 {
 	G_FreeEntity(ent);
 }

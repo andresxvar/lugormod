@@ -1,11 +1,11 @@
 -- functions to handle the rpg commands
-function roll_f(player,args)
+function roll_f(player,argc)
 	Game.Broadcast("^2*^7" .. player:Name() .. " ^7 rolled a ^1" .. math.random(6), 16)
 	return 1
 end
 
-function do_f(player,args)
-	if args == 1 then
+function do_f(player,argc)
+	if argc == 1 then
 		player:PrintConsole("^7Syntax: /do <text>")
 	else
 		local msg = Game.ConcatArgs(1)
@@ -14,8 +14,8 @@ function do_f(player,args)
 	return 1
 end
 
-function me_f(player,args)
-	if args == 1 then
+function me_f(player,argc)
+	if argc == 1 then
 		player:PrintConsole("^7Syntax: /me <action>")
 	else
 		local msg = Game.ConcatArgs(1)
@@ -24,8 +24,8 @@ function me_f(player,args)
 	return 1
 end
 
-function timer_f(player,args)
-	if args == 1 then
+function timer_f(player,argc)
+	if argc == 1 then
 		player:PrintConsole("^7Syntax: /timer <seconds>")
 	else
 		player:SiegeSpecTimer(tonumber(Game.Argument(1)));

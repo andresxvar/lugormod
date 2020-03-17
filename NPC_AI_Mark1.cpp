@@ -36,7 +36,6 @@ enum
 
 qboolean NPC_CheckPlayerTeamStealth( void );
 void Mark1_BlasterAttack(qboolean advance);
-void DeathFX( gentity_t *ent );
 
 #include "../namespace_begin.h"
 extern gitem_t *BG_FindItemForAmmo( ammo_t ammo );

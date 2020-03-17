@@ -156,6 +156,27 @@ static int g_lua_Player_Hack(lua_State *L)
 }
 
 //
+// Player:NPCSpawn(npc_type:String, npc_targetname:String)
+//
+extern gentity_t *NPC_SpawnType( gentity_t *ent, char *npc_type, char *targetname, qboolean isVehicle );
+static int g_lua_Player_NPCSpawn(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+	gentity_t *ent = &g_entities[ply->cl->ps.clientNum];
+	char *npc_type = (char *)luaL_checkstring(L, 2);
+	char *npc_targetname = (char *)luaL_checkstring(L, 3);
+	
+	gentity_t* newEnt = NPC_SpawnType(ent, npc_type, npc_targetname, qfalse);
+
+	if (!newEnt)
+		lua_pushnil(L);
+	else
+		g_lua_pushEntity(L,newEnt);
+	return 1;
+}
+
+//
 // Player:AimOrigin()
 // Player:AimOrigin(range:Integer)
 //
@@ -177,6 +198,26 @@ static int g_lua_Player_AimOrigin(lua_State *L)
 }
 
 //
+// Player:AimAnyTarget(range:Integer)
+//
+gentity_t* AimAnyTarget (gentity_t *ent, int length);
+static int g_lua_Player_AimAnyTarget(lua_State *L)
+{	
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+	gentity_t *player = &g_entities[ply->cl->ps.clientNum];
+	gentity_t *target = NULL;
+
+	int range = luaL_checkinteger(L, 2);
+	gentity_t *targetEnt = AimAnyTarget(player,range);
+
+	if (!targetEnt)
+		lua_pushnil(L);
+	else
+		g_lua_pushEntity(L,targetEnt);
+	return 1;
+}
+
+//
 // Player:ViewAngles( )
 // Player:ViewAngles( newVal:QVector )
 //
@@ -194,6 +235,37 @@ static int g_lua_Player_ViewAngles(lua_State *L)
 
 	lua_pushvector(L, ply->cl->ps.viewangles);
 	return 1;
+}
+
+//
+// Player:PrintChat( message:String )
+//
+static int g_lua_Player_PrintChat(lua_State *L)
+{
+	int i;
+	char buf[1000] = {0};
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+
+	lua_rawgeti(L, LUA_REGISTRYINDEX, lua_toString);
+
+	for (i = 2; i <= n; i++)
+	{
+		const char *s;
+
+		lua_pushvalue(L, -1); // function to be called
+		lua_pushvalue(L, i);  // value to print
+		lua_call(L, 1, 1);
+		s = lua_tostring(L, -1); // get result
+
+		if (s == NULL)
+			return luaL_error(L, "`tostring' must return a string to `print'");
+
+		Q_strcat(buf, sizeof(buf), s);
+		lua_pop(L, 1); // pop result
+	}
+	trap_SendServerCommand(ply->cl->ps.clientNum, va("chat \"%s\"", buf));
+	return 0;
 }
 
 //
@@ -227,6 +299,37 @@ static int g_lua_Player_PrintConsole(lua_State *L)
 	return 0;
 }
 
+//
+// Player:PrintCenter( message:String )
+//
+static int g_lua_Player_PrintCenter(lua_State *L)
+{
+	int i;
+	char buf[1000] = {0};
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+	
+	lua_rawgeti(L, LUA_REGISTRYINDEX, lua_toString);
+
+	for (i = 2; i <= n; i++)
+	{
+		const char *s;
+
+		lua_pushvalue(L, -1); // function to be called
+		lua_pushvalue(L, i);  // value to print
+		lua_call(L, 1, 1);
+		s = lua_tostring(L, -1); // get result
+
+		if (s == NULL)
+			return luaL_error(L, "`tostring' must return a string to `print'");
+
+		Q_strcat(buf, sizeof(buf), s);
+		lua_pop(L, 1); // pop result
+	}
+	trap_SendServerCommand(ply->cl->ps.clientNum, va("cp \"%s\"", buf));
+	return 0;
+}
+
 // Player library methods
 static const luaL_Reg player_ctor[] = {
 	{"FromEntity", g_lua_Player_FromEntity},
@@ -242,11 +345,15 @@ static const luaL_Reg player_meta[] = {
 	{"Number", g_lua_Player_Number},
 	{"Weapon", g_lua_Player_Weapon},
 	{"Hack", g_lua_Player_Hack},
+	{"NPCSpawn", g_lua_Player_NPCSpawn},
 
 	{"AimOrigin", g_lua_Player_AimOrigin},
+	{"AimAnyTarget", g_lua_Player_AimAnyTarget},
 	{"ViewAngles", g_lua_Player_ViewAngles},
 
 	{"PrintConsole", g_lua_Player_PrintConsole},
+	{"PrintChat", g_lua_Player_PrintChat},
+	{"PrintCenter", g_lua_Player_PrintCenter},	
 	{"SiegeSpecTimer", g_lua_Player_SiegeSpecTimer},
 
 	{NULL, NULL}};

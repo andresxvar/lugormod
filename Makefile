@@ -6,12 +6,14 @@ ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 # Compiler settings - Can be customized.
 CC = g++
+
+# -g -D_DEBUG 
 CXXFLAGS = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
 	-fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
 	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME
 
-CXXFLAGS_DEBUG = -g -D_DEBUG -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
+CXXFLAGS_RELEASE = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
 	-fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
 	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME

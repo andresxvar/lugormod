@@ -1361,7 +1361,7 @@ void G_FindTeams(void)
 
 	c = 0;
 	c2 = 0;
-	for (i = 1, e = g_entities + i; i < level.num_entities; i++, e++)
+	for (i = MAX_CLIENTS, e = g_entities + i; i < level.num_entities; i++, e++)
 	{
 		if (!e->inuse)
 			continue;
@@ -1837,6 +1837,11 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	// even if they aren't all used, so numbers inside that
 	// range are NEVER anything but clients
 	level.num_entities = MAX_CLIENTS;
+
+	for (i = 0; i < MAX_CLIENTS; i++)
+	{
+		g_entities[i].classname = "clientslot";
+	}
 
 	// let the server system know where the entites are
 	trap_LocateGameData(level.gentities, level.num_entities, sizeof(gentity_t),

@@ -138,20 +138,6 @@ extern stringID_table_t FPTable[];
 char	*TeamNames[TEAM_NUM_TEAMS] = 
 {
 	"",
-//	"starfleet",
-//	"borg",
-//	"parasite",
-//	"scavengers",
-//	"klingon",
-//	"malon",
-//	"hirogen",
-//	"imperial",
-//	"stasis",
-//	"species8472",
-//	"dreadnought",
-//	"forge",
-//	"disguise",
-//	"player (not valid)"
 	"player",
 	"enemy",
 	"neutral"
@@ -1031,7 +1017,6 @@ qboolean NPC_ParseParms( const char *NPCName, gentity_t *NPC )
 	NPC->NPC->allWeaponOrder[1]	= WP_SABER;
 	NPC->NPC->allWeaponOrder[2]	= WP_IMOD;
 	NPC->NPC->allWeaponOrder[3]	= WP_SCAVENGER_RIFLE;
-	NPC->NPC->allWeaponOrder[4]	= WP_TRICORDER;
 	NPC->NPC->allWeaponOrder[6]	= WP_NONE;
 	NPC->NPC->allWeaponOrder[6]	= WP_NONE;
 	NPC->NPC->allWeaponOrder[7]	= WP_NONE;

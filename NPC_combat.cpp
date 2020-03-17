@@ -722,15 +722,7 @@ void ChangeWeapon( gentity_t *ent, int newWeapon )
 		ent->NPC->burstMax = 20;//3 seconds
 		ent->NPC->burstSpacing = 2000;//2 seconds
 		ent->NPC->attackHold = 1000;//Hold attack button for a 1-second burst
-		break;
-	
-	case WP_TRICORDER:
-		ent->NPC->aiFlags |= NPCAI_BURST_WEAPON;
-		ent->NPC->burstMin = 5;
-		ent->NPC->burstMean = 10;
-		ent->NPC->burstMax = 30;
-		ent->NPC->burstSpacing = 1000;
-		break;
+		break;	
 	*/
 
 	case WP_BLASTER:
@@ -1301,11 +1293,6 @@ int NPC_AttackDebounceForWeapon (void)
 	case WP_SABER:
 		return 100;
 		break;
-	
-
-	case WP_TRICORDER:
-		return 0;//tricorder
-		break;
 */
 	case WP_SABER:
 		return 0;
@@ -1367,11 +1354,6 @@ float NPC_MaxDistSquaredForWeapon (void)
 /*
 	case WP_SABER:
 		return 1024 * 1024;
-		break;
-	
-
-	case WP_TRICORDER:
-		return 0;//tricorder
 		break;
 */
 	case WP_SABER:
@@ -2486,11 +2468,6 @@ float IdealDistance ( gentity_t *self )
 	case WP_THERMAL:
 		ideal += 50;
 		break;
-
-/*	case WP_TRICORDER:
-		ideal = 0;
-		break;
-*/
 	case WP_SABER:
 	case WP_BRYAR_PISTOL:
 //	case WP_BLASTER_PISTOL:

@@ -233,6 +233,18 @@ static int g_lua_GEntity_MakeHackable(lua_State *L)
 }
 
 //
+// GEntity:MakeUsable( )
+//
+static int g_lua_GEntity_MakeUsable(lua_State *L)
+{
+	lua_GEntity *lent;
+
+	lent = g_lua_checkEntity(L, 1);
+	lent->e->r.svFlags |= SVF_PLAYER_USABLE;
+	return 0;
+}
+
+//
 // GEntity:Position( )
 // GEntity:Position( newVal:QVector )
 //
@@ -304,6 +316,20 @@ static int g_lua_GEntity_Model(lua_State *L)
 	}
 
 	lua_pushstring(L, lent->e->model);
+	return 1;
+}
+
+//
+// GEntity:Targetname()
+//
+static int g_lua_GEntity_Targetname(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = NULL;
+
+	lent = g_lua_checkEntity(L, 1);
+	
+	lua_pushstring(L, lent->e->targetname);
 	return 1;
 }
 
@@ -529,12 +555,14 @@ static const luaL_Reg gentity_meta[] = {
 	//{ "BindTouch", lua_GEntity_BindDie},
 	{"BindUse", g_lua_GEntity_BindUse},
 	{"MakeHackable", g_lua_GEntity_MakeHackable},
+	{"MakeUsable", g_lua_GEntity_MakeUsable},
 
 	{"Number", g_lua_GEntity_Number},
 	{"Angles", g_lua_GEntity_Angles},
 	{"Position", g_lua_GEntity_Position},
 
 	{"Model", g_lua_GEntity_Model},
+	{"Targetname", g_lua_GEntity_Targetname},
 	{"Health", g_lua_GEntity_Health},
 	{"GenericValues", g_lua_GEntity_GenericValue},
 

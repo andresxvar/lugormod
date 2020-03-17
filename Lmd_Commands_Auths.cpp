@@ -1,4 +1,3 @@
-
 #include "g_local.h"
 #include "Lmd_Arrays.h"
 #include "Lmd_Accounts_Data.h"
@@ -9,7 +8,6 @@
 #include "Lmd_Accounts_Core.h"
 #include "Lmd_Console.h"
 
-
 int AccAuthDataDataIndex = -1;
 #define AUTHDATA(acc) (authFileDataList_t *)Lmd_Accounts_GetAccountCategoryData(acc, AccAuthDataDataIndex)
 
@@ -19,82 +17,89 @@ int AccAuthDataDataIndex = -1;
 //TODO: cmdpoint regen
 //=============
 
-#define	CMDFILEENTRYOFS(x) ((int)&(((authCmdEntry_t *)0)->x))
+#define CMDFILEENTRYOFS(x) ((int)&(((authCmdEntry_t *)0)->x))
 BG_field_t authCmdEntryFields[] = {
 	{"report", CMDFILEENTRYOFS(report), F_INT},
 	{"log", CMDFILEENTRYOFS(log), F_INT},
 	{"restrict", CMDFILEENTRYOFS(restr), F_INT},
 	{"cost", CMDFILEENTRYOFS(cost), F_INT},
-	{NULL}
-};
+	{NULL}};
 
-#define	CMDFILEOFS(x) ((int)&(((authFile_t *)0)->x))
+#define CMDFILEOFS(x) ((int)&(((authFile_t *)0)->x))
 BG_field_t authFileFields[] = {
-	{"rank", CMDFILEOFS(rank), F_INT}, 
-	{"cmdpoints", CMDFILEOFS(maxPoints), F_INT}, 
-	{"flags", CMDFILEOFS(flags), F_INT}, 
-	{NULL}
-};
+	{"rank", CMDFILEOFS(rank), F_INT},
+	{"cmdpoints", CMDFILEOFS(maxPoints), F_INT},
+	{"flags", CMDFILEOFS(flags), F_INT},
+	{NULL}};
 
-struct {
+struct
+{
 	unsigned int count;
 	authFile_t *files;
-}AuthFiles;
+} AuthFiles;
 
 authFile_t defaultCmds;
 
 //Double pointer on files, this is for accounts.
-struct authFileDataList_s{
+struct authFileDataList_s
+{
 	unsigned int count;
 	authFileData_t *list;
 };
 
-typedef struct authFlag_s{
+typedef struct authFlag_s
+{
 	char *name;
 	int defaultLevel;
-}authFlag_t;
+} authFlag_t;
 
 authFlag_t AuthFlags[] = {
-	{"AdminChat", -1}, //AUTH_ADMINCHAT,
-	{"FullVoting", 3}, //AUTH_FULLVOTING,
-	{"SavePlaced", 1}, //AUTH_SAVEPLACED,
-	{"UnFollowable", 3}, //AUTH_UNFOLLOWABLE,
+	{"AdminChat", -1},	 //AUTH_ADMINCHAT,
+	{"FullVoting", 3},	 //AUTH_FULLVOTING,
+	{"SavePlaced", 1},	 //AUTH_SAVEPLACED,
+	{"UnFollowable", 3},   //AUTH_UNFOLLOWABLE,
 	{"AllowSpectate", -1}, //AUTH_ALLOWSPEC,
-	{"UnIgnoreable", -1}, //AUTH_UNIGNOREABLE,
-	{"Cheats", 1}, //AUTH_CHEATS,
-	{"GodProf", 1}, //AUTH_GODPROF,
-	{"UberForce", 1}, //AUTH_UBERFORCE,
-	{"BotCommands", 1}, //AUTH_BOTCOMMANDS,
-	{"", 2}, //AUTH_BETACMDS,
+	{"UnIgnoreable", -1},  //AUTH_UNIGNOREABLE,
+	{"Cheats", 1},		   //AUTH_CHEATS,
+	{"GodProf", 1},		   //AUTH_GODPROF,
+	{"UberForce", 1},	  //AUTH_UBERFORCE,
+	{"BotCommands", 1},	//AUTH_BOTCOMMANDS,
+	{"", 2},			   //AUTH_BETACMDS,
 };
 
-authFile_t *Auths_GetFile(char *name){
-	if(Q_stricmp(name, "default") == 0)
+authFile_t *Auths_GetFile(char *name)
+{
+	if (Q_stricmp(name, "default") == 0)
 		return &defaultCmds;
 	int i;
-	for(i = 0; i < AuthFiles.count; i++){
-		if(Q_stricmp(AuthFiles.files[i].name, name) == 0)
+	for (i = 0; i < AuthFiles.count; i++)
+	{
+		if (Q_stricmp(AuthFiles.files[i].name, name) == 0)
 			return &AuthFiles.files[i];
 	}
 	return NULL;
 }
 
-authFile_t *Auths_NewFile(char *name){
+authFile_t *Auths_NewFile(char *name)
+{
 	int i = Lmd_Arrays_AddArrayElement((void **)&AuthFiles.files, sizeof(authFile_t), &AuthFiles.count);
 	AuthFiles.files[i].name = G_NewString2(name);
 	return &AuthFiles.files[i];
 }
 
-authCmdEntry_t *Auths_GetAuthCmdEntry(authFile_t *file, cmdEntry_t *cmd){
+authCmdEntry_t *Auths_GetAuthCmdEntry(authFile_t *file, cmdEntry_t *cmd)
+{
 	int i;
-	for(i = 0; i < file->count; i++){
-		if(file->entries[i]->cmd == cmd)
+	for (i = 0; i < file->count; i++)
+	{
+		if (file->entries[i]->cmd == cmd)
 			return file->entries[i];
 	}
 	return NULL;
 }
 
-authCmdEntry_t *Auths_NewAuthCmdEntry(authFile_t *file, cmdEntry_t *cmd){
+authCmdEntry_t *Auths_NewAuthCmdEntry(authFile_t *file, cmdEntry_t *cmd)
+{
 	authCmdEntry_t *entry = (authCmdEntry_t *)G_Alloc(sizeof(authCmdEntry_t));
 	int i = Lmd_Arrays_AddArrayElement((void **)&file->entries, sizeof(authCmdEntry_t *), &file->count);
 	file->entries[i] = entry;
@@ -103,7 +108,8 @@ authCmdEntry_t *Auths_NewAuthCmdEntry(authFile_t *file, cmdEntry_t *cmd){
 }
 
 extern vmCvar_t g_cmdLvlFile;
-void Auths_ParseLevelFile(){
+void Auths_ParseLevelFile()
+{
 	if (!g_cmdLvlFile.string || *g_cmdLvlFile.string == '\0')
 		return;
 
@@ -116,28 +122,30 @@ void Auths_ParseLevelFile(){
 
 	G_Printf("^3Loading Lugormod command level definitions.\n");
 	buf = Lmd_Data_AllocFileContents(g_cmdLvlFile.string);
-	if (!buf){
+	if (!buf)
+	{
 		G_Printf("^3Command level data not found.\n");
 		return;
 	}
 
 	sp = buf;
 
-	while (sp){
+	while (sp)
+	{
 		str = COM_ParseExt((const char **)&sp, qtrue);
-		if(!str[0])
+		if (!str[0])
 			continue;
 		Q_strncpyz(cmdName, str, sizeof(cmdName));
 
 		//weird thing uses qtrue as failed.
-		if(COM_ParseInt((const char **)&sp, &level))
+		if (COM_ParseInt((const char **)&sp, &level))
 			continue;
 
 		entry = Commands_GetEntry(cmdName);
-		if(!entry)
+		if (!entry)
 			continue;
 		//Only profession neutral commands are changeable
-		if(entry->locked || entry->profession != PROF_NONE)
+		if (entry->locked || entry->profession != PROF_NONE)
 			continue;
 		entry->isAdmin = qtrue;
 		entry->level = level;
@@ -149,43 +157,53 @@ void Auths_ParseLevelFile(){
 
 extern vmCvar_t lmd_admingodlevel;
 extern vmCvar_t lmd_admincheatlevel;
-void Auths_LoadDefaults(){
+void Auths_LoadDefaults()
+{
 	cmdCategory_t *c = Categories;
 	cmdEntry_t *e;
 	authFile_t *file;
 	char *str;
 	int i, j;
 
-	while(c->name){
+	while (c->name)
+	{
 		e = c->entries;
-		while(e->name){
+		while (e->name)
+		{
 			//Only profession neutral commands are changeable
 			//Level of -2 means "any admin"
-			if(!e->locked && e->isAdmin && e->level > 0){
-				for(i = 1; i <= e->level; i++){
+			if (!e->locked && e->isAdmin && e->level > 0)
+			{
+				for (i = 1; i <= e->level; i++)
+				{
 					str = va("%i", i);
 					file = Auths_GetFile(str);
-					if(!file) {
+					if (!file)
+					{
 						file = Auths_NewFile(str);
 						file->rank = i;
 						file->autoGenerated = qtrue;
-						for(j = 0; j < AUTH_MAX; j++) {
-							if(AuthFlags[j].defaultLevel == -1 || (i <= AuthFlags[j].defaultLevel))
+						for (j = 0; j < AUTH_MAX; j++)
+						{
+							if (AuthFlags[j].defaultLevel == -1 || (i <= AuthFlags[j].defaultLevel))
 								file->flags |= (1 << j);
 						}
-						if(lmd_admingodlevel.integer != 0 && lmd_admingodlevel.integer <= i)
+						if (lmd_admingodlevel.integer != 0 && lmd_admingodlevel.integer <= i)
 							file->flags |= AUTH_GODPROF;
-						if(lmd_admincheatlevel.integer != 0 && lmd_admincheatlevel.integer <= i)
+						if (lmd_admincheatlevel.integer != 0 && lmd_admincheatlevel.integer <= i)
 							file->flags |= AUTH_CHEATS;
 					}
-					if(!Auths_GetAuthCmdEntry(file, e)){
+					if (!Auths_GetAuthCmdEntry(file, e))
+					{
 						Auths_NewAuthCmdEntry(file, e);
 					}
 				}
 			}
 			//-1 for disable.
-			else if(e->locked || e->level != -1){
-				if(!Auths_GetAuthCmdEntry(&defaultCmds, e)){
+			else if (e->locked || e->level != -1)
+			{
+				if (!Auths_GetAuthCmdEntry(&defaultCmds, e))
+				{
 					Auths_NewAuthCmdEntry(&defaultCmds, e);
 				}
 			}
@@ -195,17 +213,19 @@ void Auths_LoadDefaults(){
 	}
 }
 
-qboolean Auths_ParseFile(byte *obj, qboolean pre, char *key, char *value){
+qboolean Auths_ParseFile(byte *obj, qboolean pre, char *key, char *value)
+{
 	authFile_t *file = (authFile_t *)obj;
-	if(pre){
+	if (pre)
+	{
 		cmdEntry_t *cmd = Commands_GetEntry(key);
-		if(!cmd)
+		if (!cmd)
 			return qfalse;
 		//Can't manipulate some commands
-		if(cmd->locked || cmd->profession != PROF_NONE)
+		if (cmd->locked || cmd->profession != PROF_NONE)
 			return qtrue;
 		authCmdEntry_t *entry = Auths_GetAuthCmdEntry(file, cmd);
-		if(!entry)
+		if (!entry)
 			entry = Auths_NewAuthCmdEntry(file, cmd);
 		Lmd_Data_ParseDatastring(&value, NULL, authCmdEntryFields, (byte *)entry);
 		return qtrue;
@@ -213,7 +233,8 @@ qboolean Auths_ParseFile(byte *obj, qboolean pre, char *key, char *value){
 	return qfalse;
 }
 
-qboolean Auths_LoadFile(char *name, char *buf){
+qboolean Auths_LoadFile(char *name, char *buf)
+{
 	authFile_t *file = Auths_NewFile(name);
 
 	Lmd_Data_ParseFields_Old(&buf, qfalse, Auths_ParseFile, authFileFields, (byte *)file);
@@ -221,25 +242,29 @@ qboolean Auths_LoadFile(char *name, char *buf){
 	return qtrue;
 }
 
-unsigned int Auths_Load(){
+unsigned int Auths_Load()
+{
 	Auths_ParseLevelFile();
 	Auths_LoadDefaults();
 	return Lmd_Data_ProcessFiles("authfiles", ".auth", Auths_LoadFile, Q3_INFINITE);
 }
 
-
 //====================================================================================
 //Account stuff
 //====================================================================================
 
-void Auths_AddDataEntry(authFileDataList_t *authList, authFile_t *file, int points){
+void Auths_AddDataEntry(authFileDataList_t *authList, authFile_t *file, int points)
+{
 	int i;
-	if (points < 0) {
+	if (points < 0)
+	{
 		points = file->maxPoints;
 	}
 
-	for(i = 0; i < authList->count; i++) {
-		if(authList->list[i].file == file) {
+	for (i = 0; i < authList->count; i++)
+	{
+		if (authList->list[i].file == file)
+		{
 			authList->list[i].points = points;
 			return;
 		}
@@ -251,22 +276,26 @@ void Auths_AddDataEntry(authFileDataList_t *authList, authFile_t *file, int poin
 	authList->list[i].file = file;
 }
 
-qboolean Auths_RemoveDataEntry(authFileDataList_t *data, authFile_t *file){
+qboolean Auths_RemoveDataEntry(authFileDataList_t *data, authFile_t *file)
+{
 	int i;
 	int index = -1;
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file == file) {
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file == file)
+		{
 			index = i;
 			break;
 		}
 	}
-	if(index < 0)
+	if (index < 0)
 		return qfalse;
 	Lmd_Arrays_RemoveArrayElement((void **)&data->list, index, sizeof(authFileData_t), &data->count);
 	return qtrue;
 }
 
-void Auths_RemoveAllDataEntries(authFileDataList_t *data) {
+void Auths_RemoveAllDataEntries(authFileDataList_t *data)
+{
 	Lmd_Arrays_RemoveAllElements((void **)&data->list);
 	data->count = 0;
 }
@@ -274,40 +303,43 @@ void Auths_RemoveAllDataEntries(authFileDataList_t *data) {
 qboolean Accounts_Auths_Parse(char *key, char *value, void *target, void *args)
 {
 	authFileDataList_t *cmdData = (authFileDataList_t *)target;
-	
+
 	char name[MAX_STRING_CHARS] = "";
 	int points = -1; //default to full.
-	if(sscanf(value, "\"%1023[^\"]\" %i", name, &points) == 0){ //== 0, we can still read only the name and be valid
+	if (sscanf(value, "\"%1023[^\"]\" %i", name, &points) == 0)
+	{ //== 0, we can still read only the name and be valid
 		//try without quotes
-		if(sscanf(value, "%1023s", name) == 0)
+		if (sscanf(value, "%1023s", name) == 0)
 			return qfalse;
 	}
 
 	authFile_t *file = Auths_GetFile(name);
-	if(!file)
+	if (!file)
 		return qtrue;
 
 	Auths_AddDataEntry(cmdData, file, points);
 	return qtrue;
 }
 
-typedef struct AuthsWriteState_s {
+typedef struct AuthsWriteState_s
+{
 	int index;
 } AuthsWriteState_t;
 
 DataWriteResult_t Accounts_Auths_Write(void *target, char key[], int keySize, char value[], int valueSize, void **writeState, void *args)
 {
 	authFileDataList_t *authList = (authFileDataList_t *)target;
-	
-	void* statePtr = *writeState;
-	if (statePtr == NULL) {
+
+	void *statePtr = *writeState;
+	if (statePtr == NULL)
+	{
 		statePtr = *writeState = G_Alloc(sizeof(AuthsWriteState_t));
 	}
 
 	AuthsWriteState_t *state = (AuthsWriteState_t *)statePtr;
 
-
-	if (state->index >= authList->count) {
+	if (state->index >= authList->count)
+	{
 		G_Free(state);
 		return DWR_NODATA;
 	}
@@ -317,7 +349,8 @@ DataWriteResult_t Accounts_Auths_Write(void *target, char key[], int keySize, ch
 
 	state->index++;
 
-	if (state->index >= authList->count) {
+	if (state->index >= authList->count)
+	{
 		G_Free(state);
 		return DWR_COMPLETE;
 	}
@@ -325,22 +358,21 @@ DataWriteResult_t Accounts_Auths_Write(void *target, char key[], int keySize, ch
 	return DWR_CONTINUE;
 }
 
-#define AuthsFields_Base(_m) \
-	/* authfile is our primary key */ \
-	_m##_FUNC(authfile, Accounts_Auths_Parse, Accounts_Auths_Write, NULL) \
-	/* We can also parse authlevel as read-only.  It will be written as authfile*/ \
-	_m##_FUNC(authlevel, Accounts_Auths_Parse, NULL, NULL)
-
+#define AuthsFields_Base(_m)                                                                                                                             \
+	/* authfile is our primary key */                                                                                                                    \
+	_m##_FUNC(authfile, Accounts_Auths_Parse, Accounts_Auths_Write, NULL) /* We can also parse authlevel as read-only.  It will be written as authfile*/ \
+		_m##_FUNC(authlevel, Accounts_Auths_Parse, NULL, NULL)
 
 AuthsFields_Base(DEFINE_FIELD_PRE)
 
-DATAFIELDS_BEGIN(AuthsFields)
-AuthsFields_Base(DEFINE_FIELD_LIST)
-DATAFIELDS_END
+	DATAFIELDS_BEGIN(AuthsFields)
+		AuthsFields_Base(DEFINE_FIELD_LIST)
+			DATAFIELDS_END
 
-const int AuthsFields_Count = DATAFIELDS_COUNT(AuthsFields);
+	const int AuthsFields_Count = DATAFIELDS_COUNT(AuthsFields);
 
-void Accounts_Auths_Free(void *target) {
+void Accounts_Auths_Free(void *target)
+{
 	authFileDataList_t *authList = (authFileDataList_t *)target;
 	Auths_RemoveAllDataEntries(authList);
 }
@@ -362,32 +394,36 @@ accDataModule_t Accounts_AuthData = {
 	Accounts_Auths_Free,
 };
 
-
-void Accounts_Auths_Register() {
+void Accounts_Auths_Register()
+{
 	AccAuthDataDataIndex = Lmd_Accounts_AddDataCategory(&Accounts_AuthData);
 }
 
-void Auths_AddAccAuthfile(Account_t *acc, authFile_t *file) {
-	if(!acc)
+void Auths_AddAccAuthfile(Account_t *acc, authFile_t *file)
+{
+	if (!acc)
 		return;
 	authFileDataList_t *data = AUTHDATA(acc);
 	Lmd_Accounts_Modify(acc);
 	Auths_AddDataEntry(data, file, file->maxPoints);
 }
 
-qboolean Auths_RemoveAccAuthfile(Account_t *acc, authFile_t *file) {
-	if(!acc)
+qboolean Auths_RemoveAccAuthfile(Account_t *acc, authFile_t *file)
+{
+	if (!acc)
 		return qfalse;
 	authFileDataList_t *data = AUTHDATA(acc);
-	if(Auths_RemoveDataEntry(data, file)) {
+	if (Auths_RemoveDataEntry(data, file))
+	{
 		Lmd_Accounts_Modify(acc);
 		return qtrue;
 	}
 	return qfalse;
 }
 
-qboolean Auths_RemoveAllAccAuthfiles(Account_t *acc) {
-	if(!acc)
+qboolean Auths_RemoveAllAccAuthfiles(Account_t *acc)
+{
+	if (!acc)
 		return qfalse;
 	authFileDataList_t *data = AUTHDATA(acc);
 	Auths_RemoveAllDataEntries(data);
@@ -395,35 +431,41 @@ qboolean Auths_RemoveAllAccAuthfiles(Account_t *acc) {
 	return qtrue;
 }
 
-void Auths_RemoveAutoAuthfiles(authFileDataList_t *data) {
+void Auths_RemoveAutoAuthfiles(authFileDataList_t *data)
+{
 	int i;
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file->autoGenerated) {
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file->autoGenerated)
+		{
 			Lmd_Arrays_RemoveArrayElement((void **)&data->list, i, sizeof(authFileData_t), &data->count);
 			i--;
 		}
 	}
 }
 
-int Auths_GetRank(Account_t *acc) {
-	if(!acc)
+int Auths_GetRank(Account_t *acc)
+{
+	if (!acc)
 		return 0;
 
 	authFileDataList_t *data = AUTHDATA(acc);
-	if(data->count == 0)
+	if (data->count == 0)
 		return 0;
 	int i;
 	int best = Q3_INFINITE;
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file->rank < best)
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file->rank < best)
 			best = data->list[i].file->rank;
 	}
-	if(best == Q3_INFINITE)
+	if (best == Q3_INFINITE)
 		return 0;
 	return best;
 }
 
-int Auths_GetPlayerRank(gentity_t *ent) {
+int Auths_GetPlayerRank(gentity_t *ent)
+{
 	if (!ent->client || ent->client->pers.connected != CON_CONNECTED)
 		return 0;
 
@@ -431,18 +473,20 @@ int Auths_GetPlayerRank(gentity_t *ent) {
 	int i, cRank;
 
 	// Get tmp admin auths
-	for(i = 0; i < ent->client->sess.Lmd.auths->count; i++) {
+	for (i = 0; i < ent->client->sess.Lmd.auths->count; i++)
+	{
 		cRank = ent->client->sess.Lmd.auths->list[i].file->rank;
-		if(cRank > 0 && cRank < rank)
+		if (cRank > 0 && cRank < rank)
 			rank = ent->client->sess.Lmd.auths->list[i].file->rank;
 	}
 
 	// Get account auth
 	cRank = Auths_GetRank(ent->client->pers.Lmd.account);
-	if(cRank > 0 && cRank < rank)
+	if (cRank > 0 && cRank < rank)
 		rank = cRank;
 
-	if (rank == Q3_INFINITE) {
+	if (rank == Q3_INFINITE)
+	{
 		return 0;
 	}
 
@@ -458,98 +502,119 @@ int Auths_GetPlayerRank(gentity_t *ent) {
 5-24-2010 22:18 (218:45): (4) jampgamex86.dll(vmMain+0x99257) [0x201da97d]
 5-24-2010 22:18 (218:45): (5) jampgamex86.dll(vmMain+0xc3f8d) [0x202056b3]
 */
-qboolean Auths_AccHasAdmin(Account_t *acc) {
-	if(!acc)
+qboolean Auths_AccHasAdmin(Account_t *acc)
+{
+	if (!acc)
 		return qfalse;
 	authFileDataList_t *data = AUTHDATA(acc);
-	if (data == NULL) {
+	if (data == NULL)
+	{
 		return qfalse;
 	}
-	if(data->count > 0)
+	if (data->count > 0)
 		return qtrue;
 	return qfalse;
 }
 
-qboolean Auths_AccHasFile(Account_t *acc, authFile_t *file) {
-	if(!acc)
+qboolean Auths_AccHasFile(Account_t *acc, authFile_t *file)
+{
+	if (!acc)
 		return qfalse;
 	authFileDataList_t *data = AUTHDATA(acc);
-	if (data == NULL) {
+	if (data == NULL)
+	{
 		return qfalse;
 	}
 	unsigned int i;
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file == file)
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file == file)
 			return qtrue;
 	}
 	return qfalse;
 }
 
-qboolean Auths_PlayerHasTempAdmin(gentity_t *ent) {
-	if (ent == NULL || ent->client == NULL) {
+qboolean Auths_PlayerHasTempAdmin(gentity_t *ent)
+{
+	if (ent == NULL || ent->client == NULL)
+	{
 		return qfalse;
 	}
 
 	//Should never happen, but it does.
-	if(ent->client->sess.Lmd.auths == NULL)
+	if (ent->client->sess.Lmd.auths == NULL)
 		return qfalse;
 	return ent->client->sess.Lmd.auths->count > 0;
 }
 
-qboolean Auths_RemoveTempAdmin(gentity_t *ent, char *authfile){ 
-	if(!authfile) {
+qboolean Auths_RemoveTempAdmin(gentity_t *ent, char *authfile)
+{
+	if (!authfile)
+	{
 		Auths_RemoveAllDataEntries(ent->client->sess.Lmd.auths);
 	}
-	else {
+	else
+	{
 		authFile_t *file = Auths_GetFile(authfile);
-		if(!file)
+		if (!file)
 			return qfalse;
 		Auths_RemoveDataEntry(ent->client->sess.Lmd.auths, file);
 	}
 	return qtrue;
 }
 
-qboolean Auths_PlayerHasAdmin(gentity_t *ent) {
-	if (ent == NULL || ent->client == NULL) {
+qboolean Auths_PlayerHasAdmin(gentity_t *ent)
+{
+	if (ent == NULL || ent->client == NULL)
+	{
 		return qfalse;
 	}
 
-	if(Auths_PlayerHasTempAdmin(ent))
+	if (Auths_PlayerHasTempAdmin(ent))
 		return qtrue;
 	return Auths_AccHasAdmin(ent->client->pers.Lmd.account);
 }
 
-void Auths_DispAdmins(char* msg) {
+void Auths_DispAdmins(char *msg)
+{
 	unsigned int i;
-	for (i = 0; i < level.maxclients; i++) {
+	for (i = 0; i < level.maxclients; i++)
+	{
 		gentity_t *ent = &g_entities[i];
 		//Ufo:
-		if (Auths_PlayerHasAdmin(ent) && Auths_PlayerHasAuthFlag(ent, AUTH_BETACMDS)) {
+		if (Auths_PlayerHasAdmin(ent) && Auths_PlayerHasAuthFlag(ent, AUTH_BETACMDS))
+		{
 			Disp(ent, msg);
 		}
 	}
 }
 
-qboolean Auths_PlayerHasTempFile(gentity_t *ent, authFile_t *file) {
+qboolean Auths_PlayerHasTempFile(gentity_t *ent, authFile_t *file)
+{
 	//Might need to branch this off into a seperate function if I ever need it on its own.
 	unsigned int i;
-	for(i = 0; i < ent->client->sess.Lmd.auths->count; i++) {
-		if(ent->client->sess.Lmd.auths->list[i].file == file)
+	for (i = 0; i < ent->client->sess.Lmd.auths->count; i++)
+	{
+		if (ent->client->sess.Lmd.auths->list[i].file == file)
 			return qtrue;
 	}
 	return qfalse;
 }
 
-void Auths_AddTempAuthfile(gentity_t *ent, authFile_t *file) {
+void Auths_AddTempAuthfile(gentity_t *ent, authFile_t *file)
+{
 	Auths_AddDataEntry(ent->client->sess.Lmd.auths, file, -1);
 }
 
-qboolean Auths_RemoveTempAuthfile(gentity_t *ent, authFile_t *file) {
-	if (!ent || !ent->client) {
+qboolean Auths_RemoveTempAuthfile(gentity_t *ent, authFile_t *file)
+{
+	if (!ent || !ent->client)
+	{
 		return qfalse;
 	}
 
-	if (!file) {
+	if (!file)
+	{
 		Auths_RemoveAllDataEntries(ent->client->sess.Lmd.auths);
 		return qtrue;
 	}
@@ -557,18 +622,20 @@ qboolean Auths_RemoveTempAuthfile(gentity_t *ent, authFile_t *file) {
 	return Auths_RemoveDataEntry(ent->client->sess.Lmd.auths, file);
 }
 
-qboolean Auths_PlayerHasFile(gentity_t *ent, authFile_t *file) {
-	if(Auths_PlayerHasTempFile(ent, file))
+qboolean Auths_PlayerHasFile(gentity_t *ent, authFile_t *file)
+{
+	if (Auths_PlayerHasTempFile(ent, file))
 		return qtrue;
 	return Auths_AccHasFile(ent->client->pers.Lmd.account, file);
 }
 
-void Auths_PlayerCmdpointRegen(gentity_t *ent) {
+void Auths_PlayerCmdpointRegen(gentity_t *ent)
+{
 	//TODO: Auths_PlayerCmdpointRegen
 }
 
-
-qboolean Auths_InferiorToAcc(gentity_t *ent, Account_t *targ) {
+qboolean Auths_InferiorToAcc(gentity_t *ent, Account_t *targ)
+{
 	if (!ent || !ent->client)
 		return qfalse;
 
@@ -581,21 +648,23 @@ qboolean Auths_InferiorToAcc(gentity_t *ent, Account_t *targ) {
 	int myRank = Auths_GetPlayerRank(ent);
 	int targRank = Auths_GetRank(targ);
 
-	if(myRank == 1)
+	if (myRank == 1)
 		return qfalse;
-	else if(targRank == 0)
+	else if (targRank == 0)
 		return qfalse;
-	else if(myRank == 0) {
+	else if (myRank == 0)
+	{
 		return qtrue;
 	}
 
-	if(myRank >= targRank)
+	if (myRank >= targRank)
 		return qtrue;
 
 	return qfalse;
 }
 
-qboolean Auths_Inferior(gentity_t *ent, gentity_t *targ) {
+qboolean Auths_Inferior(gentity_t *ent, gentity_t *targ)
+{
 	if (!ent || !ent->client)
 		return qfalse;
 
@@ -608,71 +677,79 @@ qboolean Auths_Inferior(gentity_t *ent, gentity_t *targ) {
 	int myRank = Auths_GetPlayerRank(ent);
 	int targRank = Auths_GetPlayerRank(targ);
 
-	if(myRank == 1)
+	if (myRank == 1)
 		return qfalse;
-	else if(targRank == 0)
+	else if (targRank == 0)
 		return qfalse;
-	else if(myRank == 0) {
+	else if (myRank == 0)
+	{
 		return qtrue;
 	}
 
-	if(myRank >= targRank)
+	if (myRank >= targRank)
 		return qtrue;
 
 	return qfalse;
 }
 
-void Auths_AllocTempAdmin(clientSession_t *sess) {
-	if(sess->Lmd.auths)
+void Auths_AllocTempAdmin(clientSession_t *sess)
+{
+	if (sess->Lmd.auths)
 		Lmd_Arrays_RemoveAllElements((void **)&sess->Lmd.auths->list);
 	else
 		sess->Lmd.auths = (authFileDataList_t *)G_Alloc(sizeof(authFileDataList_t));
 }
 
-
-void Auths_WriteTempAdminSess(gclient_t *client) {
+void Auths_WriteTempAdminSess(gclient_t *client)
+{
 	char buf[MAX_STRING_CHARS] = "";
 	int buflen = 0;
 	int tmplen;
 	char *tmp;
 	int i;
 	authFileDataList_t *list = client->sess.Lmd.auths;
-	if(!list)
+	if (!list)
 		return;
-	for(i = 0; i < list->count; i++) {
+	for (i = 0; i < list->count; i++)
+	{
 		tmp = va("%s,%i,", list->list[i].file->name, list->list[i].points);
 		tmplen = strlen(tmp);
-		if(tmplen + buflen >= 1023)
+		if (tmplen + buflen >= 1023)
 			break;
 		Q_strncpyz(buf, tmp, sizeof(buf));
 		buflen += tmplen;
 	}
-	trap_Cvar_Set(va( "lauthsession%i", client - level.clients ), buf);
+	trap_Cvar_Set(va("lauthsession%i", client - level.clients), buf);
 }
 
-void Auths_ReadTempAdminSess(gclient_t *client) {
+void Auths_ReadTempAdminSess(gclient_t *client)
+{
 	//If this is not a brand new session we might not get AllocTempAdmin called.
-	if(!client->sess.Lmd.auths)
+	if (!client->sess.Lmd.auths)
 		client->sess.Lmd.auths = (authFileDataList_t *)G_Alloc(sizeof(authFileDataList_t));
 
 	authFileDataList_t *list = client->sess.Lmd.auths;
 	char str[MAX_STRING_CHARS], name[MAX_STRING_CHARS], buf[MAX_STRING_CHARS];
-	trap_Cvar_VariableStringBuffer(va("lauthsession%i", client - level.clients ), str, sizeof(str));
+	trap_Cvar_VariableStringBuffer(va("lauthsession%i", client - level.clients), str, sizeof(str));
 	qboolean inPoints = qtrue;
 	int bufPos = 0;
 	char *ptr = str;
 	authFile_t *file;
-	while(ptr[0]) {
-		if(ptr[0] == ',') {
+	while (ptr[0])
+	{
+		if (ptr[0] == ',')
+		{
 			buf[bufPos] = 0;
 			bufPos = 0;
-			if(inPoints) {
+			if (inPoints)
+			{
 				file = Auths_GetFile(name);
-				if(file)
+				if (file)
 					Auths_AddDataEntry(list, file, atoi(buf));
 				inPoints = qfalse;
 			}
-			else {
+			else
+			{
 				Q_strncpyz(name, buf, sizeof(name));
 				inPoints = qtrue;
 			}
@@ -684,34 +761,41 @@ void Auths_ReadTempAdminSess(gclient_t *client) {
 	}
 }
 
-authCmdEntry_t *Auths_GetPlayerFileCmdEntry(gentity_t *ent, cmdEntry_t *cmd, authFileData_t **foundData){
-	if(foundData)
+authCmdEntry_t *Auths_GetPlayerFileCmdEntry(gentity_t *ent, cmdEntry_t *cmd, authFileData_t **foundData)
+{
+	if (foundData)
 		(*foundData) = NULL;
 	authCmdEntry_t *e;
 	e = Auths_GetAuthCmdEntry(&defaultCmds, cmd);
-	if(e){
+	if (e)
+	{
 		return e;
 	}
 
-	if(ent->client->pers.Lmd.account) {
+	if (ent->client->pers.Lmd.account)
+	{
 		authFileDataList_t *data = AUTHDATA(ent->client->pers.Lmd.account);
 		int i;
-		for(i = 0; i < data->count; i++){
+		for (i = 0; i < data->count; i++)
+		{
 			e = Auths_GetAuthCmdEntry(data->list[i].file, cmd);
-			if(e){
-				if(foundData)
+			if (e)
+			{
+				if (foundData)
 					(*foundData) = &data->list[i];
 				return e;
 			}
 		}
 	}
-	
+
 	//Check temporary auths
 	int i;
-	for(i = 0; i < ent->client->sess.Lmd.auths->count; i++) {
+	for (i = 0; i < ent->client->sess.Lmd.auths->count; i++)
+	{
 		e = Auths_GetAuthCmdEntry(ent->client->sess.Lmd.auths->list[i].file, cmd);
-		if(e) {
-			if(foundData)
+		if (e)
+		{
+			if (foundData)
 				(*foundData) = &ent->client->sess.Lmd.auths->list[i];
 			return e;
 		}
@@ -719,116 +803,138 @@ authCmdEntry_t *Auths_GetPlayerFileCmdEntry(gentity_t *ent, cmdEntry_t *cmd, aut
 	return NULL;
 }
 
-qboolean Auths_PlayerHasCommand(gentity_t *ent, cmdEntry_t *cmd) {
+qboolean Auths_PlayerHasCommand(gentity_t *ent, cmdEntry_t *cmd)
+{
 	return Auths_GetPlayerFileCmdEntry(ent, cmd, NULL) != NULL;
 }
 
-qboolean Auths_CanUseCommand(gentity_t *ent, cmdEntry_t *cmd) {
+qboolean Auths_CanUseCommand(gentity_t *ent, cmdEntry_t *cmd)
+{
 	authFileData_t *fileData = NULL;
 	authCmdEntry_t *entry = Auths_GetPlayerFileCmdEntry(ent, cmd, &fileData);
-	if(entry->restr){
+	if (entry->restr)
+	{
 		int i;
 		qboolean found = qfalse;
-		for(i = 0; i < MAX_CLIENTS; i++){
-			if(!g_entities[i].inuse || !g_entities[i].client)
+		for (i = 0; i < MAX_CLIENTS; i++)
+		{
+			if (!g_entities[i].inuse || !g_entities[i].client)
 				continue;
 			int plRank = Auths_GetPlayerRank(&g_entities[i]);
-			if(plRank > 0 && plRank <= entry->restr){
+			if (plRank > 0 && plRank <= entry->restr)
+			{
 				found = qtrue;
 				break;
 			}
 		}
-		if(!found) {
-			Disp(ent, va(CT_NA"To use this command, there must be another admin of rank "CT_NAV"%i"CT_NA" or better logged in.", entry->restr));
+		if (!found)
+		{
+			Disp(ent, va(CT_NA "To use this command, there must be another admin of rank " CT_NAV "%i" CT_NA " or better logged in.", entry->restr));
 			return qfalse;
 		}
 	}
-	if(entry->cost && fileData->points < entry->cost){
-		Disp(ent, va(CT_NA"To use this command, you must have at least "CT_NAV"%i"CT_NA" command points.", entry->cost));
+	if (entry->cost && fileData->points < entry->cost)
+	{
+		Disp(ent, va(CT_NA "To use this command, you must have at least " CT_NAV "%i" CT_NA " command points.", entry->cost));
 		return qfalse;
 	}
 	return qtrue;
 }
 
 char *ConcatArgs(int start);
-void Auths_CommandUsed(gentity_t *ent, cmdEntry_t *cmd){
+void Auths_CommandUsed(gentity_t *ent, cmdEntry_t *cmd)
+{
 	authFileData_t *fileData = NULL;
 	authCmdEntry_t *entry = Auths_GetPlayerFileCmdEntry(ent, cmd, &fileData);
-	if(!entry) {
+	if (!entry)
+	{
 		return;
 	}
 
-	if(entry->report != 0){
+	if (entry->report != 0)
+	{
 
-		char *msg = va(CT_B"Player "CT_N"%s"CT_B" ("CT_SV"%s"CT_B") used command \'"CT_SV"%s"CT_B"\'", ent->client->pers.netname, PlayerAcc_GetUsername(ent), ConcatArgs(0));
+		char *msg = va(CT_B "Player " CT_N "%s" CT_B " (" CT_SV "%s" CT_B ") used command \'" CT_SV "%s" CT_B "\'", ent->client->pers.netname, PlayerAcc_GetUsername(ent), ConcatArgs(0));
 		int i;
-		for(i = 0; i < MAX_CLIENTS; i++){
-			if(!g_entities[i].inuse || !g_entities[i].client || g_entities[i].client->pers.connected != CON_CONNECTED)
+		for (i = 0; i < MAX_CLIENTS; i++)
+		{
+			if (!g_entities[i].inuse || !g_entities[i].client || g_entities[i].client->pers.connected != CON_CONNECTED)
 				continue;
 
 			int plRank = Auths_GetPlayerRank(&g_entities[i]);
-			if (plRank != 0 && (entry->report == -1 || plRank <= entry->report)) {
+			if (plRank != 0 && (entry->report == -1 || plRank <= entry->report))
+			{
 				Disp(&g_entities[i], msg);
 			}
 		}
 	}
-	if(entry->cost){
+	if (entry->cost)
+	{
 		fileData->points -= entry->cost;
 		Lmd_Accounts_Modify(ent->client->pers.Lmd.account);
 	}
 }
 
-authFileData_t* Auths_GetAccAuthData(Account_t *acc, authFile_t *file) {
-	if(!acc)
+authFileData_t *Auths_GetAccAuthData(Account_t *acc, authFile_t *file)
+{
+	if (!acc)
 		return NULL;
 	authFileDataList_t *data = AUTHDATA(acc);
 	int i;
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file == file)
-		return &data->list[i];
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file == file)
+			return &data->list[i];
 	}
 	return NULL;
 }
 
-qboolean Auths_AccHasAuthFlag(Account_t *acc, int auth) {
+qboolean Auths_AccHasAuthFlag(Account_t *acc, int auth)
+{
 	authFileDataList_t *data = AUTHDATA(acc);
 	int i;
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file->flags == -1 || data->list[i].file->flags & (1 << auth))
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file->flags == -1 || data->list[i].file->flags & (1 << auth))
 			return qtrue;
 	}
 	return qfalse;
 }
 
-qboolean Auths_PlayerHasAuthFlag(gentity_t *ent, int auth) {
+qboolean Auths_PlayerHasAuthFlag(gentity_t *ent, int auth)
+{
 	int i;
 	//Check temporary auths
-	for(i = 0; i < ent->client->sess.Lmd.auths->count; i++) {
-		if(ent->client->sess.Lmd.auths->list[i].file->flags & (1 << auth))
+	for (i = 0; i < ent->client->sess.Lmd.auths->count; i++)
+	{
+		if (ent->client->sess.Lmd.auths->list[i].file->flags & (1 << auth))
 			return qtrue;
 	}
 
-	if(!ent->client->pers.Lmd.account)
+	if (!ent->client->pers.Lmd.account)
 		return qfalse;
 	return Auths_AccHasAuthFlag(ent->client->pers.Lmd.account, auth);
 }
 
-void Auths_UnallocFile(authFile_t *file) {
+void Auths_UnallocFile(authFile_t *file)
+{
 
 	int i;
-	for(i = 0; i < file->count; i++) {
+	for (i = 0; i < file->count; i++)
+	{
 		BG_FreeFields(authCmdEntryFields, (byte *)file->entries[i]);
 		G_Free(file->entries[i]);
 	}
 
 	G_Free(file->name);
 	G_Free(file->logfile);
-
 }
 
-void Auths_Shutdown() {
+void Auths_Shutdown()
+{
 	int i;
-	for(i = 0; i < AuthFiles.count; i++) {
+	for (i = 0; i < AuthFiles.count; i++)
+	{
 		Auths_UnallocFile(&AuthFiles.files[i]);
 	}
 
@@ -838,12 +944,13 @@ void Auths_Shutdown() {
 	Auths_UnallocFile(&defaultCmds);
 }
 
-char* Auths_QuickAuthList(Account_t *acc) {
+char *Auths_QuickAuthList(Account_t *acc)
+{
 	int highest[3] = {-1, -1, -1};
 	int i, j;
 
 	//FIXME: temp admin.
-	if(!acc)
+	if (!acc)
 		return "";
 
 	static char buf[MAX_STRING_CHARS];
@@ -851,16 +958,21 @@ char* Auths_QuickAuthList(Account_t *acc) {
 
 	authFileDataList_t *data = AUTHDATA(acc);
 
-	for(i = 0; i < data->count; i++) {
-		if(data->list[i].file->rank <= 0)
+	for (i = 0; i < data->count; i++)
+	{
+		if (data->list[i].file->rank <= 0)
 			continue;
 
-		for(j = 0; j < 3; j++) {
-			if(data->list[i].file->rank < highest[j] || highest[j] < 0) {
-				if(j == 0 || j == 1) {
+		for (j = 0; j < 3; j++)
+		{
+			if (data->list[i].file->rank < highest[j] || highest[j] < 0)
+			{
+				if (j == 0 || j == 1)
+				{
 					highest[2] = highest[1];
 				}
-				if(j == 0) {
+				if (j == 0)
+				{
 					highest[1] = highest[0];
 				}
 				highest[j] = i;
@@ -869,19 +981,21 @@ char* Auths_QuickAuthList(Account_t *acc) {
 		}
 	}
 
-	for(i = 0; i < 3; i++) {
-		if(highest[i] < 0)
+	for (i = 0; i < 3; i++)
+	{
+		if (highest[i] < 0)
 			break;
-		Q_strcat(buf, sizeof(buf), va("'"CT_V"%s"CT_B"', ", data->list[highest[i]].file->name, data->list[highest[i]].file->rank));
+		Q_strcat(buf, sizeof(buf), va("'" CT_V "%s" CT_B "', ", data->list[highest[i]].file->name, data->list[highest[i]].file->rank));
 	}
 
 	buf[strlen(buf) - 2] = 0;
-	if(data->count > 3)
-		Q_strcat(buf, sizeof(buf), va(", and "CT_V"%i"CT_B" other%s", data->count - 3, (data->count - 3 > 1)?"s":""));
+	if (data->count > 3)
+		Q_strcat(buf, sizeof(buf), va(", and " CT_V "%i" CT_B " other%s", data->count - 3, (data->count - 3 > 1) ? "s" : ""));
 	return buf;
 }
 
-char* Auths_QuickPlayerAuthList(gentity_t *ent) {
+char *Auths_QuickPlayerAuthList(gentity_t *ent)
+{
 	//FIXME: determine the highest 3 and display them in order.
 	static char buf[MAX_STRING_CHARS];
 	Q_strncpyz(buf, CT_B, sizeof(buf));
@@ -890,76 +1004,85 @@ char* Auths_QuickPlayerAuthList(gentity_t *ent) {
 	int total = ent->client->sess.Lmd.auths->count;
 
 	int i;
-	for(i = 0; i < ent->client->sess.Lmd.auths->count; i++) {
-		if(count > 0) {
-			Q_strcat(buf, sizeof(buf), va("'"CT_V"%s"CT_B"', ", ent->client->sess.Lmd.auths->list[i].file->name,
-				ent->client->sess.Lmd.auths->list[i].file->rank));
+	for (i = 0; i < ent->client->sess.Lmd.auths->count; i++)
+	{
+		if (count > 0)
+		{
+			Q_strcat(buf, sizeof(buf), va("'" CT_V "%s" CT_B "', ", ent->client->sess.Lmd.auths->list[i].file->name, ent->client->sess.Lmd.auths->list[i].file->rank));
 			count--;
 		}
 	}
 
-	if(ent->client->pers.Lmd.account) {
+	if (ent->client->pers.Lmd.account)
+	{
 		authFileDataList_t *data = AUTHDATA(ent->client->pers.Lmd.account);
 
 		total += data->count;
 
-		for(i = 0; i < data->count; i++) {
-			if(count > 0) {
-				Q_strcat(buf, sizeof(buf), va("'"CT_V"%s"CT_B"', ", data->list[i].file->name, data->list[i].file->rank));
+		for (i = 0; i < data->count; i++)
+		{
+			if (count > 0)
+			{
+				Q_strcat(buf, sizeof(buf), va("'" CT_V "%s" CT_B "', ", data->list[i].file->name, data->list[i].file->rank));
 				count--;
 			}
 		}
 	}
 
 	buf[strlen(buf) - 2] = 0;
-	if(total > 3)
-		Q_strcat(buf, sizeof(buf), va(", and "CT_V"%i"CT_B" others", total - 3));
+	if (total > 3)
+		Q_strcat(buf, sizeof(buf), va(", and " CT_V "%i" CT_B " others", total - 3));
 	return buf;
 }
 
-void Cmd_GrantAdmin_ShowAvailableAuthfiles(gentity_t *ent) {
-	Disp(ent, CT_B"Available admin authfiles\n"
-		CT_V"Rank "CT_VP"Name");
+void Cmd_GrantAdmin_ShowAvailableAuthfiles(gentity_t *ent)
+{
+	Disp(ent, CT_B "Available admin authfiles\n" CT_V "Rank " CT_VP "Name");
 	int i;
 	int rank = 0;
-	if(ent)
+	if (ent)
 		rank = Auths_GetRank(ent->client->pers.Lmd.account);
-	for(i = 0; i < AuthFiles.count; i++) {
-		if(rank > AuthFiles.files[i].rank)
+	for (i = 0; i < AuthFiles.count; i++)
+	{
+		if (rank > AuthFiles.files[i].rank)
 			continue;
-		Disp(ent, va(CT_V"%-4i "CT_VP"%s", AuthFiles.files[i].rank, AuthFiles.files[i].name));
+		Disp(ent, va(CT_V "%-4i " CT_VP "%s", AuthFiles.files[i].rank, AuthFiles.files[i].name));
 	}
 }
 
-void Cmd_GrantAdmin_ListAuths(gentity_t *ent, Account_t *acc) {
+void Cmd_GrantAdmin_ListAuths(gentity_t *ent, Account_t *acc)
+{
 	authFileDataList_t *data = AUTHDATA(acc);
-	if(data->count == 0) {
-		Disp(ent, CT_NA"This account has no authfiles.");
+	if (data->count == 0)
+	{
+		Disp(ent, CT_NA "This account has no authfiles.");
 	}
-	else {
+	else
+	{
 		int i;
-		Disp(ent, CT_B"Authfiles on this account\n"
-			CT_V"Rank "CT_VP"Name");
-		for(i = 0; i < data->count; i++) {
-			Disp(ent, va(CT_V"%.4i "CT_VP"%s", data->list[i].file->rank, data->list[i].file->name));
+		Disp(ent, CT_B "Authfiles on this account\n" CT_V "Rank " CT_VP "Name");
+		for (i = 0; i < data->count; i++)
+		{
+			Disp(ent, va(CT_V "%.4i " CT_VP "%s", data->list[i].file->rank, data->list[i].file->name));
 		}
 	}
 }
 
-void Cmd_GrantAdmin_f(gentity_t *ent, int iArg){
+void Cmd_GrantAdmin_f(gentity_t *ent, int iArg)
+{
 	char arg[MAX_STRING_CHARS];
 	Account_t *acc;
 	authFile_t *file;
 	char *username;
 
-	if(iArg && trap_Argc() < 2) {
-		Disp(ent, CT_C"RemoveAdmin "CT_AR"<account> <authfile>\n"
-			CT_B"Set authfile to \'"CT_V"all"CT_B"\' to remove all admin.\n"
-			CT_B"If no authfile given, all of the account's authfiles will be listed.");
+	if (iArg && trap_Argc() < 2)
+	{
+		Disp(ent, CT_C "RemoveAdmin " CT_AR "<account> <authfile>\n" CT_B "Set authfile to \'" CT_V "all" CT_B "\' to remove all admin.\n" CT_B "If no authfile given, all of the account's authfiles will be listed.");
 		return;
 	}
-	else if (trap_Argc() < 3) {
-		Disp(ent, CT_C"GrantAdmin "CT_AR"<account> <authfile>");
+	else if (trap_Argc() < 3)
+	{
+		Disp(ent, CT_C "GrantAdmin " CT_AR "<account> <authfile>");
 		Cmd_GrantAdmin_ShowAvailableAuthfiles(ent);
 		return;
 	}
@@ -967,15 +1090,17 @@ void Cmd_GrantAdmin_f(gentity_t *ent, int iArg){
 	trap_Argv(1, arg, sizeof(arg));
 
 	acc = Accounts_GetById(atoi(arg));
-	if(!acc)
+	if (!acc)
 		acc = Accounts_GetByUsername(arg);
-	if(!acc){
-		Disp(ent, CT_NA"Unable to find account.");
+	if (!acc)
+	{
+		Disp(ent, CT_NA "Unable to find account.");
 		return;
 	}
 
 	trap_Argv(2, arg, sizeof(arg));
-	if(iArg && !arg[0]) {
+	if (iArg && !arg[0])
+	{
 		Cmd_GrantAdmin_ListAuths(ent, acc);
 		return;
 	}
@@ -984,180 +1109,215 @@ void Cmd_GrantAdmin_f(gentity_t *ent, int iArg){
 
 	file = Auths_GetFile(arg);
 
-	if(!file){
-		if(!iArg || Q_stricmp(arg, "all") != 0) {
-			Disp(ent, CT_NA"Unknown authfile.");
+	if (!file)
+	{
+		if (!iArg || Q_stricmp(arg, "all") != 0)
+		{
+			Disp(ent, CT_NA "Unknown authfile.");
 			return;
 		}
 	}
 
-	if (Auths_InferiorToAcc(ent, acc)){
-		Disp(ent, va(CT_NA"You cannot change "CT_NAV"%s"CT_NA"'s admin.", username));
+	if (Auths_InferiorToAcc(ent, acc))
+	{
+		Disp(ent, va(CT_NA "You cannot change " CT_NAV "%s" CT_NA "'s admin.", username));
 		return;
 	}
 
-	if(!iArg) {
-		if(ent && Auths_GetRank(ent->client->pers.Lmd.account) > file->rank) {
-			Disp(ent, CT_NA"You cannot use an authfile with a rank lower or equal to your own.");
+	if (!iArg)
+	{
+		if (ent && Auths_GetRank(ent->client->pers.Lmd.account) > file->rank)
+		{
+			Disp(ent, CT_NA "You cannot use an authfile with a rank lower or equal to your own.");
 			return;
 		}
 	}
 
-	if(iArg) {
-		if(!file) {
+	if (iArg)
+	{
+		if (!file)
+		{
 			Auths_RemoveAllAccAuthfiles(acc);
-			Disp(ent, va(CT_S"All authfiles removed from "CT_SV"%s", username));
-			if(Accounts_Prof_GetProfession(acc) == PROF_ADMIN){
+			Disp(ent, va(CT_S "All authfiles removed from " CT_SV "%s", username));
+			if (Accounts_Prof_GetProfession(acc) == PROF_ADMIN)
+			{
 				Accounts_Prof_SetProfession(acc, PROF_NONE);
 				Accounts_Prof_SetLevel(acc, 1);
 			}
 			Lmd_Accounts_Modify(acc);
 		}
-		else if(Auths_RemoveAccAuthfile(acc, file)) {
-			Disp(ent, va(CT_S"Authfile "CT_SV"%s"CT_S" removed from "CT_SV"%s", file->name, username));
-			if(Auths_AccHasAuthFlag(acc, AUTH_GODPROF) == qfalse && Accounts_Prof_GetProfession(acc) == PROF_ADMIN){
+		else if (Auths_RemoveAccAuthfile(acc, file))
+		{
+			Disp(ent, va(CT_S "Authfile " CT_SV "%s" CT_S " removed from " CT_SV "%s", file->name, username));
+			if (Auths_AccHasAuthFlag(acc, AUTH_GODPROF) == qfalse && Accounts_Prof_GetProfession(acc) == PROF_ADMIN)
+			{
 				Accounts_Prof_SetProfession(acc, PROF_NONE);
 				Accounts_Prof_SetLevel(acc, 1);
 			}
 			Lmd_Accounts_Modify(acc);
 		}
 		else
-			Disp(ent, va(CT_NAV"%s"CT_NA" does not have authfile "CT_NAV"%s", username, file->name));
+			Disp(ent, va(CT_NAV "%s" CT_NA " does not have authfile " CT_NAV "%s", username, file->name));
 	}
-	else if(Auths_AccHasFile(acc, file)) {
-		Disp(ent, va(CT_NAV"%s"CT_NA" already has this authfile.  Use "CT_C"\'/RemoveAdmin %s %s"CT_NA"\' to remove it.", 
-			username, username, file->name));
+	else if (Auths_AccHasFile(acc, file))
+	{
+		Disp(ent, va(CT_NAV "%s" CT_NA " already has this authfile.  Use " CT_C "\'/RemoveAdmin %s %s" CT_NA "\' to remove it.",
+					 username, username, file->name));
 	}
-	else {
-		if(file->autoGenerated) {
+	else
+	{
+		if (file->autoGenerated)
+		{
 			Auths_RemoveAutoAuthfiles(AUTHDATA(acc));
-			Disp(ent, CT_B"Auto-generated admin auths removed.");
+			Disp(ent, CT_B "Auto-generated admin auths removed.");
 		}
 		Auths_AddAccAuthfile(acc, file);
-		Disp(ent, va(CT_V"%s"CT_S" now has access to authfile \'"CT_SV"%s"CT_S"\'.", username, file->name));
+		Disp(ent, va(CT_V "%s" CT_S " now has access to authfile \'" CT_SV "%s" CT_S "\'.", username, file->name));
 	}
 }
 
-void Cmd_GrantTempAdmin_ListAuths(gentity_t *ent, gentity_t *targ) {
+void Cmd_GrantTempAdmin_ListAuths(gentity_t *ent, gentity_t *targ)
+{
 	authFileDataList_t *data = targ->client->sess.Lmd.auths;
-	if(data->count == 0) {
-		Disp(ent, CT_NA"This player has no temporary authfiles.");
+	if (data->count == 0)
+	{
+		Disp(ent, CT_NA "This player has no temporary authfiles.");
 	}
-	else {
+	else
+	{
 		int i;
-		Disp(ent, CT_B"Temporary authfiles on this player\n"
-			CT_V"Rank "CT_VP"Name");
-		for(i = 0; i < data->count; i++) {
-			Disp(ent, va(CT_V"%.4i "CT_VP"%s", data->list[i].file->rank, data->list[i].file->name));
+		Disp(ent, CT_B "Temporary authfiles on this player\n" CT_V "Rank " CT_VP "Name");
+		for (i = 0; i < data->count; i++)
+		{
+			Disp(ent, va(CT_V "%.4i " CT_VP "%s", data->list[i].file->rank, data->list[i].file->name));
 		}
 	}
 }
 
-gentity_t *ClientFromArg (gentity_t *to, int argNum);
-void Cmd_GrantTempAdmin_f(gentity_t *ent, int iArg){
+gentity_t *ClientFromArg(gentity_t *to, int argNum);
+void Cmd_GrantTempAdmin_f(gentity_t *ent, int iArg)
+{
 	char arg[MAX_STRING_CHARS];
 	gentity_t *tEnt;
 	authFile_t *file;
-	if(iArg && trap_Argc() < 2) {
-		Disp(ent, CT_C"RemoveTempAdmin "CT_AR"<player> <authfile>\n"
-			CT_B"Set authfile to \'"CT_V"all"CT_B"\' to remove all temporary authfiles.\n"
-			CT_B"If no authfile specified, all of the player's temporary authfiles will be listed.");
+	if (iArg && trap_Argc() < 2)
+	{
+		Disp(ent, CT_C "RemoveTempAdmin " CT_AR "<player> <authfile>\n" CT_B "Set authfile to \'" CT_V "all" CT_B "\' to remove all temporary authfiles.\n" CT_B "If no authfile specified, all of the player's temporary authfiles will be listed.");
 		return;
 	}
-	else if(trap_Argc() < 3) {
-		Disp(ent, CT_C"GrantTempAdmin "CT_AR"<player> <authfile>");
+	else if (trap_Argc() < 3)
+	{
+		Disp(ent, CT_C "GrantTempAdmin " CT_AR "<player> <authfile>");
 		Cmd_GrantAdmin_ShowAvailableAuthfiles(ent);
 		return;
 	}
 
-	if (!(tEnt = ClientFromArg(ent, 1))) {
-		Disp(ent, CT_NA"Player not found.");
+	if (!(tEnt = ClientFromArg(ent, 1)))
+	{
+		Disp(ent, CT_NA "Player not found.");
 		return;
 	}
 
 	trap_Argv(2, arg, sizeof(arg));
 
-	if(iArg && !arg[0]) {
+	if (iArg && !arg[0])
+	{
 		Cmd_GrantTempAdmin_ListAuths(ent, tEnt);
 		return;
 	}
 
 	file = Auths_GetFile(arg);
-	if(!file){
-		if(!iArg || Q_stricmp(arg, "all") != 0) {
-			Disp(ent, CT_NA"Unknown authfile.");
+	if (!file)
+	{
+		if (!iArg || Q_stricmp(arg, "all") != 0)
+		{
+			Disp(ent, CT_NA "Unknown authfile.");
 			return;
 		}
 	}
 
-	if (Auths_Inferior(ent, tEnt)){
-		Disp(ent, va(CT_NA"You cannot change "CT_NAV"%s"CT_NA"'s admin.", tEnt->client->pers.netname));
+	if (Auths_Inferior(ent, tEnt))
+	{
+		Disp(ent, va(CT_NA "You cannot change " CT_NAV "%s" CT_NA "'s admin.", tEnt->client->pers.netname));
 		return;
 	}
 
-	if(!iArg) {
-		if(ent && Auths_GetRank(ent->client->pers.Lmd.account) > file->rank) {
-			Disp(ent, CT_NA"You cannot use an authfile with a rank lower or equal to your own.");
+	if (!iArg)
+	{
+		if (ent && Auths_GetRank(ent->client->pers.Lmd.account) > file->rank)
+		{
+			Disp(ent, CT_NA "You cannot use an authfile with a rank lower or equal to your own.");
 			return;
 		}
 	}
 
-	if(iArg) {
+	if (iArg)
+	{
 
-		if(!file) {
+		if (!file)
+		{
 			Auths_RemoveTempAuthfile(tEnt, NULL);
-			Disp(ent, va(CT_S"All authfiles removed from "CT_SV"%s", tEnt->client->pers.netname));
+			Disp(ent, va(CT_S "All authfiles removed from " CT_SV "%s", tEnt->client->pers.netname));
 		}
-		else if(Auths_RemoveTempAuthfile(tEnt, file)) {
-			Disp(ent, va(CT_S"Temporary authfile "CT_SV"%s"CT_S" removed from "CT_SV"%s", file->name, tEnt->client->pers.netname));
+		else if (Auths_RemoveTempAuthfile(tEnt, file))
+		{
+			Disp(ent, va(CT_S "Temporary authfile " CT_SV "%s" CT_S " removed from " CT_SV "%s", file->name, tEnt->client->pers.netname));
 		}
-		else {
-			Disp(ent, va(CT_NAV"%s"CT_NA" does not have temporary authfile "CT_NAV"%s", tEnt->client->pers.netname, file->name));
+		else
+		{
+			Disp(ent, va(CT_NAV "%s" CT_NA " does not have temporary authfile " CT_NAV "%s", tEnt->client->pers.netname, file->name));
 			return;
 		}
 
-		if(Auths_PlayerHasTempAdmin(tEnt) == qfalse && PlayerAcc_Prof_GetProfession(tEnt) == PROF_ADMIN){
+		if (Auths_PlayerHasTempAdmin(tEnt) == qfalse && PlayerAcc_Prof_GetProfession(tEnt) == PROF_ADMIN)
+		{
 			PlayerAcc_Prof_SetProfession(tEnt, PROF_NONE);
 			PlayerAcc_Prof_SetLevel(tEnt, 1);
 		}
 		tEnt->flags &= ~FL_GODMODE;
 		tEnt->flags &= ~FL_NOTARGET;
 	}
-	else {
-		if(file->autoGenerated) {
+	else
+	{
+		if (file->autoGenerated)
+		{
 			Auths_RemoveAutoAuthfiles(tEnt->client->sess.Lmd.auths);
-			Disp(ent, CT_B"Auto-generated admin auths removed.");
+			Disp(ent, CT_B "Auto-generated admin auths removed.");
 		}
 		Auths_AddTempAuthfile(tEnt, file);
-		Disp(ent, va(CT_SV"%s"CT_S" now has temporary access to authfile \'"CT_SV"%s"CT_S"\'.", tEnt->client->pers.netname, file->name));
+		Disp(ent, va(CT_SV "%s" CT_S " now has temporary access to authfile \'" CT_SV "%s" CT_S "\'.", tEnt->client->pers.netname, file->name));
 	}
 }
 
-void Cmd_MyAuths_DispList(gentity_t *ent, authFileDataList_t *list) {
+void Cmd_MyAuths_DispList(gentity_t *ent, authFileDataList_t *list)
+{
 	int i;
 	char *points;
-	for(i = 0; i < list->count; i++) {
-		if(list->list[i].file->maxPoints > 0 || list->list[i].points > 0) {
-			points = va(CT_V"%i"CT_B" out of "CT_V"%i"CT_B" command points", list->list[i].points, list->list[i].file->maxPoints);
+	for (i = 0; i < list->count; i++)
+	{
+		if (list->list[i].file->maxPoints > 0 || list->list[i].points > 0)
+		{
+			points = va(CT_V "%i" CT_B " out of " CT_V "%i" CT_B " command points", list->list[i].points, list->list[i].file->maxPoints);
 		}
 		else
 			points = "";
-		Disp(ent, va(CT_VP"%-25s "CT_B"%4i  %s", list->list[i].file->name, list->list[i].file->rank, points));
+		Disp(ent, va(CT_VP "%-25s " CT_B "%4i  %s", list->list[i].file->name, list->list[i].file->rank, points));
 	}
 }
 
-void Auths_DispInfo(gentity_t *ent, authFile_t *file, cmdCategory_t *category) {
+void Auths_DispInfo(gentity_t *ent, authFile_t *file, cmdCategory_t *category)
+{
 	unsigned int i;
-	if(!category) {
+	if (!category)
+	{
 		Disp(ent, va(
-			CT_VP"Name: "CT_V"%s\n"
-			CT_VP"Rank: "CT_V"%i", file->name, file->rank));
+					  CT_VP "Name: " CT_V "%s\n" CT_VP "Rank: " CT_V "%i", file->name, file->rank));
 		//TODO: flags
-		if(file->maxPoints) {
-			Disp(ent, va(CT_B"Max command points: "CT_V"%i", file->maxPoints));
+		if (file->maxPoints)
+		{
+			Disp(ent, va(CT_B "Max command points: " CT_V "%i", file->maxPoints));
 		}
-		Disp(ent, CT_B"==============================\n"
-			CT_VP"Command categories");
+		Disp(ent, CT_B "==============================\n" CT_VP "Command categories");
 #if 0
 		//Optimization attempt.  This will fail on gcc/linux, as it claims a constant int isn't a constant.
 		unsigned int counts[sizeof(Categories) / sizeof(cmdCategory_t)];
@@ -1177,141 +1337,162 @@ void Auths_DispInfo(gentity_t *ent, authFile_t *file, cmdCategory_t *category) {
 #else
 		cmdCategory_t *c = Categories;
 		unsigned int count;
-		while(c->name) {
+		while (c->name)
+		{
 			count = 0;
-			for(i = 0; i < file->count; i++) {
-				if(file->entries[i]->cmd->category == c)
+			for (i = 0; i < file->count; i++)
+			{
+				if (file->entries[i]->cmd->category == c)
 					count++;
 			}
-			if(count > 0)
-				Disp(ent, va("^%i%-25s "CT_B"%i", c->color, c->name, count));
+			if (count > 0)
+				Disp(ent, va("^%i%-25s " CT_B "%i", c->color, c->name, count));
 			c++;
 		}
 #endif
 		Disp(ent, "^3==============================");
 	}
-	else {
-		Disp(ent, 
-			CT_B"Commands included in this catagory\n"
-			CT_B"=====================================================");
+	else
+	{
+		Disp(ent,
+			 CT_B "Commands included in this catagory\n" CT_B "=====================================================");
 		char seg[2][59];
 		int p;
 		unsigned int c = 0;
 		//"^3cccccccccccccccccc ^5[Notif: ^2all ^3| ^5Restr: ^2any^5]"
-		for(i = 0; i < file->count; i++) {
-			if(file->entries[i]->cmd->category != category)
+		for (i = 0; i < file->count; i++)
+		{
+			if (file->entries[i]->cmd->category != category)
 				continue;
 			p = c++ % 2;
 			seg[p][0] = 0;
-			Q_strncpyz(seg[p], va(CT_V"%-18s ", file->entries[i]->cmd->name), sizeof(seg[p]));
+			Q_strncpyz(seg[p], va(CT_V "%-18s ", file->entries[i]->cmd->name), sizeof(seg[p]));
 
 			Q_strcat(seg[p], sizeof(seg[p]), "^5[");
 
-			if(file->entries[i]->report > 0)
-				Q_strcat(seg[p], sizeof(seg[p]), va("Notif "CT_V"%-3i", file->entries[i]->report));
-			else if(file->entries[i]->report == -1)
-				Q_strcat(seg[p], sizeof(seg[p]), "Notif "CT_V"All");
+			if (file->entries[i]->report > 0)
+				Q_strcat(seg[p], sizeof(seg[p]), va("Notif " CT_V "%-3i", file->entries[i]->report));
+			else if (file->entries[i]->report == -1)
+				Q_strcat(seg[p], sizeof(seg[p]), "Notif " CT_V "All");
 			else
-				Q_strcat(seg[p], sizeof(seg[p]), "Notif "CT_V"  0");
+				Q_strcat(seg[p], sizeof(seg[p]), "Notif " CT_V "  0");
 
-			Q_strcat(seg[p], sizeof(seg[p]), " "CT_B"| ^5");
+			Q_strcat(seg[p], sizeof(seg[p]), " " CT_B "| ^5");
 
-			if(file->entries[i]->report > 0)
-				Q_strcat(seg[p], sizeof(seg[p]), va("Restr "CT_V"%-3i", file->entries[i]->report));
-			else if(file->entries[i]->report == -1)
-				Q_strcat(seg[p], sizeof(seg[p]), "Restr "CT_V"Any");
+			if (file->entries[i]->report > 0)
+				Q_strcat(seg[p], sizeof(seg[p]), va("Restr " CT_V "%-3i", file->entries[i]->report));
+			else if (file->entries[i]->report == -1)
+				Q_strcat(seg[p], sizeof(seg[p]), "Restr " CT_V "Any");
 			else
-				Q_strcat(seg[p], sizeof(seg[p]), "Restr "CT_V"  0");
+				Q_strcat(seg[p], sizeof(seg[p]), "Restr " CT_V "  0");
 
 			Q_strcat(seg[p], sizeof(seg[p]), "^5]");
 
-			if(p == 1) {
+			if (p == 1)
+			{
 				Disp(ent, va("%-58s %s", seg[0], seg[1]));
 			}
 		}
-		if(p == 0)
+		if (p == 0)
 			Disp(ent, seg[0]);
-		Disp(ent, CT_B"=====================================================");
+		Disp(ent, CT_B "=====================================================");
 	}
 }
 
-void Cmd_MyAuths_f(gentity_t *ent, int iArg){
-	if(trap_Argc() > 1) {
+void Cmd_MyAuths_f(gentity_t *ent, int iArg)
+{
+	if (trap_Argc() > 1)
+	{
 		char arg[MAX_STRING_CHARS];
 		trap_Argv(1, arg, sizeof(arg));
 		authFile_t *file = Auths_GetFile(arg);
-		if(!file || !Auths_PlayerHasFile(ent, file)) {
-			Disp(ent, CT_NA"You do not have an auth file by that name.");
+		if (!file || !Auths_PlayerHasFile(ent, file))
+		{
+			Disp(ent, CT_NA "You do not have an auth file by that name.");
 			return;
 		}
 		cmdCategory_t *category = NULL;
 		trap_Argv(2, arg, sizeof(arg));
-		if(arg[0]) {
+		if (arg[0])
+		{
 			category = Commands_GetCategory(arg);
-			if(!category) {
-				Disp(ent, CT_NA"Unknown category.");
+			if (!category)
+			{
+				Disp(ent, CT_NA "Unknown category.");
 			}
 		}
 		Auths_DispInfo(ent, file, category);
-		if(!category)
-			Disp(ent, CT_B"Use \'"CT_C"MyAuths "CT_AR"<auth> "CT_AO"[category]"CT_B"\' to get information on what commands this role has.");
+		if (!category)
+			Disp(ent, CT_B "Use \'" CT_C "MyAuths " CT_AR "<auth> " CT_AO "[category]" CT_B "\' to get information on what commands this role has.");
 		return;
 	}
 	qboolean hasAdmin = qfalse, hasTemp = qfalse;
-	if(Auths_AccHasAdmin(ent->client->pers.Lmd.account))
+	if (Auths_AccHasAdmin(ent->client->pers.Lmd.account))
 		hasAdmin = qtrue;
-	if(Auths_PlayerHasTempAdmin(ent))
+	if (Auths_PlayerHasTempAdmin(ent))
 		hasTemp = qtrue;
-	if(!hasAdmin && !hasTemp) {
-		Disp(ent, CT_NA"You have no admin authentication.");
+	if (!hasAdmin && !hasTemp)
+	{
+		Disp(ent, CT_NA "You have no admin authentication.");
 		return;
 	}
 	int rank = Auths_GetPlayerRank(ent);
-	if(rank > 0){
-		Disp(ent, va(CT_VP"Best Rank: "CT_V"%i", rank));
+	if (rank > 0)
+	{
+		Disp(ent, va(CT_VP "Best Rank: " CT_V "%i", rank));
 	}
-	Disp(ent, CT_B"=======================================");
-	Disp(ent, CT_VP"Auth role                 "CT_V"Rank  Extra");
-	if(hasAdmin) {
+	Disp(ent, CT_B "=======================================");
+	Disp(ent, CT_VP "Auth role                 " CT_V "Rank  Extra");
+	if (hasAdmin)
+	{
 		Cmd_MyAuths_DispList(ent, AUTHDATA(ent->client->pers.Lmd.account));
 	}
-	if(hasTemp) {
+	if (hasTemp)
+	{
 		Disp(ent, "^5Temporary");
 		Cmd_MyAuths_DispList(ent, ent->client->sess.Lmd.auths);
 	}
-	Disp(ent, CT_B"=======================================");
-	Disp(ent, CT_B"Use \'"CT_C"MyAuths "CT_AO"[role]"CT_B"\' to get more information on what each role allows.");
+	Disp(ent, CT_B "=======================================");
+	Disp(ent, CT_B "Use \'" CT_C "MyAuths " CT_AO "[role]" CT_B "\' to get more information on what each role allows.");
 }
 
-void Cmd_AuthInfo_f(gentity_t *ent, int iArg){
-	if(trap_Argc() > 1) {
+void Cmd_AuthInfo_f(gentity_t *ent, int iArg)
+{
+	if (trap_Argc() > 1)
+	{
 		char arg[MAX_STRING_CHARS];
 		trap_Argv(1, arg, sizeof(arg));
 		authFile_t *file = Auths_GetFile(arg);
-		if(!file) {
-			Disp(ent, CT_NA"There is no auth file by that name.");
+		if (!file)
+		{
+			Disp(ent, CT_NA "There is no auth file by that name.");
 			return;
 		}
 		cmdCategory_t *category = NULL;
 		trap_Argv(2, arg, sizeof(arg));
-		if(arg[0]) {
+		if (arg[0])
+		{
 			category = Commands_GetCategory(arg);
-			if(!category) {
-				Disp(ent, CT_NA"Unknown category.");
+			if (!category)
+			{
+				Disp(ent, CT_NA "Unknown category.");
 			}
 		}
 		Auths_DispInfo(ent, file, category);
-		if(!category)
-			Disp(ent, CT_B"Use \'"CT_C"AuthInfo "CT_AR"<role> "CT_AO"[category]"CT_B"\' to get information on what commands this role has.");
+		if (!category)
+			Disp(ent, CT_B "Use \'" CT_C "AuthInfo " CT_AR "<role> " CT_AO "[category]" CT_B "\' to get information on what commands this role has.");
 		return;
 	}
-	else {
+	else
+	{
 		unsigned int i;
 		unsigned int p = 0;
 		char buf[MAX_STRING_CHARS] = "";
-		for(i = 0; i < AuthFiles.count; i++) {
-			Q_strcat(buf, sizeof(buf), va(CT_VP"%.25s ^5["CT_V"%i^5]\t\t", AuthFiles.files[i].name, AuthFiles.files[i].rank));
-			if(++p % 3 == 0) {
+		for (i = 0; i < AuthFiles.count; i++)
+		{
+			Q_strcat(buf, sizeof(buf), va(CT_VP "%.25s ^5[" CT_V "%i^5]\t\t", AuthFiles.files[i].name, AuthFiles.files[i].rank));
+			if (++p % 3 == 0)
+			{
 				Disp(ent, buf);
 				buf[0] = 0;
 			}
@@ -1327,5 +1508,4 @@ cmdEntry_t authCommandEntries[] = {
 	{"removetempadmin", "Remove a temporary authfile from a player.  If authfile is not specified, all of the player's temp authfiles will be listed.", Cmd_GrantTempAdmin_f, 1, qtrue, 3, 0, 0},
 	{"myauths", "Show your admin authentication information.", Cmd_MyAuths_f, 0, qtrue, -2, 0, 0},
 	{"authinfo", "Show all authfiles and get information on their commands.", Cmd_AuthInfo_f, 0, qtrue, 1, 0, 0},
-	{NULL}
-};
+	{NULL}};

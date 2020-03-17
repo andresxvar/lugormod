@@ -1,8 +1,8 @@
 
 #include "g_local.h"
 
-void PlayerGuide_Player_Login(gentity_t *ent) {
-
+void PlayerGuide_Player_Login(gentity_t *ent)
+{
 }
 
 #if 0

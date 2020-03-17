@@ -1,7 +1,7 @@
 {
     // See https://go.microsoft.com/fwlink/?LinkId=733558
     // for the documentation about the tasks.json format
-    "version": "2.0.0",    
+    "version": "2.0.0",
     "tasks": [
         {
             "label": "build",
@@ -29,11 +29,32 @@
         },
         {
             "label": "build_install",
-            "dependsOn": [                
+            "dependsOn": [
                 "install",
                 "build"
             ],
             "problemMatcher": []
+        },
+        {
+            "type": "shell",
+            "label": "build jampgame",
+            "command": "/usr/bin/g++",
+            "args": [
+                "-g",
+                "*.cpp",
+                "-o",
+                "${fileDirname}/jampgamei386.so"
+            ],
+            "options": {
+                "cwd": "/usr/bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ]
 }

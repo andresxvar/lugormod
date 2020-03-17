@@ -1,5 +1,3 @@
-
-
 #include "q_shared.h"
 
 #include "Lmd_API_Commands_Auths.h"
@@ -7,38 +5,44 @@
 
 #include "g_local.h"
 
-qboolean LmdApi_Commands_Auths_AccountHasAdmin(AccountPtr_t acc) {
+qboolean LmdApi_Commands_Auths_AccountHasAdmin(AccountPtr_t acc)
+{
 	return Auths_AccHasAdmin((Account_t *)acc);
 }
 
-qboolean LmdApi_Commands_Auths_AccountHasAuthFlag(AccountPtr_t acc, int flag) {
-	return Auths_AccHasAuthFlag((Account_t*)acc, flag);
+qboolean LmdApi_Commands_Auths_AccountHasAuthFlag(AccountPtr_t acc, int flag)
+{
+	return Auths_AccHasAuthFlag((Account_t *)acc, flag);
 }
 
-qboolean LmdApi_Commands_Auths_AccountHasAuth(AccountPtr_t acc, authFile_t *auth) {
+qboolean LmdApi_Commands_Auths_AccountHasAuth(AccountPtr_t acc, authFile_t *auth)
+{
 	return Auths_AccHasFile((Account_t *)acc, auth);
 }
 
-qboolean LmdApi_Commands_Auths_PlayerInferiorToAccount(gentity_t *ent, AccountPtr_t acc) {
-	return Auths_InferiorToAcc(ent, (Account_t*)acc);
+qboolean LmdApi_Commands_Auths_PlayerInferiorToAccount(gentity_t *ent, AccountPtr_t acc)
+{
+	return Auths_InferiorToAcc(ent, (Account_t *)acc);
 }
 
-int LmdApi_Commands_Auths_AccountRank(AccountPtr_t acc) {
+int LmdApi_Commands_Auths_AccountRank(AccountPtr_t acc)
+{
 	return Auths_GetRank((Account_t *)acc);
 }
 
-void LmdApi_Commands_Auths_GrantAccountAuth(AccountPtr_t acc, authFile_t *file) {
+void LmdApi_Commands_Auths_GrantAccountAuth(AccountPtr_t acc, authFile_t *file)
+{
 	Auths_AddAccAuthfile((Account_t *)acc, file);
 }
 
-qboolean LmdApi_Commands_Auths_RemoveAccountAuth(AccountPtr_t acc, authFile_t *file) {
-	return Auths_RemoveAccAuthfile((Account_t*)acc, file);
+qboolean LmdApi_Commands_Auths_RemoveAccountAuth(AccountPtr_t acc, authFile_t *file)
+{
+	return Auths_RemoveAccAuthfile((Account_t *)acc, file);
 }
 
 LmdApi_Commands_Auths_v1_t api_commands_auths_v1 = {
 	// Gets the authfile with the given name, or NULL it not found.
 	Auths_GetFile,
-
 
 	// Permissions
 
@@ -47,7 +51,6 @@ LmdApi_Commands_Auths_v1_t api_commands_auths_v1 = {
 
 	// Returns true only if the player has temporary admin (ignores account admin).
 	Auths_PlayerHasTempAdmin,
-
 
 	// Returns true if the player has the authfile in their temporary auths list (ignores account auths).
 	Auths_PlayerHasTempFile,
@@ -60,7 +63,6 @@ LmdApi_Commands_Auths_v1_t api_commands_auths_v1 = {
 
 	// Returns true if the account has a specific authfile.
 	LmdApi_Commands_Auths_AccountHasAuth,
-
 
 	// Ranks
 
@@ -75,7 +77,6 @@ LmdApi_Commands_Auths_v1_t api_commands_auths_v1 = {
 
 	// Gets the auth rank of the account.
 	LmdApi_Commands_Auths_AccountRank,
-
 
 	// Modification
 
@@ -92,8 +93,10 @@ LmdApi_Commands_Auths_v1_t api_commands_auths_v1 = {
 	Auths_RemoveTempAuthfile,
 };
 
-const void *LmdApi_Get_Commands_Auths(unsigned int version) {
-	if (version == LMDAPI_COMMANDS_AUTHS_VERSION_1) {
+const void *LmdApi_Get_Commands_Auths(unsigned int version)
+{
+	if (version == LMDAPI_COMMANDS_AUTHS_VERSION_1)
+	{
 		return &api_commands_auths_v1;
 	}
 
