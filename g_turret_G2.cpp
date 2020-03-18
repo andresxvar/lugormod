@@ -51,13 +51,8 @@ qboolean isArmed (gentity_t *ent) {
 //special routine for tracking angles between client and server -rww
 void G2Tur_SetBoneAngles(gentity_t *ent, char *bone, vec3_t angles)
 {
-#ifdef _XBOX
-	byte *thebone = &ent->s.boneIndex1;
-	byte *firstFree = NULL;
-#else
 	int *thebone = &ent->s.boneIndex1;
 	int *firstFree = NULL;
-#endif
 	int i = 0;
 	int boneIndex = G_BoneIndex(bone);
 	int flags, up, right, forward;

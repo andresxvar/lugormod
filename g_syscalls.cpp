@@ -11,7 +11,6 @@
 
 static int (QDECL *syscall)( int arg, ... ) = (int (QDECL *)( int, ...))-1;
 
-#include "../namespace_begin.h"
 #ifdef __cplusplus
 //#ifdef __linux__
 extern "C" {
@@ -2521,5 +2520,3 @@ void trap_Bot_CalculatePaths(int rmg)
 #endif
 	syscall(G_BOT_CALCULATEPATHS, rmg);
 }
-
-#include "../namespace_end.h"

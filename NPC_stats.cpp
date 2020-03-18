@@ -10,10 +10,8 @@ extern vec3_t playerMaxs;
 
 extern qboolean NPCsPrecached;
 
-#include "../namespace_begin.h"
 extern qboolean WP_SaberParseParms( const char *SaberName, saberInfo_t *saber );
 extern void WP_RemoveSaber( saberInfo_t *sabers, int saberNum );
-#include "../namespace_end.h"
 
 stringID_table_t TeamTable[] =
 {
@@ -130,10 +128,8 @@ stringID_table_t BSETTable[] =
 	"",				-1,
 };
 
-#include "../namespace_begin.h"
 extern stringID_table_t WPTable[];
 extern stringID_table_t FPTable[];
-#include "../namespace_end.h"
 
 char	*TeamNames[TEAM_NUM_TEAMS] = 
 {
@@ -216,10 +212,7 @@ int NPC_ReactionTime ( void )
 //
 // parse support routines
 //
-
-#include "../namespace_begin.h"
 extern qboolean BG_ParseLiteral( const char **data, const char *string );
-#include "../namespace_end.h"
 
 //
 // NPC parameters file : scripts/NPCs.cfg
@@ -331,9 +324,7 @@ static rank_t TranslateRankName( const char *name )
 	return RANK_CIVILIAN;
 }
 
-#include "../namespace_begin.h"
 extern saber_colors_t TranslateSaberColor( const char *name );
-#include "../namespace_end.h"
 
 /* static int MethodNameToNumber( const char *name ) {
 	if ( !Q_stricmp( name, "EXPONENTIAL" ) ) {
@@ -3237,9 +3228,7 @@ Ghoul2 Insert End
 	return qtrue;
 }
 //RoboPhred:
-//#ifdef _XBOX
 char *npcParseBuffer = NULL;
-//#else
 //char npcParseBuffer[MAX_NPC_DATA_SIZE];
 //#endif
 
@@ -3273,13 +3262,8 @@ void NPC_LoadParms( void )
 	}
 #endif
 
-#ifdef _XBOX
-	npcParseBuffer = (char *) Z_Malloc(MAX_NPC_DATA_SIZE, TAG_TEMP_WORKSPACE, qfalse, 4);
-#else
 	//RoboPhred:
 	npcParseBuffer = (char *)G_Alloc(MAX_NPC_FILE_SIZE);
-#endif
-
 	//remember where to store the next one
 	totallen = mainBlockLen = len = 0;
 	//RoboPhred
@@ -3333,15 +3317,9 @@ void NPC_LoadParms( void )
 		}
 	}
 
-#ifdef _XBOX
-	Z_Free(npcParseBuffer);
-	//RoboPhred
-	//npcParseBuffer = NULL;
-#else
 	//RoboPhred
 	G_Free(npcParseBuffer);
-#endif
-//RoboPhred
 	npcParseBuffer = NULL;
+
 	G_Free(npcExtensionListBuf);
 }

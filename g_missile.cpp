@@ -3,17 +3,13 @@
 #include "g_local.h"
 #include "w_saber.h"
 #include "q_shared.h"
+#include "Lmd_Accounts_Stats.h"
 
 #define	MISSILE_PRESTEP_TIME	50
-
 extern void laserTrapStick( gentity_t *ent, vec3_t endpos, vec3_t normal );
 extern void Jedi_Decloak( gentity_t *self );
-
-#include "../namespace_begin.h"
 extern qboolean FighterIsLanded( Vehicle_t *pVeh, playerState_t *parentPS );
-#include "../namespace_end.h"
 
-#include "Lmd_Accounts_Stats.h"
 /*
 ================
 G_ReflectMissile

@@ -685,9 +685,7 @@ void misc_model_breakable_pay(gentity_t *self, gentity_t *other, gentity_t *acti
 }
 
 void animate_model(gentity_t *self);
-
 void FixBox(vec3_t mins, vec3_t maxs, vec3_t angles);
-
 /*
 misc_model_breakable
 spawnflags:
@@ -703,49 +701,30 @@ NO_EXPLOSION  256
 START_OFF     512
 ??           1024
 ??           2048
+FL_PAY	     8192
 */
-
 void SP_misc_model_breakable(gentity_t *ent)
 {
 	qboolean gravity;
 	int t;
 
-	/*
-	G_SpawnInt("profession", "0",&ent->genericValue11);
-	G_SpawnInt("level", "0",&ent->genericValue12);
-	G_SpawnInt("adminLevel", "0",&ent->genericValue13);
-	*/
 	PlayerUsableGetKeys(ent);
 
-	//RoboPhred: load it, silly
-	/*
-	if (ent->health && !ent->target && !ent->spawnString) { //Don't load too many models
-		G_FreeEntity(ent);
-		return;
-	}
-	*/
-
 	if (!ent->wait)
-	{
 		ent->wait = 1;
-	}
-
-	//RoboPhred
-	if (ent->spawnflags & 512)
-		ent->flags |= FL_INACTIVE;
 
 	ent->use = misc_model_breakable_use;
 	ent->genericValue10 = level.time + 500;
 
-	if (ent->spawnflags & (128 | 32))
-	{
+	if (ent->spawnflags & (32 | 128))
 		ent->r.svFlags |= SVF_PLAYER_USABLE;
-	}
+
+	if (ent->spawnflags & 512)
+		ent->flags |= FL_INACTIVE;
 
 	if (ent->spawnflags & 1024)
-	{
 		ent->s.isPortalEnt = qtrue;
-	}
+
 	if (ent->spawnflags & 8192)
 	{
 		ent->use = misc_model_breakable_pay;
@@ -754,27 +733,11 @@ void SP_misc_model_breakable(gentity_t *ent)
 	}
 
 	G_SpawnInt("showhealth", "0", &t);
-
-	if (t)
-	{ //a non-0 maxhealth value will mean we want to show the health on the hud
+	if (t != 0)
+	{ //show the health on the hud
 		ent->maxHealth = ent->health;
 		G_ScaleNetHealth(ent);
 	}
-
-	//NOTE: g_spawn.c does this automatically now
-	//G_SpawnInt( "teamowner", "0", &t );
-	//self->s.teamowner = t;
-
-	/* func_breakable
-	if ( self->spawnflags & 16 ) // saber only
-	{
-		self->flags |= FL_DMG_BY_SABER_ONLY;
-	}
-	else if ( self->spawnflags & 32 ) // heavy weap
-	{
-		self->flags |= FL_DMG_BY_HEAVY_WEAP_ONLY;
-	}
-	*/
 
 	if (ent->health)
 	{
@@ -787,7 +750,6 @@ void SP_misc_model_breakable(gentity_t *ent)
 	ent->s.modelGhoul2 = 0;
 	ent->s.pos.trType = TR_STATIONARY;
 
-	//RoboPhred: copied model stuff to func
 	SpawnEntModel(ent, ent->spawnflags & 1, ent->spawnflags & 2);
 
 	if (ent->spawnflags & 4096)
@@ -814,15 +776,10 @@ void SP_misc_model_breakable(gentity_t *ent)
 		ent->bounceCount = 0;
 		ent->r.ownerNum = ent->s.number;
 	}
+
 	if (!(ent->spawnflags & 8321 || gravity || ent->health))
 	{
 		ent->r.contents = 0;
-		//RoboPhred: why?  Did lugor mean to unlink it?
-		//trap_LinkEntity(ent);
-		//cant unlink it, this wont send us to clients so the model does not appear.
-		//trap_UnlinkEntity(ent);
-		////continuing on will just link it again
-		//return;
 	}
 
 	trap_LinkEntity(ent);
@@ -834,26 +791,16 @@ void misc_slotmachine_use(gentity_t *ent, gentity_t *other, gentity_t *activator
 	int diff;
 	int win = 0;
 
-	if (!other || !other->client)
-	{
+	if (!other || !other->client || duelInProgress(&other->client->ps))
 		return;
-	}
-	if (duelInProgress(&other->client->ps))
-	{
-		return;
-	}
 
 	VectorSubtract(other->client->ps.origin, ent->r.currentOrigin, dir);
 	vectoangles(dir, dir);
 	if (dir[YAW] > 180)
-	{
 		dir[YAW] -= 360;
-	}
 	diff = (int)Q_fabs(dir[YAW] - ent->s.apos.trBase[YAW]);
 	if (diff > 180)
-	{
 		diff = 360 - diff;
-	}
 
 	if (diff > 40)
 	{
@@ -1431,8 +1378,8 @@ void SP_misc_skyportal(gentity_t *ent)
 {
 	char *fov = NULL;
 	vec3_t fogv;   //----(SA)
-	int fogn;	  //----(SA)
-	int fogf;	  //----(SA)
+	int fogn;	   //----(SA)
+	int fogf;	   //----(SA)
 	int isfog = 0; // (SA)
 
 	float fov_x;
@@ -1474,23 +1421,23 @@ SABERTHROW = 17
 
 char *holocronTypeModels[] = {
 	"models/map_objects/mp/lt_heal.md3",	   //FP_HEAL,
-	"models/map_objects/mp/force_jump.md3",	//FP_LEVITATION,
+	"models/map_objects/mp/force_jump.md3",	   //FP_LEVITATION,
 	"models/map_objects/mp/force_speed.md3",   //FP_SPEED,
-	"models/map_objects/mp/force_push.md3",	//FP_PUSH,
-	"models/map_objects/mp/force_pull.md3",	//FP_PULL,
+	"models/map_objects/mp/force_push.md3",	   //FP_PUSH,
+	"models/map_objects/mp/force_pull.md3",	   //FP_PULL,
 	"models/map_objects/mp/lt_telepathy.md3",  //FP_TELEPATHY,
 	"models/map_objects/mp/dk_grip.md3",	   //FP_GRIP,
 	"models/map_objects/mp/dk_lightning.md3",  //FP_LIGHTNING,
 	"models/map_objects/mp/dk_rage.md3",	   //FP_RAGE,
-	"models/map_objects/mp/lt_protect.md3",	//FP_PROTECT,
-	"models/map_objects/mp/lt_absorb.md3",	 //FP_ABSORB,
+	"models/map_objects/mp/lt_protect.md3",	   //FP_PROTECT,
+	"models/map_objects/mp/lt_absorb.md3",	   //FP_ABSORB,
 	"models/map_objects/mp/lt_healother.md3",  //FP_TEAM_HEAL,
 	"models/map_objects/mp/dk_powerother.md3", //FP_TEAM_FORCE,
-	"models/map_objects/mp/dk_drain.md3",	  //FP_DRAIN,
+	"models/map_objects/mp/dk_drain.md3",	   //FP_DRAIN,
 	"models/map_objects/mp/force_sight.md3",   //FP_SEE
 	"models/map_objects/mp/saber_attack.md3",  //FP_SABER_OFFENSE
 	"models/map_objects/mp/saber_defend.md3",  //FP_SABER_DEFENSE
-	"models/map_objects/mp/saber_throw.md3"	//FP_SABERTHROW
+	"models/map_objects/mp/saber_throw.md3"	   //FP_SABERTHROW
 };
 
 void HolocronRespawn(gentity_t *self)
@@ -1581,7 +1528,7 @@ void HolocronTouch(gentity_t *self, gentity_t *other, trace_t *trace)
 	}
 
 	if (hasall)
-	{   //once we pick up this holocron we'll have all of them, so give us super special best prize!
+	{	//once we pick up this holocron we'll have all of them, so give us super special best prize!
 		//G_Printf("You deserve a pat on the back.\n");
 	}
 
@@ -4341,9 +4288,7 @@ void misc_weapon_shooter_aim(gentity_t *self)
 	}
 }
 
-#include "../namespace_begin.h"
 extern stringID_table_t WPTable[];
-#include "../namespace_end.h"
 
 void SP_misc_weapon_shooter(gentity_t *self)
 {

@@ -56,15 +56,17 @@ cmdCategory_t Categories[] = {
 #endif
 #endif
 
-	{NULL}
-};
+	{NULL}};
 
-void Commands_Init(){
+void Commands_Init()
+{
 	cmdCategory_t *c = Categories;
 	cmdEntry_t *e;
-	while(c->name) {
+	while (c->name)
+	{
 		e = c->entries;
-		while(e->name) {
+		while (e->name)
+		{
 			e->category = c;
 			e++;
 		}
@@ -72,23 +74,28 @@ void Commands_Init(){
 	}
 }
 
-cmdCategory_t *Commands_GetCategory(const char *name){
+cmdCategory_t *Commands_GetCategory(const char *name)
+{
 	cmdCategory_t *c = Categories;
-	while(c->name){
-		if(Q_stricmp(c->name, name) == 0)
+	while (c->name)
+	{
+		if (Q_stricmp(c->name, name) == 0)
 			return c;
 		c++;
 	}
 	return NULL;
 }
 
-cmdEntry_t *Commands_GetEntry(const char *name){
+cmdEntry_t *Commands_GetEntry(const char *name)
+{
 	cmdCategory_t *c = Categories;
 	cmdEntry_t *e;
-	while(c->name){
+	while (c->name)
+	{
 		e = c->entries;
-		while(e->name){
-			if(Q_stricmp(e->name, name) == 0)
+		while (e->name)
+		{
+			if (Q_stricmp(e->name, name) == 0)
 				return e;
 			e++;
 		}
@@ -99,31 +106,37 @@ cmdEntry_t *Commands_GetEntry(const char *name){
 
 extern vmCvar_t g_cmdDisable;
 extern vmCvar_t g_gametype;
-qboolean Commands_PlayerCanUseCommand(gentity_t *ent, cmdEntry_t *cmd){
-	if(cmd->isAdmin) {
-		if(cmd->level == -2) {
-			if(!Auths_PlayerHasAdmin(ent))
+qboolean Commands_PlayerCanUseCommand(gentity_t *ent, cmdEntry_t *cmd)
+{
+	if (cmd->isAdmin)
+	{
+		if (cmd->level == -2)
+		{
+			if (!Auths_PlayerHasAdmin(ent))
 				return qfalse;
 		}
 	}
-	else {
-		if(cmd->profession > 0 && PlayerAcc_Prof_GetProfession(ent) != cmd->profession)
+	else
+	{
+		if (cmd->profession > 0 && PlayerAcc_Prof_GetProfession(ent) != cmd->profession)
 			return qfalse;
-		if(cmd->level && PlayerAcc_Prof_GetLevel(ent) < cmd->level)
+		if (cmd->level && PlayerAcc_Prof_GetLevel(ent) < cmd->level)
 			return qfalse;
 	}
-	if(cmd->disable & g_cmdDisable.integer)
+	if (cmd->disable & g_cmdDisable.integer)
 		return qfalse;
-	if(cmd->gametype & (1 << g_gametype.integer))
+	if (cmd->gametype & (1 << g_gametype.integer))
 		return qfalse;
 	//level of -1 will still get here, so will work for admin setting.
 	return qtrue;
 }
 
-qboolean Commands_PlayerHasCatgory(gentity_t *ent, cmdCategory_t *category){
+qboolean Commands_PlayerHasCatgory(gentity_t *ent, cmdCategory_t *category)
+{
 	cmdEntry_t *entry = category->entries;
-	while(entry->name){
-		if(Commands_PlayerCanUseCommand(ent, entry) && Auths_PlayerHasCommand(ent, entry))
+	while (entry->name)
+	{
+		if (Commands_PlayerCanUseCommand(ent, entry) && Auths_PlayerHasCommand(ent, entry))
 			return qtrue;
 		entry++;
 	}
@@ -132,17 +145,20 @@ qboolean Commands_PlayerHasCatgory(gentity_t *ent, cmdCategory_t *category){
 
 qboolean Auths_CanUseCommand(gentity_t *ent, cmdEntry_t *cmd);
 void Auths_CommandUsed(gentity_t *ent, cmdEntry_t *cmd);
-qboolean Commands_TryUse(gentity_t *ent, cmdEntry_t *cmd){
-	if(!Auths_PlayerHasCommand(ent, cmd) || !Commands_PlayerCanUseCommand(ent, cmd))
+qboolean Commands_TryUse(gentity_t *ent, cmdEntry_t *cmd)
+{
+	if (!Auths_PlayerHasCommand(ent, cmd) || !Commands_PlayerCanUseCommand(ent, cmd))
 		return qfalse;
-	if(Auths_CanUseCommand(ent, cmd)) {
+	if (Auths_CanUseCommand(ent, cmd))
+	{
 		cmd->func(ent, cmd->iArg);
 		Auths_CommandUsed(ent, cmd);
 	}
 	return qtrue;
 }
 
-qboolean Lmd_Command(gentity_t *ent, const char *cmd) {
+qboolean Lmd_Command(gentity_t *ent, const char *cmd)
+{
 	/*
 	cmdEntry_t *e = Commands_GetEntry(cmd);
 	if(!e)
@@ -153,27 +169,34 @@ qboolean Lmd_Command(gentity_t *ent, const char *cmd) {
 	cmdEntry_t *e, *found = NULL;
 	int cmdLen = strlen(cmd);
 	int count = 0;
-	while(c->name){
+	while (c->name)
+	{
 		e = c->entries;
-		while(e->name){
-			if(!Auths_PlayerHasCommand(ent, e) || !Commands_PlayerCanUseCommand(ent, e)) {
+		while (e->name)
+		{
+			if (!Auths_PlayerHasCommand(ent, e) || !Commands_PlayerCanUseCommand(ent, e))
+			{
 				e++;
 				continue;
 			}
-				
-			if(Q_stricmpn(e->name, cmd, cmdLen) == 0) {
-				if (strlen(e->name) == cmdLen) {
+
+			if (Q_stricmpn(e->name, cmd, cmdLen) == 0)
+			{
+				if (strlen(e->name) == cmdLen)
+				{
 					// Exact match.
 					count = 1;
 					found = e;
 					goto execCommand;
 				}
 				count++;
-				if (!found) {
+				if (!found)
+				{
 					found = e;
 				}
-				else {
-					DispContiguous(ent, va(CT_B"%s", found->name));
+				else
+				{
+					DispContiguous(ent, va(CT_B "%s", found->name));
 					found = e;
 				}
 			}
@@ -182,42 +205,51 @@ qboolean Lmd_Command(gentity_t *ent, const char *cmd) {
 		c++;
 	}
 
-	execCommand:
+execCommand:
 
-	if (count > 1) {
-		DispContiguous(ent, va(CT_B"%s", found->name));
-		DispContiguous(ent, va(CT_V"%i"CT_B" commands match that command.", count));
+	if (count > 1)
+	{
+		DispContiguous(ent, va(CT_B "%s", found->name));
+		DispContiguous(ent, va(CT_V "%i" CT_B " commands match that command.", count));
 		DispContiguous(ent, NULL);
 		return qfalse;
 	}
 
-	if (!found) {
+	if (!found)
+	{
 		return qfalse;
 	}
 
-	if (Q_stricmp(found->name, cmd) != 0) {
+	if (Q_stricmp(found->name, cmd) != 0)
+	{
 		Disp(ent, va("%s %s", found->name, ConcatArgs(1)));
 	}
 
 	return Commands_TryUse(ent, found);
 }
 
-void Cmd_Help_ShowCmd(gentity_t *ent, authCmdEntry_t *entry){
+void Cmd_Help_ShowCmd(gentity_t *ent, authCmdEntry_t *entry)
+{
 	Disp(ent, va("^2%s", entry->cmd->name));
-	if(entry->restr > 0){
+	if (entry->restr > 0)
+	{
 		Disp(ent, va("^3Requires another online admin of rank ^2%i", entry->restr));
 	}
-	if(entry->cost > 0){
+	if (entry->cost > 0)
+	{
 		Disp(ent, va("^3Command point cost: ^2%i", entry->restr));
 	}
 	Disp(ent, va("^3%s", entry->cmd->descr));
 }
 
-int Cmd_Help_ListCmds(gentity_t *ent, cmdCategory_t *category){
+int Cmd_Help_ListCmds(gentity_t *ent, cmdCategory_t *category)
+{
 	int c = 0;
 	cmdEntry_t *entry = category->entries;
-	while(entry->name){
-		if(Auths_GetPlayerFileCmdEntry(ent, entry, NULL) && Commands_PlayerCanUseCommand(ent, entry)){
+	while (entry->name)
+	{
+		if (Auths_GetPlayerFileCmdEntry(ent, entry, NULL) && Commands_PlayerCanUseCommand(ent, entry))
+		{
 			DispContiguous(ent, va("^2%-25s ^3%s", entry->name, entry->descr));
 			c++;
 		}
@@ -227,10 +259,13 @@ int Cmd_Help_ListCmds(gentity_t *ent, cmdCategory_t *category){
 	return c;
 }
 
-void Cmd_Help_ListCategories(gentity_t *ent){
+void Cmd_Help_ListCategories(gentity_t *ent)
+{
 	cmdCategory_t *category = Categories;
-	while(category->name){
-		if(Commands_PlayerHasCatgory(ent, category)){
+	while (category->name)
+	{
+		if (Commands_PlayerHasCatgory(ent, category))
+		{
 			DispContiguous(ent, va("^%i%-25s ^3%s", category->color, category->name, category->descr));
 		}
 		category++;
@@ -239,34 +274,41 @@ void Cmd_Help_ListCategories(gentity_t *ent){
 }
 
 extern vmCvar_t Lugormod_Version;
-void Cmd_Help_f(gentity_t *ent){
+void Cmd_Help_f(gentity_t *ent)
+{
 	char *arg = ConcatArgs(1);
 	cmdCategory_t *category = NULL;
 	authCmdEntry_t *entry = NULL;
-	if(arg[0]){
+	if (arg[0])
+	{
 		category = Commands_GetCategory(arg);
-		if(!category){
+		if (!category)
+		{
 			cmdEntry_t *e = Commands_GetEntry(arg);
-			if(e)
+			if (e)
 				entry = Auths_GetPlayerFileCmdEntry(ent, e, NULL);
-			if(!entry || !Commands_PlayerCanUseCommand(ent, e)){
+			if (!entry || !Commands_PlayerCanUseCommand(ent, e))
+			{
 				Disp(ent, "^3There is no category or command by that name.");
 				return;
 			}
 		}
 	}
-	if(entry){
+	if (entry)
+	{
 		Cmd_Help_ShowCmd(ent, entry);
 	}
-	else if(category){
-		if(Cmd_Help_ListCmds(ent, category) <= 0){
+	else if (category)
+	{
+		if (Cmd_Help_ListCmds(ent, category) <= 0)
+		{
 			Disp(ent, "^3You do not have any commands in this category");
 			return;
 		}
 	}
-	else {
-		Disp(ent, va("^2Lugormod %s -- ^3Lugormod.RoboPhredDev.Net\n", Lugormod_Version.string));
+	else
+	{
+		Disp(ent, va("^2Lugormod %s (" __DATE__ " " __TIME__ ")", Lugormod_Version.string));
 		Cmd_Help_ListCategories(ent);
 	}
 }
-

@@ -13,11 +13,7 @@ extern int GetTime ( int lastTime );
 
 navInfo_t	frameNavInfo;
 extern qboolean FlyingCreature( gentity_t *ent );
-
-#include "../namespace_begin.h"
 extern qboolean PM_InKnockDown( playerState_t *ps );
-#include "../namespace_end.h"
-
 /*
 -------------------------
 NPC_ClearPathToGoal

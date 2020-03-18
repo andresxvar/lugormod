@@ -474,9 +474,6 @@ const char *BuildShaderStateConfig(void);
 Ghoul2 Insert Start
 */
 int G_BoneIndex( const char *name );
-
-#include "../namespace_begin.h"
-
 qhandle_t	trap_R_RegisterSkin( const char *name );
 
 // CG specific API access
@@ -549,8 +546,6 @@ void		trap_G2API_AttachInstanceToEntNum(void *ghoul2, int entityNum, qboolean se
 void		trap_G2API_ClearAttachedInstance(int entityNum);
 void		trap_G2API_CleanEntAttachments(void);
 qboolean	trap_G2API_OverrideServer(void *serverInstance);
-
-#include "../namespace_end.h"
 
 /*
 Ghoul2 Insert End
@@ -1061,12 +1056,8 @@ extern	vmCvar_t	g_debugUp;
 //extern	vmCvar_t	g_redteam;
 //extern	vmCvar_t	g_blueteam;
 extern	vmCvar_t	g_smoothClients;
-
-#include "../namespace_begin.h"
 extern	vmCvar_t	pmove_fixed;
 extern	vmCvar_t	pmove_msec;
-#include "../namespace_end.h"
-
 extern	vmCvar_t	g_enableBreath;
 extern	vmCvar_t	g_singlePlayer;
 extern	vmCvar_t	g_dismember;
@@ -1106,11 +1097,6 @@ extern vmCvar_t		g_showDuelHealths;
 
 //RoboPhred
 extern vmCvar_t lmd_enforceentwait;
-
-
-#include "../namespace_begin.h"
-
-// RoboPhred
 #define SERVERCOMMAND_MAX 800
 
 void	trap_Printf( const char *fmt );
@@ -1421,7 +1407,5 @@ void trap_RMG_Init(int terrainID);
 
 void trap_Bot_UpdateWaypoints(int wpnum, wpobject_t **wps);
 void trap_Bot_CalculatePaths(int rmg);
-
-#include "../namespace_end.h"
 
 #endif //__G_LOCAL_H__

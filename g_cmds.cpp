@@ -14,10 +14,7 @@
 //rww - for getting bot commands...
 int AcceptBotCommand(char *cmd, gentity_t *pl);
 //end rww
-
-#include "../namespace_begin.h"
 void WP_SetSaber( int entNum, saberInfo_t *sabers, int saberNum, const char *saberName );
-#include "../namespace_end.h"
 
 //Lugormod why not?
 qboolean saberKnockOutOfHand(gentity_t *saberent, gentity_t *saberOwner, vec3_t velocity);
@@ -4365,7 +4362,7 @@ void ClientCommand( int clientNum ) {
 		TryGrapple (ent);
 		return;
 	}
-	if (Q_stricmp (cmd, "helpme") == 0) {
+	if (Q_strncmp (cmd, "help",4) == 0) {
 		Cmd_Help_f(ent);
 		return;
 	}

@@ -21,7 +21,7 @@ const int verBuild = 91;
 const int verMajor = 0;
 const int verMinor = 0;
 const int verRev = 0;
-const int verBuild = 1;
+const int verBuild = 2;
 #endif
 
 #ifdef LMD_EXPERIMENTAL
@@ -263,11 +263,8 @@ vmCvar_t g_debugForward;
 vmCvar_t g_debugRight;
 vmCvar_t g_debugUp;
 vmCvar_t g_smoothClients;
-
-#include "../namespace_begin.h"
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
-#include "../namespace_end.h"
 
 vmCvar_t g_listEntity;
 //vmCvar_t	g_redteam;
@@ -385,13 +382,10 @@ vmCvar_t lmd_penaltyTmpbanTime;
 
 vmCvar_t lmd_allowEmptyHostname;
 
-//vmCvar_t lmd_enableUnsafeCvars;
-
 vmCvar_t lmd_enableCorpseDrag;
 
 vmCvar_t lmd_rewardcr_kill;
 
-//RoboPhred: track this and force it to off
 vmCvar_t sv_allowdownload;
 
 //Need to keep track of this for checking if someone tries to change it.
@@ -576,12 +570,6 @@ static cvarTable_t gameCvarTable[] = {
 	{&lmd_allowEmptyHostname, "lmd_allowEmptyHostname", "1", CVAR_ARCHIVE, 0, qfalse, qfalse,
 	 "Prevent a player from joining if the attempt to identify their hostname fails."},
 
-	/*
-	{ &lmd_enableUnsafeCvars, "lmd_enableUnsafeCvars", "0", CVAR_ARCHIVE, 0, qfalse, qfalse,
-		"Allow the use of sv_allowDownload.  This is NOT recommended, as sv_allowDownload may be used to steal files off the server such as the server config.",
-	},
-	*/
-
 	{
 		&lmd_enableCorpseDrag,
 		"lmd_enableCorpseDrag",
@@ -607,7 +595,7 @@ static cvarTable_t gameCvarTable[] = {
 	//====================================================================================================
 	//====================================================================================================
 
-	{&sv_allowdownload, "sv_allowDownload", "0", CVAR_ARCHIVE, 0, qtrue}, //Ufo: we want it
+	{&sv_allowdownload, "sv_allowDownload", "0", CVAR_ARCHIVE, 0, qtrue},
 
 	// don't override the cheat state set by the system
 	{&g_cheats, "sv_cheats", "", 0, 0, qfalse},
@@ -1028,7 +1016,6 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .q3vm file
 ================
 */
-#include "../namespace_begin.h"
 
 //int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  );
 //#pragma export list vmMain
@@ -1269,7 +1256,6 @@ extern "C"
 	//#ifdef __linux__
 }
 #endif
-#include "../namespace_end.h"
 
 //Lugormod
 //Ufo: discarded
@@ -1622,11 +1608,8 @@ void G_UpdateCvars(void)
 }
 
 char gSharedBuffer[MAX_G_SHARED_BUFFER_SIZE];
-
-#include "../namespace_begin.h"
 void WP_SaberLoadParms(void);
 void BG_VehicleLoadParms(void);
-#include "../namespace_end.h"
 
 //Lugormod
 //RoboPhred: in Lmd_Main now
@@ -1651,8 +1634,8 @@ extern unsigned char model_frames[MAX_MODELS];
 char *enterMotd;
 void SP_misc_holocron(gentity_t *ent);
 gentity_t *pick_random_spot(void); //Lugormod
-int count_random_spots(void);	  //Lugormod
-void LinkBGSpawnPoints(void);	  //Lugormod
+int count_random_spots(void);	   //Lugormod
+void LinkBGSpawnPoints(void);	   //Lugormod
 
 //RoboPhred
 void Lmd_Startup(void);
@@ -1665,14 +1648,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	int i;
 	vmCvar_t mapname;
 	vmCvar_t ckSum;
-
-#ifdef _XBOX
-	if (restart)
-	{
-		BG_ClearVehicleParseParms();
-		RemoveAllWP();
-	}
-#endif
 
 	G_InitMemory();
 
@@ -1734,7 +1709,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	G_RegisterCvars();
 
 	//trap_SP_RegisterServer("mp_svgame");
-#ifndef _XBOX
 	//RoboPhred: in Lmd_main.c now
 	/*
 	//Lugormod parse cmd level defs
@@ -1802,7 +1776,6 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	{
 		G_Printf("Not logging to disk.\n");
 	}
-#endif
 
 	G_Printf("Preparing weapon logs...\n");
 
@@ -2119,7 +2092,7 @@ void G_InitGame(int levelTime, int randomSeed, int restart)
 	if (g_gametype.integer == GT_SIEGE
 		//|| g_gametype.integer == GT_BATTLE_GROUND
 		) //Lugormod
-	{	 //just get these configstrings registered now...
+	{	  //just get these configstrings registered now...
 		int i = 0;
 		while (i < MAX_CUSTOM_SIEGE_SOUNDS)
 		{
@@ -4832,13 +4805,7 @@ void CheckCvars(void)
 	//static int lastDlMod = -1;
 	static int lmdVer = -1;
 	static int gamenameVer = -1;
-	/*
-	if(lmd_enableUnsafeCvars.integer == 0 && sv_allowdownload.modificationCount != lastDlMod) {
-		trap_Cvar_Set("sv_allowDownload", "0");
-		Com_Printf("^3sv_allowDownload forced to 0.  ^1Do NOT turn this on, it is commonly exploited.\n");
-		lastDlMod = sv_allowdownload.modificationCount;
-	}
-	*/
+
 	//LUGORMODVERSION_VAL_1
 	if (Lugormod_Version.modificationCount != lmdVer || gamename.modificationCount != gamenameVer)
 	{
@@ -5032,26 +4999,21 @@ void NAV_CheckCalcPaths(void)
 		}
 		else
 #endif
-#ifndef _XBOX
-			//RoboPhred
-			if (trap_Nav_Save(level.rawmapname, ckSum.integer) == qfalse)
+		//RoboPhred
+		if (trap_Nav_Save(level.rawmapname, ckSum.integer) == qfalse)
 		//if ( trap_Nav_Save( mapname.string, ckSum.integer ) == qfalse )
 		{
 			Com_Printf("Unable to save navigations data for map \"%s\" (checksum:%d)\n", level.rawmapname, ckSum.integer);
 		}
-#endif
 		navCalcPathTime = 0;
 	}
 }
 
 //so shared code can get the local time depending on the side it's executed on
-#include "../namespace_begin.h"
 int BG_GetTime(void)
 {
 	return level.time;
 }
-#include "../namespace_end.h"
-
 /*
 ================
 G_RunFrame

@@ -2411,13 +2411,8 @@ void SP_func_static( gentity_t *ent )
 		ent->s.bolt1 = 1;
 	}
 
-#ifdef _XBOX
-	int	tempModelScale;
-	G_SpawnInt("model2scale", "0", &tempModelScale);
-	ent->s.iModelScale = tempModelScale;
-#else
 	G_SpawnInt("model2scale", "0", &ent->s.iModelScale);
-#endif
+
 	if (ent->s.iModelScale < 0)
 	{
 		ent->s.iModelScale = 0;
@@ -2583,13 +2578,7 @@ void SP_func_rotating (gentity_t *ent) {
 		trap_LinkEntity( ent );
 	}
 
-#ifdef _XBOX
-	int	tempModelScale;
-	G_SpawnInt("model2scale", "0", &tempModelScale);
-	ent->s.iModelScale = tempModelScale;
-#else
 	G_SpawnInt("model2scale", "0", &ent->s.iModelScale);
-#endif
 	if (ent->s.iModelScale < 0)
 	{
 		ent->s.iModelScale = 0;
@@ -3923,13 +3912,7 @@ void SP_rail_mover ( gentity_t *ent ) {
 	ent->damage = 9999;
 	ent->spawnflags |= 32;
 
-#ifdef _XBOX
-	int	tempModelScale;
-	G_SpawnInt("model2scale", "0", &tempModelScale);
-	ent->s.iModelScale = tempModelScale;
-#else
 	G_SpawnInt("model2scale", "0", &ent->s.iModelScale);
-#endif
 	if (ent->s.iModelScale < 0)
 		ent->s.iModelScale = 0;
 	else if (ent->s.iModelScale > 1023)

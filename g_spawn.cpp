@@ -1489,14 +1489,9 @@ Spawn an entity and fill in all of the level fields from
 level.spawnVars[], then call the class specfic spawn function
 ===================
 */
-#include "../namespace_begin.h"
 //RoboPhred
 qboolean BG_ParseField(BG_field_t *l_fields, const char *key, const char *value, void *target);
-//void BG_ParseField( BG_field_t *l_fields, const char *key, const char *value, byte *ent );
-#include "../namespace_end.h"
-//RoboPhred
 gentity_t *Lmd_logic_spawn();
-
 gentity_t *G_SpawnGEntityPtrFromSpawnVars(gentity_t *ent, SpawnData_t *spawnData, qboolean inSubBSP)
 {
 	//void G_SpawnGEntityFromSpawnVars( qboolean inSubBSP ) {

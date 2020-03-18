@@ -1116,7 +1116,7 @@ cmdEntry_t accountCommandEntries[] = {
 	{"credits", "Check your current wealth.", Cmd_Credits_f, 0, qfalse, 1, 128, ~(1 << GT_FFA), 0},
 	{"dropcr", "Drop credits.", Cmd_Credits_f, 3, qfalse, 1, 128, ~(1 << GT_FFA), 0},
 	{"inventory", "View and use items in your inventory.", Cmd_Inventory_f, 0, qfalse, 1, 1, ~(1 << GT_FFA), 0},
-	{"login", " Login to use the name you registered with \\register.\nIf you change name when you are logged in, the new name will become the registered name.", Cmd_Login_f, 0, qfalse, 0, 1, 0, 0, qtrue},
+	{"login", "Login into your account.", Cmd_Login_f, 0, qfalse, 0, 1, 0, 0, qtrue},
 	{"logout", "Logs out of your account.  If you are not in an account but have admin, you will loose admin status.", Cmd_Logout_f, 0, qfalse, 1, 0, 0, 0},
 	{"pay", "Give the player you are looking at CR <amount>.", Cmd_Credits_f, 1, qfalse, 1, 128, ~(1 << GT_FFA), 0},
 	{"property", "View your owned properties.  If you have the right rank, you can modify your property access here.", Cmd_Property_f, 0, qfalse, 1, 0, 0, 0},
