@@ -1020,13 +1020,6 @@ This must be the very first function compiled into the .q3vm file
 //int vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9, int arg10, int arg11  );
 //#pragma export list vmMain
 
-//RoboPhred
-//Ufo: discarded
-#ifdef _PATCHER
-void JKG_PatchEngine();
-void JKG_UnpatchEngine();
-#endif
-
 #ifdef LMD_EXPERIMENTAL
 void ActivateCrashHandler();
 void DeactivateCrashHandler();
@@ -1051,10 +1044,7 @@ extern "C"
 #else
 		EnableStackTrace();
 #endif
-//Ufo: discarded
-#ifdef _PATCHER
-			JKG_PatchEngine();
-#endif
+
 			g_lua_init(); // Lua
 			G_InitGame(arg0, arg1, arg2);
 			return 0;
@@ -1064,10 +1054,7 @@ extern "C"
 #ifdef LMD_MEMORY_DEBUG
 			_CrtDumpMemoryLeaks();
 #endif
-//Ufo: discarded
-#ifdef _PATCHER
-			JKG_UnpatchEngine();
-#endif
+
 #ifdef LMD_EXPERIMENTAL
 			DeactivateCrashHandler();
 #else
@@ -4999,8 +4986,8 @@ void NAV_CheckCalcPaths(void)
 		}
 		else
 #endif
-		//RoboPhred
-		if (trap_Nav_Save(level.rawmapname, ckSum.integer) == qfalse)
+			//RoboPhred
+			if (trap_Nav_Save(level.rawmapname, ckSum.integer) == qfalse)
 		//if ( trap_Nav_Save( mapname.string, ckSum.integer ) == qfalse )
 		{
 			Com_Printf("Unable to save navigations data for map \"%s\" (checksum:%d)\n", level.rawmapname, ckSum.integer);

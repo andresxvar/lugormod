@@ -27,7 +27,7 @@ static int g_lua_Player_FromNumber(lua_State *L)
 	num = luaL_checkinteger(L, 1);
 
 	if (num > level.maxclients)
-		return luaL_error(L, "number can't be more than %i", level.maxclients);
+		return luaL_error(L, va("number can't be more than %i", level.maxclients));
 
 	g_lua_pushPlayer(L, &g_clients[num]);
 	return 1;
@@ -92,6 +92,71 @@ static int g_lua_Player_Number(lua_State *L)
 }
 
 //
+// Player:MaxHealth( )
+// Player:MaxHealth( newVal:Integer )
+//
+static int g_lua_Player_MaxHealth(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+
+	if (n > 1)
+	{
+		int newVal = luaL_checkinteger(L, 2);
+		gentity_t *ent = &g_entities[ply->cl->ps.clientNum];
+
+		ply->cl->pers.maxHealth = ply->cl->ps.stats[STAT_MAX_HEALTH] = newVal;
+		ent->maxHealth = ent->s.maxhealth = newVal;
+		return 0;
+	}
+
+	lua_pushinteger(L, ply->cl->pers.maxHealth);
+	return 1;
+}
+
+//
+// Player:Health( )
+// Player:Health( newVal:Integer )
+//
+static int g_lua_Player_Health(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+	gentity_t *ent = &g_entities[ply->cl->ps.clientNum];
+
+	if (n > 1)
+	{
+		int newVal = luaL_checkinteger(L, 2);
+		ply->cl->ps.stats[STAT_HEALTH] = newVal;
+		ent->health = ent->s.health = newVal;
+		return 0;
+	}
+
+	lua_pushinteger(L, ent->health);
+	return 1;
+}
+
+//
+// GEntity:Position( )
+// GEntity:Position( newVal:QVector )
+//
+static int g_lua_Player_Position(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+
+	if (n > 1)
+	{
+		vec_t *newVal = lua_getvector(L, 2);
+		VectorCopy(newVal, ply->cl->ps.origin);
+		return 0;
+	}
+
+	lua_pushvector(L, ply->cl->ps.origin);
+	return 1;
+}
+
+//
 // Player:SiegeSpecTimer( waitTime:Integer )
 //
 static int g_lua_Player_SiegeSpecTimer(lua_State *L)
@@ -116,6 +181,19 @@ static int g_lua_Player_Weapon(lua_State *L)
 	lua_Player *ply = g_lua_checkPlayer(L, 1);
 
 	lua_pushinteger(L, ply->cl->ps.weapon);
+	return 1;
+}
+
+//
+// Player:AdminRank( )
+//
+int Auths_GetPlayerRank(gentity_t *ent);
+static int g_lua_Player_AdminRank(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+
+	lua_pushinteger(L, Auths_GetPlayerRank(&g_entities[ply->cl->ps.clientNum]));
 	return 1;
 }
 
@@ -158,7 +236,7 @@ static int g_lua_Player_Hack(lua_State *L)
 //
 // Player:NPCSpawn(npc_type:String, npc_targetname:String)
 //
-extern gentity_t *NPC_SpawnType( gentity_t *ent, char *npc_type, char *targetname, qboolean isVehicle );
+extern gentity_t *NPC_SpawnType(gentity_t *ent, char *npc_type, char *targetname, qboolean isVehicle);
 static int g_lua_Player_NPCSpawn(lua_State *L)
 {
 	int n = lua_gettop(L);
@@ -166,13 +244,35 @@ static int g_lua_Player_NPCSpawn(lua_State *L)
 	gentity_t *ent = &g_entities[ply->cl->ps.clientNum];
 	char *npc_type = (char *)luaL_checkstring(L, 2);
 	char *npc_targetname = (char *)luaL_checkstring(L, 3);
-	
-	gentity_t* newEnt = NPC_SpawnType(ent, npc_type, npc_targetname, qfalse);
+
+	gentity_t *newEnt = NPC_SpawnType(ent, npc_type, npc_targetname, qfalse);
 
 	if (!newEnt)
 		lua_pushnil(L);
 	else
-		g_lua_pushEntity(L,newEnt);
+		g_lua_pushEntity(L, newEnt);
+	return 1;
+}
+
+//
+// Player:Team()
+// Player:Team(team:String,wait:Integer)
+//
+static int g_lua_Player_Team(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+
+	if (n > 1)
+	{
+		char *newTeam = (char *)luaL_checkstring(L, 2);
+		int switchTime = luaL_checkinteger(L, 3);
+		SetTeam(&g_entities[ply->cl->ps.clientNum], newTeam);
+		ply->cl->switchTeamTime = level.time + switchTime * 1000;
+		return 0;
+	}
+
+	lua_pushinteger(L, ply->cl->sess.sessionTeam);
 	return 1;
 }
 
@@ -200,20 +300,20 @@ static int g_lua_Player_AimOrigin(lua_State *L)
 //
 // Player:AimAnyTarget(range:Integer)
 //
-gentity_t* AimAnyTarget (gentity_t *ent, int length);
+gentity_t *AimAnyTarget(gentity_t *ent, int length);
 static int g_lua_Player_AimAnyTarget(lua_State *L)
-{	
+{
 	lua_Player *ply = g_lua_checkPlayer(L, 1);
 	gentity_t *player = &g_entities[ply->cl->ps.clientNum];
 	gentity_t *target = NULL;
 
 	int range = luaL_checkinteger(L, 2);
-	gentity_t *targetEnt = AimAnyTarget(player,range);
+	gentity_t *targetEnt = AimAnyTarget(player, range);
 
 	if (!targetEnt)
 		lua_pushnil(L);
 	else
-		g_lua_pushEntity(L,targetEnt);
+		g_lua_pushEntity(L, targetEnt);
 	return 1;
 }
 
@@ -308,7 +408,7 @@ static int g_lua_Player_PrintCenter(lua_State *L)
 	char buf[1000] = {0};
 	int n = lua_gettop(L);
 	lua_Player *ply = g_lua_checkPlayer(L, 1);
-	
+
 	lua_rawgeti(L, LUA_REGISTRYINDEX, lua_toString);
 
 	for (i = 2; i <= n; i++)
@@ -343,9 +443,15 @@ static const luaL_Reg player_meta[] = {
 
 	{"Name", g_lua_Player_Name},
 	{"Number", g_lua_Player_Number},
+	{"Health", g_lua_Player_Health},
+	{"MaxHealth", g_lua_Player_MaxHealth},
+	{"Position", g_lua_Player_Position},
 	{"Weapon", g_lua_Player_Weapon},
 	{"Hack", g_lua_Player_Hack},
 	{"NPCSpawn", g_lua_Player_NPCSpawn},
+	{"Team", g_lua_Player_Team},
+
+	{"AdminRank", g_lua_Player_AdminRank},
 
 	{"AimOrigin", g_lua_Player_AimOrigin},
 	{"AimAnyTarget", g_lua_Player_AimAnyTarget},
@@ -353,7 +459,7 @@ static const luaL_Reg player_meta[] = {
 
 	{"PrintConsole", g_lua_Player_PrintConsole},
 	{"PrintChat", g_lua_Player_PrintChat},
-	{"PrintCenter", g_lua_Player_PrintCenter},	
+	{"PrintCenter", g_lua_Player_PrintCenter},
 	{"SiegeSpecTimer", g_lua_Player_SiegeSpecTimer},
 
 	{NULL, NULL}};
@@ -367,7 +473,7 @@ int luaopen_player(lua_State *L)
 	luaL_newmetatable(L, "Game.Player"); /* create metatable for entities */
 	lua_pushvalue(L, -1);				 /* push metatable */
 	lua_setfield(L, -2, "__index");		 /* metatable.__index = metatable */
-	luaL_setfuncs(L, player_meta, 0);	/* add entity methods to new metatable */
+	luaL_setfuncs(L, player_meta, 0);	 /* add entity methods to new metatable */
 	lua_pop(L, 1);						 /* pop new metatable */
 
 	// set global class

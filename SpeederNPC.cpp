@@ -40,13 +40,7 @@
 #include "bg_public.h"
 #endif
 
-#ifndef _JK2MP
-#include "g_functions.h"
-#include "g_vehicles.h"
-#include "..\game\wp_saber.h"
-#else
 #include "bg_vehicles.h"
-#endif
 
 #ifdef _JK2MP
 //this is really horrible, but it works! just be sure not to use any locals or anything

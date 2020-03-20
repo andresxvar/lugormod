@@ -203,7 +203,6 @@ If "private", only the activator gets the message.  If no checks, all clients ge
 
 //RoboPhred
 //Ufo: Added data tags support
-
 char* GetPasswordByIndex(const char* index)
 {
 	if (!index || !index[0])
@@ -265,29 +264,11 @@ void Send_Target_Print(gentity_t *ent, int targ) {
 	else if(ent->spawnflags & 16) {
 		trap_SendServerCommand(targ, va("chat \"%s\"", buf));
 	}
-/*
-	else if(ent->spawnflags & 16) {
-		char msg[MAX_STRING_CHARS];
-		Q_strncpyz(msg, ent->message, sizeof(msg));
-		char *s = msg, *c = s;
-		while(c[0]) {
-			if(c[0] == '\n'){
-				c[0] = 0;
-				trap_SendServerCommand(targ, va("chat \"%s\"", s));
-				s = ++c;
-			}
-			c++;
-		}
-		if(s[0])
-			trap_SendServerCommand(targ, va("chat \"%s\"", s));
-	}
-*/
 	else
 		trap_SendServerCommand(targ, va("cp \"%s\n\"", buf));
 }
 
 void Use_Target_Print_Go (gentity_t *ent){
-
 	//RoboPhred
 	int i;
 
@@ -306,17 +287,6 @@ void Use_Target_Print_Go (gentity_t *ent){
 		ent->genericValue14 = level.time + ent->wait;
 	}
 
-	/*
-	//RoboPhred
-	if(ent->message[0] == '@' && ent->message[1] != '@')
-		cmd = "cps";
-	else if(ent->spawnflags & 8)
-		cmd = "print";
-	else if(ent->spawnflags & 16)
-		cmd = "chat";
-	else
-		cmd = "cp";
-	*/
 	G_ActivateBehavior(ent, BSET_USE);
 
 	if(ent->spawnflags & 4)
@@ -333,39 +303,10 @@ void Use_Target_Print_Go (gentity_t *ent){
 		}
 	}
 	else
-		Send_Target_Print(ent, -1);
-	/*
-	if ( ( ent->spawnflags & 4 ) ) 
-	{//private, to one client only
-		if (!activator || !activator->inuse)
-		{
-			Com_Printf("ERROR: Bad activator in Use_Target_Print");
-		}
-		if ( activator && activator->client )
-		{//make sure there's a valid client ent to send it to
-			trap_SendServerCommand( activator->s.number, va("%s \"%s\"", cmd, ent->message ));
-		}
-		//NOTE: change in functionality - if there *is* no valid client ent, it won't send it to anyone at all
-		return;
-	}
-
-	if ( ent->spawnflags & 3 ) {
-		if ( ent->spawnflags & 1 ) {
-			G_TeamCommand( TEAM_RED, va("%s \"%s\"", cmd, ent->message) );
-		}
-		if ( ent->spawnflags & 2 ) {
-			G_TeamCommand( TEAM_BLUE, va("%s \"%s\"", cmd, ent->message) );
-			if(isChat)
-				target_print_sendechos(activator, ent->message);
-		}
-		return;
-	}
-	trap_SendServerCommand( -1, va("%s \"%s\"", cmd, ent->message ));
-	*/
+		Send_Target_Print(ent, -1);	
 	G_UseTargets(ent, ent->activator);
 }
 
-//Ufo: redesigned a bit to make "delay" working
 void Think_Target_Print(gentity_t* ent) {
 	Use_Target_Print_Go(ent);
 }
@@ -375,9 +316,9 @@ void Use_Target_Print(gentity_t *ent, gentity_t *other, gentity_t *activator) {
 	if (ent->delay <= 0) {
 		Use_Target_Print_Go(ent);
 	}
-	else {
+	else 
+	{
 		ent->think = Think_Target_Print;
-		//Ufo:
 		ent->nextthink = level.time + ent->delay;
 	}
 }
@@ -389,9 +330,10 @@ void SP_target_print( gentity_t *ent ) {
 		return;
 	}
 	ent->use = Use_Target_Print;
-	//RoboPhred: force a delay
+	
 	if(ent->wait <= 0)
 		ent->wait = 700;
+	
 	//Ufo:
 	if (!ent->target2 || !ent->target2[0])
 		G_SpawnString("arg", "", &ent->target2);

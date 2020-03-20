@@ -1995,7 +1995,6 @@ void lmd_scale(gentity_t *ent)
 	ent->use = lmd_scale_use;
 }
 
-//Ufo: adding new options:
 const entityInfoData_t lmd_playereffect_keys[] = {
 	{"effect", "1: Invincible, 2: Electrocution, 3: Fall to death, 4: Jail, 5: Godmode, 6: Shield, 7: Notarget, 8: Invisible, 9. Undying."},
 	{"wait", "Time to play the effect for.  Default 30."},
@@ -2827,13 +2826,20 @@ void lmd_event_playerkilled(gentity_t *player, gentity_t *attacker, int meansOfD
 	{
 		if (Q_stricmp(trig->classname, "lmd_event") != 0)
 			continue;
-		if (trig->flags & FL_INACTIVE) //Ufo: was missing
+		if (trig->flags & FL_INACTIVE)
 			continue;
+
 		playerIn = attackerIn = qfalse;
-		if (trap_EntityContact(trig->r.absmin, trig->r.absmax, player))
-			playerIn = qtrue;
-		if (trap_EntityContact(trig->r.absmin, trig->r.absmax, attacker))
-			attackerIn = qtrue;
+
+		if (VectorCompare(vec3_origin, trig->r.mins) && VectorCompare(vec3_origin, trig->r.maxs))
+			playerIn = attackerIn = qtrue; // event is eveywhere
+		else
+		{
+			if (trap_EntityContact(trig->r.absmin, trig->r.absmax, player))
+				playerIn = qtrue;
+			if (trap_EntityContact(trig->r.absmin, trig->r.absmax, attacker))
+				attackerIn = qtrue;
+		}
 
 		if (trig->spawnflags & 2)
 		{

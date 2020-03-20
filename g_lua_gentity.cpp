@@ -54,8 +54,8 @@ static int g_lua_GEntity_Place(lua_State *L)
 	{
 		if (n > 1)
 		{
-			int canSave = luaL_checkinteger(L, 2);
-			if (canSave != 0)
+			qboolean canSave = luaL_checkinteger(L, 2);
+			if (canSave)
 				Lmd_Entities_SetSaveable(result->Lmd.spawnData, qtrue);
 		}
 
@@ -328,7 +328,7 @@ static int g_lua_GEntity_Targetname(lua_State *L)
 	lua_GEntity *lent = NULL;
 
 	lent = g_lua_checkEntity(L, 1);
-	
+
 	lua_pushstring(L, lent->e->targetname);
 	return 1;
 }
@@ -358,6 +358,40 @@ static int g_lua_GEntity_Health(lua_State *L)
 	}
 
 	lua_pushinteger(L, lent->e->health);
+	return 1;
+}
+
+//
+// GEntity:ScaleNetHealth( )
+//
+static int g_lua_GEntity_ScaleNetHealth(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+	lent = g_lua_checkEntity(L, 1);
+	G_ScaleNetHealth(lent->e);
+	return 0;
+}
+
+//
+// Entity:NextThink( )
+// Entity:NextThink( newVal:Integer )
+//
+static int g_lua_GEntity_NextThink(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent;
+
+	lent = g_lua_checkEntity(L, 1);
+
+	if (n > 1)
+	{
+		int newVal = luaL_checkinteger(L, 2);
+		lent->e->nextthink = newVal;
+		return 0;
+	}
+
+	lua_pushinteger(L, lent->e->nextthink);
 	return 1;
 }
 
@@ -424,7 +458,6 @@ static int g_lua_GEntity_BindPain(lua_State *L)
 //
 // GEntity:BindThink( callback:Function )
 //
-
 void lua_think(gentity_t *self)
 {
 	lua_rawgeti(g_lua, LUA_REGISTRYINDEX, self->lua_think);
@@ -457,7 +490,6 @@ static int g_lua_GEntity_BindThink(lua_State *L)
 		lent->e->lua_think = luaL_ref(L, LUA_REGISTRYINDEX);
 		lent->e->think = lua_think;
 	}
-
 	return 0;
 }
 
@@ -553,6 +585,8 @@ static const luaL_Reg gentity_meta[] = {
 	{"BindPain", g_lua_GEntity_BindPain},
 	//{ "BindTouch", lua_GEntity_BindTouch},
 	//{ "BindTouch", lua_GEntity_BindDie},
+	{"BindThink", g_lua_GEntity_BindThink},
+	{"NextThink", g_lua_GEntity_NextThink},
 	{"BindUse", g_lua_GEntity_BindUse},
 	{"MakeHackable", g_lua_GEntity_MakeHackable},
 	{"MakeUsable", g_lua_GEntity_MakeUsable},
@@ -563,7 +597,8 @@ static const luaL_Reg gentity_meta[] = {
 
 	{"Model", g_lua_GEntity_Model},
 	{"Targetname", g_lua_GEntity_Targetname},
-	{"Health", g_lua_GEntity_Health},
+	{"Health", g_lua_GEntity_Health},	
+	{"ScaleNetHealth", g_lua_GEntity_ScaleNetHealth},
 	{"GenericValues", g_lua_GEntity_GenericValue},
 
 	{NULL, NULL}};
@@ -577,7 +612,7 @@ int luaopen_gentity(lua_State *L)
 	luaL_newmetatable(L, "Game.GEntity"); /* create metatable for entities */
 	lua_pushvalue(L, -1);				  /* push metatable */
 	lua_setfield(L, -2, "__index");		  /* metatable.__index = metatable */
-	luaL_setfuncs(L, gentity_meta, 0);	/* add entity methods to new metatable */
+	luaL_setfuncs(L, gentity_meta, 0);	  /* add entity methods to new metatable */
 	lua_pop(L, 1);						  /* pop new metatable */
 
 	// set global class

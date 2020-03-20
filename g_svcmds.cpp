@@ -19,41 +19,6 @@
 
 #include "g_lua_main.h"
 
-
-// SvCmd_survival_f
-// Ussage: /survival [hp ammount]
-// Description: shows healthbar for players and sets hp ammount
-int g_survivalhp = 0;
-void SvCmd_survival_f()
-{
-	if (trap_Argc() == 2) {
-		char arg[MAX_TOKEN_CHARS] = { 0 };
-		gentity_t *player = NULL;
-
-		trap_Argv(1, arg, sizeof(arg));
-		g_survivalhp = atoi(arg);
-
-		if (g_survivalhp > 0) {
-			for (int i = 0; i < 10; ++i)
-			{
-				player = g_entities + i;
-				if (player->client->pers.connected == CON_CONNECTED) {
-					player->maxHealth = g_survivalhp;
-					player->health = g_survivalhp;
-					player->s.maxhealth = g_survivalhp;
-					player->s.health = g_survivalhp;
-					player->client->ps.stats[STAT_HEALTH] = g_survivalhp;
-					player->client->ps.stats[STAT_MAX_HEALTH] = g_survivalhp;
-				}
-			}
-		}
-		else
-			g_survivalhp = 0;
-	}
-	else
-		trap_Printf("Use survival [hp]");
-}
-
 //RoboPhred
 gentity_t *ClientFromArg (gentity_t *to, int argNum);
 
@@ -914,12 +879,6 @@ qboolean	ConsoleCommand( void ) {
 						Q_COLOR_ESCAPE, 
 						COLOR_GREEN, 
 						"reloading lua scripts ..."));
-		return qtrue;
-	}
-
-	if (Q_stricmp(cmd,"survivalx")==0)
-	{
-		SvCmd_survival_f();
 		return qtrue;
 	}
 

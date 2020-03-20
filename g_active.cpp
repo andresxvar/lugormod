@@ -603,12 +603,8 @@ Spectators will only interact with teleporters.
 ============
 */
 //RoboPhred
-inline gentity_t *IterateEnts(gentity_t *from);
 void G_TouchTriggers(gentity_t *ent)
 {
-	//Ufo:
-	//int			num;
-	//int			touch[MAX_GENTITIES];
 	gentity_t *hit;
 	trace_t trace;
 	vec3_t mins, maxs;
@@ -628,22 +624,14 @@ void G_TouchTriggers(gentity_t *ent)
 	VectorSubtract(ent->client->ps.origin, range, mins);
 	VectorAdd(ent->client->ps.origin, range, maxs);
 
-	//Ufo: useless right now
-	//num = trap_EntitiesInBox( mins, maxs, touch, MAX_GENTITIES );
-
 	// can't use ent->r.absmin, because that has a one unit pad
 	VectorAdd(ent->client->ps.origin, ent->r.mins, mins);
 	VectorAdd(ent->client->ps.origin, ent->r.maxs, maxs);
 
 	//RoboPhred:
 	hit = NULL;
-	/*
-	for ( i=0 ; i<num ; i++ ) {
-	hit = &g_entities[touch[i]];
-	*/
 	while (hit = IterateEnts(hit))
 	{
-
 		if (!hit->touch && !ent->touch)
 		{
 			continue;
@@ -4473,7 +4461,6 @@ ClientThink
 A new command has arrived from the client
 ==================
 */
-extern int g_survivalhp;
 void ClientThink(int clientNum, usercmd_t *ucmd)
 {
 	gentity_t *ent;
@@ -4482,15 +4469,6 @@ void ClientThink(int clientNum, usercmd_t *ucmd)
 	if (clientNum < MAX_CLIENTS)
 	{
 		trap_GetUsercmd(clientNum, &ent->client->pers.cmd);
-	}
-
-	playerState_t *ps = &ent->client->ps;
-	if (g_survivalhp && ent->maxHealth)
-	{
-		if (ent->maxHealth == ps->stats[STAT_MAX_HEALTH])
-			G_ScaleNetHealth(ent);
-		else
-			ent->maxHealth = 0;
 	}
 
 	// mark the time we got info, so we can display the
