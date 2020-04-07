@@ -1,6 +1,7 @@
 
 
-enum{
+enum
+{
 	PROF_NONE = 0,
 	PROF_ADMIN,
 	PROF_BOT,
@@ -9,13 +10,12 @@ enum{
 	NUM_PROFESSIONS
 };
 
-
-
 //#define LMD_TECH_OLDSETUP
 
 //Tech skills.
 #ifdef LMD_TECH
-enum{
+enum
+{
 	//SK_TECH_SCANNER = 0,
 	SK_TECH_REMOTESTASHDEPO = 0,
 	SK_TECH_DEMP2,
@@ -28,7 +28,7 @@ enum{
 	SK_TECH_DATACHIPS,
 	SK_TECH_DEVICES,
 	SK_TECH_WEAPONMODS,
-//#else
+	//#else
 	SK_TECH_RATIONS,
 	SK_TECH_MEDICINE,
 	SK_TECH_STASHDECOY,
@@ -39,10 +39,9 @@ enum{
 
 #endif
 
-
 //General functions.
 int Profession_LevelCost(int level, int time);
-char* Professions_GetName(int prof);
+char *Professions_GetName(int prof);
 
 int Professions_TotalSkillPoints(int prof, int level);
 

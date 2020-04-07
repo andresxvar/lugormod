@@ -255,6 +255,7 @@ qboolean OnSameTeam( gentity_t *ent1, gentity_t *ent2 ) {
 		return qfalse;
 	}
 
+	/* weaponx
 	if (ent1->s.eType == ET_NPC && ent2->s.eType == ET_PLAYER)
 	{
 		return qfalse;
@@ -263,6 +264,7 @@ qboolean OnSameTeam( gentity_t *ent1, gentity_t *ent2 ) {
 	{
 		return qfalse;
 	}
+	*/
 
 	if ( ent1->client->sess.sessionTeam == ent2->client->sess.sessionTeam ) {
 		return qtrue;

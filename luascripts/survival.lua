@@ -11,10 +11,11 @@ end
 
 -- lua_survivalmode_setup: extra entitties
 function lua_survivalmode_setup(self)
-    GEntity.Place("classname,lmd_event,deathtarget,sDie,")
-    GEntity.Place("classname,target_relay,targetname,sDie,target,sDropCr,target2,sSpec")
-    GEntity.Place("classname,lmd_drop,spawnflags,1,targetname,sDropCr")
-    GEntity.Place("classname,lua_spectimer,targetname,sSpec")    
+    GEntity.Place("classname,lmd_event,group,survival,deathtarget,sDie")
+    GEntity.Place("classname,target_relay,group,survival,targetname,sDie,target,sDropCr,target2,sSpec")
+    GEntity.Place("classname,lmd_drop,group,survival,spawnflags,1,targetname,sDropCr,model,map_objects/imperial/crate_xplode,noise,sound/interface/pickup_battery,target,sLoot")
+    GEntity.Place("classname,target_credits,group,survival,targetname,sLoot,count,100,random,50")
+    --GEntity.Place("classname,lua_spectimer,group,survival,targetname,sSpec")    
     self:BindThink(lua_survivalmode_think)
     self:NextThink(Game.Time() + 3000)    
 end

@@ -14,6 +14,22 @@ function do_f(player,argc)
 	return 1
 end
 
+function bolt_f(player,argc)
+	if argc == 1 then
+		player:PrintConsole("^7Syntax: /bolt <model> <size>")
+	else
+		local model = Game.Argument(1)
+		local size = tonumber(Game.Argument(2))
+		player:BoltModel(model,size)
+	end
+	return 1
+end
+
+function toyr2_f(pl,argc)
+	pl:BoltModel("models/players/r2d2/model.glm",tonumber(Game.Argument(1)))
+	return 1
+end
+
 function me_f(player,argc)
 	if argc == 1 then
 		player:PrintConsole("^7Syntax: /me <action>")
@@ -38,3 +54,5 @@ Game.BindCommand("timer",timer_f)
 Game.BindCommand("do", do_f)
 Game.BindCommand("me", me_f)
 Game.BindCommand("roll", roll_f)
+Game.BindCommand("bolt", bolt_f)
+Game.BindCommand("toyr2", toyr2_f)

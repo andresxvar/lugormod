@@ -1085,11 +1085,8 @@ void Cmd_Examine_f(gentity_t *ent, int iArg)
 }
 
 void Cmd_Factions_f(gentity_t *ent, int iArg);
-
 void Cmd_Action_f(gentity_t *ent, int iArg);
-
 void Cmd_Friends_f(gentity_t *ent, int iArg);
-
 void Cmd_None_f(gentity_t *ent, int iArg)
 {
 }

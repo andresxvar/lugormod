@@ -11,12 +11,10 @@ extern stringID_table_t animTable[MAX_ANIMATIONS+1];
 	{"ModelScale", "The scale to apply to the model."}, \
 	{"LegsAnim", "The text name of a legs animation to apply.  Use the admin command \'/anims' to find an animation."}, \
 	{"TorsoAnim", "The text name of a torso animation to apply.  Use the admin command \'/anims' to find an animation."}, \
-	{"Color", "The custom RGB color of the model, if available."}
+	{"rgb", "The custom RGB for the player model"}
 
 void ParseActorAttributeEntityKeys(gentity_t *self) {
 	char *arg;
-
-	//G_SpawnString("skin", "", &self->GenericStrings[0]); //Ufo: not needed here
 
 	G_SpawnString("torsoAnim", "", &arg);
 	self->genericValue1 = GetIDForString(animTable, arg);
@@ -26,8 +24,7 @@ void ParseActorAttributeEntityKeys(gentity_t *self) {
 	self->genericValue2 = GetIDForString(animTable, arg);
 	G_Free(arg);
 
-	//Ufo:
-	G_SpawnVector("color", "0 0 0", self->genericVec1);
+	G_SpawnVector("rgb", "0 0 0", self->genericVec1);
 }
 
 void ApplyActorAttributeEntityKeys(gentity_t *self, gentity_t *actor) {
@@ -41,12 +38,7 @@ void ApplyActorAttributeEntityKeys(gentity_t *self, gentity_t *actor) {
 	if(self->genericValue2 > -1) 
 		Actor_SetAnimation_Torso(actor, self->genericValue2, -1);
 
-	//Ufo:
-	actor->client->ps.customRGBA[0] = self->genericVec1[0];
-	actor->client->ps.customRGBA[1] = self->genericVec1[1];
-	actor->client->ps.customRGBA[2] = self->genericVec1[2];
-
-	//Actor_SetSpeed(actor, self->speed); //Ufo: not needed here
+	VectorCopy(self->genericVec1, actor->client->ps.customRGBA);
 }
 
 const entityInfoData_t lmd_actor_spawnflags[] = {

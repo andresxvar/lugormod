@@ -1,5 +1,3 @@
-
-
 /*
 
 //REL: see Lmd_Invitations.h

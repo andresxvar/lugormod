@@ -21,7 +21,7 @@ const int verBuild = 91;
 const int verMajor = 0;
 const int verMinor = 0;
 const int verRev = 0;
-const int verBuild = 2;
+const int verBuild = 3;
 #endif
 
 #ifdef LMD_EXPERIMENTAL

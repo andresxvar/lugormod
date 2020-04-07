@@ -245,6 +245,36 @@ static int g_lua_GEntity_MakeUsable(lua_State *L)
 }
 
 //
+// GEntity:RGBA( r, g, b, a )
+//
+static int g_lua_GEntity_RGBA(lua_State *L)
+{
+	int n = lua_gettop(L);
+	lua_GEntity *lent = g_lua_checkEntity(L, 1);
+
+	if (n > 1)
+	{
+		int customR = luaL_checkinteger(L, 2);
+		int customG = luaL_checkinteger(L, 3);
+		int customB = luaL_checkinteger(L, 4);
+		int customA = luaL_checkinteger(L, 5);
+		lent->e->s.customRGBA[0] = customR;
+		lent->e->s.customRGBA[1] = customG;
+		lent->e->s.customRGBA[2] = customB;
+		lent->e->s.customRGBA[3] = customA;
+		if (lent->e->client != NULL)
+		{
+			lent->e->client->ps.customRGBA[0] = customR;
+			lent->e->client->ps.customRGBA[1] = customG;
+			lent->e->client->ps.customRGBA[2] = customB;
+			lent->e->client->ps.customRGBA[3] = customA;
+		}
+		trap_LinkEntity(lent->e);
+		return 0;
+	}
+}
+
+//
 // GEntity:Position( )
 // GEntity:Position( newVal:QVector )
 //
@@ -594,10 +624,11 @@ static const luaL_Reg gentity_meta[] = {
 	{"Number", g_lua_GEntity_Number},
 	{"Angles", g_lua_GEntity_Angles},
 	{"Position", g_lua_GEntity_Position},
+	{"RGBA", g_lua_GEntity_RGBA},
 
 	{"Model", g_lua_GEntity_Model},
 	{"Targetname", g_lua_GEntity_Targetname},
-	{"Health", g_lua_GEntity_Health},	
+	{"Health", g_lua_GEntity_Health},
 	{"ScaleNetHealth", g_lua_GEntity_ScaleNetHealth},
 	{"GenericValues", g_lua_GEntity_GenericValue},
 

@@ -211,28 +211,30 @@ void Rancor_Swing(qboolean tryGrab)
 	{
 		gentity_t *radiusEnt = &g_entities[radiusEntNums[i]];
 		if (!radiusEnt->inuse)
-		{
+		{	// must be in use
 			continue;
 		}
 
 		if (radiusEnt == NPC)
-		{ //Skip the rancor ent
+		{ 	// skip rancor
 			continue;
 		}
 
 		if (radiusEnt->client == NULL)
-		{ //must be a client
+		{ 	// skip non-client entities
 			continue;
 		}
 
-		if ((radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER))
-		{ //can't be one already being held
+		if (radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER)
+		{ 	// skip client being held
 			continue;
 		}
+		
 
-		//RoboPhred: dont eat spectators, silly
 		if (radiusEnt->client->sess.spectatorState != SPECTATOR_NOT)
+		{	// skip spectators
 			continue;
+		}
 
 		if (DistanceSquared(radiusEnt->r.currentOrigin, boltOrg) <= radiusSquared)
 		{
@@ -799,13 +801,12 @@ void Rancor_CheckDropVictim(void)
 	}
 }
 
-//if he's stepping on things then crush them -rww
+// Rancor crushes clients
 void Rancor_Crush(void)
 {
 	gentity_t *crush;
 
-	if (!NPC ||
-		!NPC->client ||
+	if (!NPC || !NPC->client ||
 		NPC->client->ps.groundEntityNum >= ENTITYNUM_WORLD)
 	{ //nothing to crush
 		return;

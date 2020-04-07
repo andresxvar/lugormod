@@ -253,7 +253,7 @@ void NPC_SetMiscDefaultData(gentity_t *ent)
 	{
 		Rancor_SetBolts(ent);
 		ent->s.g2radius = 255; //MAX for this value, was (ent->r.maxs[2]-ent->r.mins[2]), which is 272 or something
-		ent->mass = 1000;	  //???
+		ent->mass = 1000;	   //???
 		ent->flags |= FL_NO_KNOCKBACK;
 		ent->pain = NPC_Rancor_Pain;
 		ent->health *= 4;
@@ -335,7 +335,7 @@ void NPC_SetMiscDefaultData(gentity_t *ent)
 				//FIXME: not necc. a ST
 				ST_ClearTimers(ent);
 				if (ent->NPC->rank >= RANK_LT || ent->client->ps.weapon == WP_THERMAL)
-				{   //officers, grenade-throwers use alt-fire
+				{	//officers, grenade-throwers use alt-fire
 					//ent->health = 50;
 					//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
 				}
@@ -449,7 +449,7 @@ void NPC_SetMiscDefaultData(gentity_t *ent)
 				//FIXME: not necc. a ST
 				ST_ClearTimers(ent);
 				if (ent->NPC->rank >= RANK_COMMANDER)
-				{   //commanders use alt-fire
+				{	//commanders use alt-fire
 					//ent->NPC->scriptFlags |= SCF_ALT_FIRE;
 				}
 				if (!Q_stricmp("rodian2", ent->NPC_type))
@@ -1127,7 +1127,7 @@ void NPC_Begin(gentity_t *ent)
 	NPC_ChangeWeapon(ent->client->ps.weapon);
 
 	//==Final NPC initialization
-	ent->pain = NPC_PainFunc(ent);   //painF_NPC_Pain;
+	ent->pain = NPC_PainFunc(ent);	 //painF_NPC_Pain;
 	ent->touch = NPC_TouchFunc(ent); //touchF_NPC_Touch;
 	//	ent->NPC->side = 1;
 
@@ -1141,7 +1141,7 @@ void NPC_Begin(gentity_t *ent)
 		ent->client->ps.persistant[PERS_TEAM] = ent->client->playerTeam;
 	}
 
-	if (ent->use == NULL)		// wx: maybe set previously
+	if (ent->use == NULL) // wx: maybe set previously
 		ent->use = NPC_Use;
 
 	ent->think = NPC_Think;
@@ -1790,15 +1790,12 @@ void NPC_Spawn_Go(gentity_t *ent)
 }
 
 void scaleEntity(gentity_t *scaleEnt, int scale); //Lugormod
-
-//Lugormod How the %/%&!" do they do this for real???
 void NPC_Spawn_Tjo(gentity_t *ent)
 {
 	if (!ent->targetname)
-	{
 		ent->nextthink = level.time + 1000;
-	}
 
+	// battleground
 	if (g_gametype.integer == GT_BATTLE_GROUND)
 	{
 		if (!ent->parent || !ent->parent->alliedTeam)
@@ -1813,11 +1810,11 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 			return;
 		}
 	}
+
 	if (NPC_SpotWouldTelefrag(ent))
 	{
 		//Com_Printf("info: %s would telefrag.\n", ent->NPC_targetname);
 		ent->genericValue10 = 1;
-
 		return;
 	}
 
@@ -1872,16 +1869,14 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 		}
 	}
 
+	// allocate npc entity
 	newent = G_Spawn();
-
 	if (newent == NULL)
 	{
 		Com_Printf("ERROR: NPC G_Spawn failed\n");
 		return;
 	}
-
 	newent->fullName = G_NewString(ent->NPC_targetname);
-
 	newent->NPC = New_NPC_t(newent->s.number);
 	if (newent->NPC == NULL)
 	{
@@ -1890,62 +1885,48 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 		return;
 	}
 
-	//newent->client = (gclient_s *)G_Alloc (sizeof(gclient_s));
-	G_CreateFakeClient(newent->s.number, &newent->client);
-
+	// allocate npc goal
 	newent->NPC->tempGoal = G_Spawn();
-
 	if (newent->NPC->tempGoal == NULL)
 	{
 		newent->NPC = NULL;
 		goto finish;
 		return;
 	}
-
 	newent->NPC->tempGoal->classname = "NPC_goal";
 	newent->NPC->tempGoal->parent = newent;
 	newent->NPC->tempGoal->r.svFlags |= SVF_NOCLIENT;
 
+	// allocate client
+	G_CreateFakeClient(newent->s.number, &newent->client);
 	if (newent->client == NULL)
 	{
 		Com_Printf("ERROR: NPC BG_Alloc client failed\n");
 		goto finish;
 		return;
 	}
-
 	memset(newent->client, 0, sizeof(*newent->client));
-
-	//Assign the pointer for bg entity access
 	newent->playerState = &newent->client->ps;
-
-	//==NPC_Connect( newent, net_name );===================================
 
 	if (ent->NPC_type == NULL)
 		ent->NPC_type = "random";
 
+	// npc sounds
 	if (ent->r.svFlags & SVF_NO_BASIC_SOUNDS)
-	{
 		newent->r.svFlags |= SVF_NO_BASIC_SOUNDS;
-	}
 	if (ent->r.svFlags & SVF_NO_COMBAT_SOUNDS)
-	{
 		newent->r.svFlags |= SVF_NO_COMBAT_SOUNDS;
-	}
 	if (ent->r.svFlags & SVF_NO_EXTRA_SOUNDS)
-	{
 		newent->r.svFlags |= SVF_NO_EXTRA_SOUNDS;
-	}
 
+	// check for npc message
 	if (ent->message)
 	{									  //has a key
-		newent->message = ent->message;   //transfer the key name
+		newent->message = ent->message;	  //transfer the key name
 		newent->flags |= FL_NO_KNOCKBACK; //don't fall off ledges
 	}
 
-	// If this is a vehicle we need to see what kind it is so we properlly allocate it.
-	//if ( iVehIndex != VEHICLE_NONE )
-	//if ( Q_stricmp( ent->classname, "NPC_Vehicle" ) == 0 )
-	//if ( Q_stricmp( ent->ownername, "NPC_Vehicle" ) == 0 )
+	// allocate vehicle
 	if (ent->alt_fire)
 	{
 		int iVehIndex;
@@ -1954,9 +1935,8 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 
 		if (iVehIndex == VEHICLE_NONE)
 		{
-			G_FreeEntity(newent);
-			//get rid of the spawner, too, I guess
-			G_FreeEntity(ent);
+			G_FreeEntity(newent);			
+			G_FreeEntity(ent); //get rid of the spawner, too, I guess
 			return;
 		}
 		// NOTE: If you change/add any of these, update NPC_Spawn_f for the new vehicle you
@@ -1966,27 +1946,21 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 		switch (g_vehicleInfo[iVehIndex].type)
 		{
 		case VH_ANIMAL:
-			// Create the animal (making sure all it's data is initialized).
 			G_CreateAnimalNPC(&newent->m_pVehicle, ent->NPC_type);
 			break;
 		case VH_SPEEDER:
-			// Create the speeder (making sure all it's data is initialized).
 			G_CreateSpeederNPC(&newent->m_pVehicle, ent->NPC_type);
 			break;
 		case VH_FIGHTER:
-			// Create the fighter (making sure all it's data is initialized).
 			G_CreateFighterNPC(&newent->m_pVehicle, ent->NPC_type);
 			break;
 		case VH_WALKER:
-			// Create the walker (making sure all it's data is initialized).
 			G_CreateWalkerNPC(&newent->m_pVehicle, ent->NPC_type);
 			break;
-
 		default:
 			Com_Printf("ERROR: Couldn't spawn NPC %s\n", ent->NPC_type);
-			G_FreeEntity(newent);
-			//get rid of the spawner, too, I guess
-			G_FreeEntity(ent);
+			G_FreeEntity(newent);			
+			G_FreeEntity(ent); //get rid of the spawner, too, I guess
 			return;
 		}
 
@@ -2016,10 +1990,6 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 		G_SetAngles(newent, newent->m_pVehicle->m_vOrientation);
 		SetClientViewAngle(newent, newent->m_pVehicle->m_vOrientation);
 
-		//newent->m_pVehicle->m_ulFlags |= VEH_GEARSOPEN;
-		//why? this would just make it so the initial anim never got played... -rww
-		//There was no initial anim, it would just open the gear even though it's already on the ground (fixed now, made an initial anim)
-
 		//For SUSPEND spawnflag, the amount of time to drop like a rock after SUSPEND turns off
 		newent->fly_sound_debounce_time = ent->fly_sound_debounce_time;
 
@@ -2048,9 +2018,8 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 	if (!NPC_ParseParms(ent->NPC_type, newent))
 	{
 		Com_Printf("ERROR: Couldn't spawn NPC %s\n", ent->NPC_type);
-		G_FreeEntity(newent);
-		//get rid of the spawner, too, I guess
-		G_FreeEntity(ent);
+		G_FreeEntity(newent);	
+		G_FreeEntity(ent); 	//get rid of the spawner, too, I guess
 		return;
 	}
 
@@ -2077,6 +2046,7 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 			//		newent->r.svFlags |= SVF_NOPUSH;
 		}
 	}
+
 	//=====================================================================
 	//set the info we want
 	if (!newent->health)
@@ -2095,7 +2065,6 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 	//RoboPhred: NPC_target6
 	newent->target6 = G_NewString(ent->target6); //use when the npc kills a player.
 	newent->wait = ent->wait;
-
 	for (index = BSET_FIRST; index < NUM_BSETS; index++)
 	{
 		if (ent->behaviorSet[index])
@@ -2103,17 +2072,13 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 			newent->behaviorSet[index] = ent->behaviorSet[index];
 		}
 	}
-
 	newent->classname = "NPC";
-	//Lugormod Must allocate
-	newent->NPC_type = G_NewString(ent->NPC_type);
+	newent->NPC_type = G_NewString(ent->NPC_type); //Lugormod Must allocate
 	trap_UnlinkEntity(newent);
-
 	VectorCopy(ent->s.angles, newent->s.angles);
 	VectorCopy(ent->s.angles, newent->r.currentAngles);
 	VectorCopy(ent->s.angles, newent->client->ps.viewangles);
 	newent->NPC->desiredYaw = ent->s.angles[YAW];
-
 	trap_LinkEntity(newent);
 	newent->spawnflags = ent->spawnflags;
 
@@ -2133,7 +2098,6 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 	if (ent->parms)
 	{
 		int parmNum;
-
 		for (parmNum = 0; parmNum < MAX_PARMS; parmNum++)
 		{
 			if (ent->parms->parm[parmNum] && ent->parms->parm[parmNum][0])
@@ -2142,6 +2106,7 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 			}
 		}
 	}
+
 	//FIXME: copy cameraGroup, store mine in message or other string field
 
 	//set origin
@@ -2170,7 +2135,7 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 	NPC_DefaultScriptFlags(newent);
 
 	//copy over team variables, too
-	newent->s.shouldtarget = ent->s.shouldtarget;
+	newent->s.shouldtarget = ent->s.shouldtarget;	// show health bar
 	newent->s.teamowner = ent->s.teamowner;
 	newent->alliedTeam = ent->alliedTeam;
 	newent->teamnodmg = ent->teamnodmg;
@@ -2196,18 +2161,19 @@ void NPC_Spawn_Tjo(gentity_t *ent)
 	}
 	newent->client->ps.persistant[PERS_TEAM] = newent->client->sess.sessionTeam;
 
+	// set npc clinet rgb
+	VectorCopy(ent->s.customRGBA, newent->s.customRGBA);
+	VectorCopy(ent->s.customRGBA, newent->client->ps.customRGBA);
+
 	trap_LinkEntity(newent);
 
 finish:
 	if (ent->spawnflags & NSF_DROP_TO_FLOOR)
-	{
 		G_SetOrigin(ent, saveOrg);
-	}
 
-	if (ent->s.iModelScale)
-	{ //Lugormod
+	if (ent->s.iModelScale)  //Lugormod
 		scaleEntity(newent, ent->s.iModelScale);
-	}
+
 	//NPC_SpawnEffect(newent);
 }
 
@@ -4440,19 +4406,10 @@ gentity_t *NPC_SpawnType(gentity_t *ent, char *npc_type, char *targetname, qbool
 
 	NPCspawner->NPC_type = G_NewString(npc_type);
 
-	//NPCspawner->spawnflags |= SFB_NOTSOLID;
-
-	//NPCspawner->playerTeam = TEAM_FREE;
-	//NPCspawner->behaviorSet[BSET_SPAWN] = "common/guard";
-
-	//This is stupid
 	if (isVehicle)
 	{
 		NPCspawner->classname = "NPC_Vehicle";
 	}
-	//else {
-	//        NPCspawner->classname = "LMD_spawner";
-	//}
 
 	//call precache funcs for James' builds
 	if (!Q_stricmp("gonk", NPCspawner->NPC_type))
@@ -4527,44 +4484,7 @@ gentity_t *NPC_SpawnType(gentity_t *ent, char *npc_type, char *targetname, qbool
 	{
 		NPC_Wampa_Precache();
 	}
-	/*
-	if (targetname 
-	&& (Q_stricmpn("spawner",targetname,7) == 0)
-	&& atoi(targetname + 7) > 0){
-	//NPCspawner->use = NPC_Spawn;
 
-	//NPCspawner->think = NPC_Spawn_Go;
-	//NPCspawner->r.svFlags |= SVF_NPC_PRECACHE;
-
-	NPCspawner->think = NPC_Spawn_Tjo;
-	NPCspawner->damage = 60000;
-
-	NPCspawner->spawnflags |= 1;
-	NPCspawner->spawnflags |= NSF_DROP_TO_FLOOR;
-	VectorSet(NPCspawner->r.mins, -16, -16, -16);
-	VectorSet(NPCspawner->r.maxs, 16, 16, 16);
-
-	NPCspawner->nextthink = level.time + FRAMETIME;
-	NPCspawner->count = atoi (targetname + 7);
-
-	if (NPCspawner->count < 10) {
-	NPCspawner->delay = 10 - NPCspawner->count;
-	NPCspawner->delay *= 10000;
-	} else {
-	NPCspawner->delay = 5000;
-	}
-
-
-	NPCspawner->NPC_targetname = G_NewString(va ("%s%i",
-	npc_type,
-	NPCspawner->s.number));
-	//NPCspawner->targetname = G_NewString("TjoSpawner");
-	trap_LinkEntity(NPCspawner);
-	return NPCspawner;
-	}
-	else
-	{
-	*/
 	NPCspawner->think = G_FreeEntity;
 	NPCspawner->nextthink = level.time + FRAMETIME;
 	NPCspawner->count = 1;
@@ -4579,21 +4499,24 @@ gentity_t *NPC_SpawnType(gentity_t *ent, char *npc_type, char *targetname, qbool
 		NPCspawner->NPC_targetname = G_NewString(npc_type);
 	}
 
-	//trap_LinkEntity(NPCspawner);
-
 	return (NPC_Spawn_Do(NPCspawner));
-	//}
 }
-qboolean isVehicleName(char *name);
 
+qboolean isVehicleName(char *name);
 void SP_LMD_spawner(gentity_t *NPCspawner)
 {
-	//RoboPhred: apparently this is possible
 	if (!NPCspawner->NPC_type)
 	{
 		G_FreeEntity(NPCspawner);
 		return;
 	}
+
+	// vehicles
+	if (isVehicleName(NPCspawner->NPC_type))
+	{
+		NPCspawner->alt_fire = qtrue;
+	}
+
 	if (!Q_stricmp("gonk", NPCspawner->NPC_type))
 		NPC_Gonk_Precache();
 	else if (!Q_stricmp("mouse", NPCspawner->NPC_type))
@@ -4632,18 +4555,17 @@ void SP_LMD_spawner(gentity_t *NPCspawner)
 		NPC_Wampa_Precache();
 
 	NPCspawner->damage = 60000;
-
 	NPCspawner->spawnflags |= 1;
 	//NPCspawner->spawnflags |= NSF_DROP_TO_FLOOR;
 	VectorSet(NPCspawner->r.mins, -16, -16, -16);
 	VectorSet(NPCspawner->r.maxs, 16, 16, 16);
+
 	if (NPCspawner->targetname)
 	{
 		NPCspawner->use = NPC_Spawn;
 	}
 	else
 	{
-
 		NPCspawner->think = NPC_Spawn_Tjo;
 		NPCspawner->nextthink = level.time + Q_irand(100, 5000);
 		if (NPCspawner->count < 10)
@@ -4663,125 +4585,25 @@ void SP_LMD_spawner(gentity_t *NPCspawner)
 	}
 
 	NPCspawner->NPC_targetname = G_NewString(va("%s%i", NPCspawner->NPC_type, NPCspawner->s.number));
-	if (isVehicleName(NPCspawner->NPC_type))
-	{
-		NPCspawner->alt_fire = qtrue;
-	}
+
+	int t;
+	G_SpawnInt("showhealth", "0", &t);
+	if (t)
+		NPCspawner->s.shouldtarget = qtrue;
+
+	vec3_t rgb;
+	qboolean rgbSet;
+	rgbSet = G_SpawnVector("rgb", "0 0 0", rgb);
+	if (rgbSet)
+		VectorCopy(rgb, NPCspawner->s.customRGBA);
+
 	int scale;
 	G_SpawnInt("customscale", "0", &scale);
 	NPCspawner->s.iModelScale = scale;
 
 	trap_LinkEntity(NPCspawner);
 }
-/*
-void PutSpawnerInWorld (gentity_t *NPCspawner, const char *npc_type, qboolean isVehicle)
-{
-NPCspawner->NPC_type = G_NewString( npc_type );
 
-if ( isVehicle )
-{
-NPCspawner->classname = "NPC_Vehicle";
-}
-
-//call precache funcs for James' builds
-if ( !Q_stricmp( "gonk", NPCspawner->NPC_type))
-{
-NPC_Gonk_Precache();
-}
-else if ( !Q_stricmp( "mouse", NPCspawner->NPC_type))
-{
-NPC_Mouse_Precache();
-}
-else if ( !Q_strncmp( "r2d2", NPCspawner->NPC_type, 4))
-{
-NPC_R2D2_Precache();
-}
-else if ( !Q_stricmp( "atst", NPCspawner->NPC_type))
-{
-NPC_ATST_Precache();
-}
-else if ( !Q_strncmp( "r5d2", NPCspawner->NPC_type, 4))
-{
-NPC_R5D2_Precache();
-}
-else if ( !Q_stricmp( "mark1", NPCspawner->NPC_type))
-{
-NPC_Mark1_Precache();
-}
-else if ( !Q_stricmp( "mark2", NPCspawner->NPC_type))
-{
-NPC_Mark2_Precache();
-}
-else if ( !Q_stricmp( "interrogator", NPCspawner->NPC_type))
-{
-NPC_Interrogator_Precache(NULL);
-}
-else if ( !Q_stricmp( "probe", NPCspawner->NPC_type))
-{
-NPC_Probe_Precache();
-}
-else if ( !Q_stricmp( "seeker", NPCspawner->NPC_type))
-{
-NPC_Seeker_Precache();
-}
-else if ( !Q_stricmp( "remote", NPCspawner->NPC_type))
-{
-NPC_Remote_Precache();
-}
-else if ( !Q_strncmp( "shadowtrooper", NPCspawner->NPC_type, 13 ) )
-{
-NPC_ShadowTrooper_Precache();
-}
-else if ( !Q_stricmp( "minemonster", NPCspawner->NPC_type ))
-{
-NPC_MineMonster_Precache();
-}
-else if ( !Q_stricmp( "howler", NPCspawner->NPC_type ))
-{
-NPC_Howler_Precache();
-}
-else if ( !Q_stricmp( "sentry", NPCspawner->NPC_type ))
-{
-NPC_Sentry_Precache();
-}
-else if ( !Q_stricmp( "protocol", NPCspawner->NPC_type ))
-{
-NPC_Protocol_Precache();
-}
-else if ( !Q_stricmp( "galak_mech", NPCspawner->NPC_type ))
-{
-NPC_GalakMech_Precache();
-}
-else if ( !Q_stricmp( "wampa", NPCspawner->NPC_type ))
-{
-NPC_Wampa_Precache();
-}
-
-NPCspawner->think = NPC_Spawn_Tjo;
-NPCspawner->nextthink = level.time + FRAMETIME;
-NPCspawner->damage = 60000;
-
-NPCspawner->spawnflags |= 1;
-//NPCspawner->spawnflags |= NSF_DROP_TO_FLOOR;
-VectorSet(NPCspawner->r.mins, -16, -16, -16);
-VectorSet(NPCspawner->r.maxs, 16, 16, 16);
-
-if (NPCspawner->count < 10) {
-NPCspawner->delay = 10 - NPCspawner->count;
-NPCspawner->delay *= 10000;
-} else {
-NPCspawner->delay = 5000;
-}
-
-
-NPCspawner->NPC_targetname = G_NewString(va ("%s%i",
-npc_type,
-NPCspawner->s.number));
-//NPCspawner->targetname = G_NewString("TjoSpawner");
-
-trap_LinkEntity(NPCspawner);
-}
-*/
 void NPC_Spawn_f(gentity_t *ent)
 {
 	char npc_type[1024];

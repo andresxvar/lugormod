@@ -1,5 +1,3 @@
-
-
 #ifndef LMD_COMMANDS_AUTHS_H
 #define LMD_COMMANDS_AUTHS_H
 
@@ -19,8 +17,8 @@ qboolean Auths_RemoveTempAdmin(gentity_t *ent, char *authfile);
 qboolean Auths_AccHasAdmin(Account_t *acc);
 int Auths_GetRank(Account_t *acc);
 
-char* Auths_QuickAuthList(Account_t *acc);
-char* Auths_QuickPlayerAuthList(gentity_t *ent);
+char *Auths_QuickAuthList(Account_t *acc);
+char *Auths_QuickPlayerAuthList(gentity_t *ent);
 
 qboolean Auths_PlayerHasTempFile(gentity_t *ent, authFile_t *file);
 
@@ -34,14 +32,15 @@ authFile_t *Auths_GetFile(char *name);
 void Auths_AddTempAuthfile(gentity_t *ent, authFile_t *file);
 qboolean Auths_RemoveTempAuthfile(gentity_t *ent, authFile_t *file);
 
-typedef struct authFileData_s{
+typedef struct authFileData_s
+{
 	authFile_t *file;
 	int points;
-}authFileData_t;
+} authFileData_t;
 
 qboolean Auths_PlayerHasCommand(gentity_t *ent, cmdEntry_t *cmd);
 authCmdEntry_t *Auths_GetPlayerFileCmdEntry(gentity_t *ent, cmdEntry_t *cmd, authFileData_t **foundData);
 
-void Auths_DispAdmins(char* msg);
+void Auths_DispAdmins(char *msg);
 
 #endif

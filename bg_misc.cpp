@@ -917,7 +917,7 @@ qboolean BG_LegalizedForcePowers(char *powerOut, int maxRank, qboolean freeSaber
 	}
 
 	if (fpDisabled)
-	{	//If we specifically have attack or def disabled, force them up to level 3. It's the way
+	{ //If we specifically have attack or def disabled, force them up to level 3. It's the way
 		//things work for the case of all powers disabled.
 		//If jump is disabled, down-cap it to level 1. Otherwise don't do a thing.
 		if (fpDisabled & (1 << FP_LEVITATION))
@@ -2483,9 +2483,9 @@ qboolean BG_CanItemBeGrabbed(int gametype, const entityState_t *ent, const playe
 				//&& (item->giType != IT_HOLDABLE || item->giTag != HI_SEEKER)//not a seeker
 				&& (item->giType != IT_HOLDABLE || item->giTag == HI_JETPACK) && (item->giType != IT_POWERUP || item->giTag == PW_YSALAMIRI) //not a force pick-up
 #ifdef QAGAME
-				//&& (g_gametype.integer != GT_FFA || gameMode(GM_ANY) || item->giType != IT_WEAPON || !((item->giTag == WP_STUN_BATON && g_grapplingHook.integer) || item->giTag == WP_BRYAR_OLD)) //Lugormod
+			//&& (g_gametype.integer != GT_FFA || gameMode(GM_ANY) || item->giType != IT_WEAPON || !((item->giTag == WP_STUN_BATON && g_grapplingHook.integer) || item->giTag == WP_BRYAR_OLD)) //Lugormod
 #else
-				// && ( gametype != GT_FFA || gameMode(GM_ANY) || item->giType != IT_WEAPON || !((item->giTag == WP_STUN_BATON && g_grapplingHook.integer) || item->giTag == WP_BRYAR_OLD)) //Lugormod
+			// && ( gametype != GT_FFA || gameMode(GM_ANY) || item->giType != IT_WEAPON || !((item->giTag == WP_STUN_BATON && g_grapplingHook.integer) || item->giTag == WP_BRYAR_OLD)) //Lugormod
 #endif
 			)
 			{

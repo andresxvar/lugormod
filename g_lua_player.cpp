@@ -104,7 +104,6 @@ static int g_lua_Player_MaxHealth(lua_State *L)
 	{
 		int newVal = luaL_checkinteger(L, 2);
 		gentity_t *ent = &g_entities[ply->cl->ps.clientNum];
-
 		ply->cl->pers.maxHealth = ply->cl->ps.stats[STAT_MAX_HEALTH] = newVal;
 		ent->maxHealth = ent->s.maxhealth = newVal;
 		return 0;
@@ -274,6 +273,61 @@ static int g_lua_Player_Team(lua_State *L)
 
 	lua_pushinteger(L, ply->cl->sess.sessionTeam);
 	return 1;
+}
+
+//
+// Player:BoltModel(range:Integer)
+//
+void lua_BoltObject_Think(gentity_t *bolt)
+{
+	gentity_t *player = &g_entities[bolt->s.boltToPlayer-1];
+
+	if (player->client->pers.connected == CON_CONNECTED) {
+		VectorCopy(player->r.currentOrigin, bolt->r.currentOrigin);
+		trap_LinkEntity(bolt);		
+	}
+	else
+	{
+		player->client->holdingObjectiveItem = 0;
+		G_FreeEntity(bolt);
+	}
+
+	bolt->nextthink = level.time + 3000;
+}
+
+qboolean SpawnEntModel(gentity_t *ent, qboolean isSolid, qboolean isAnimated);
+static int g_lua_Player_BoltModel(lua_State *L)
+{
+	lua_Player *ply = g_lua_checkPlayer(L, 1);
+	char *model = (char *)luaL_checkstring(L, 2);
+	float modelscale = luaL_checknumber(L, 3);
+	gentity_t *plyEnt = &g_entities[ply->cl->ps.clientNum];
+	
+	if (ply->cl->holdingObjectiveItem) // remove the old bolt object
+	{
+		gentity_t *oldBolt = &g_entities[ply->cl->holdingObjectiveItem];
+		if (oldBolt && oldBolt->inuse)
+		{
+			ply->cl->holdingObjectiveItem = 0;
+			G_FreeEntity(oldBolt);
+		}
+	}
+
+	// attach a new bolt object
+	gentity_t *bolt = G_Spawn();
+	if (bolt)
+	{
+		bolt->model = model;
+		bolt->modelScale[0] = modelscale;
+		SpawnEntModel(bolt,qfalse,false);
+		G_SetOrigin(bolt, plyEnt->r.currentOrigin);
+		bolt->s.boltToPlayer = ply->cl->ps.clientNum + 1;
+		bolt->think = lua_BoltObject_Think;
+		bolt->nextthink = level.time + FRAMETIME;
+		ply->cl->holdingObjectiveItem = bolt->s.number;		
+		trap_LinkEntity(bolt);
+	}
+	return 0;
 }
 
 //
@@ -453,6 +507,7 @@ static const luaL_Reg player_meta[] = {
 
 	{"AdminRank", g_lua_Player_AdminRank},
 
+	{"BoltModel", g_lua_Player_BoltModel},
 	{"AimOrigin", g_lua_Player_AimOrigin},
 	{"AimAnyTarget", g_lua_Player_AimAnyTarget},
 	{"ViewAngles", g_lua_Player_ViewAngles},

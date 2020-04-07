@@ -1476,7 +1476,6 @@ qboolean NPC_CheckEnemyExt(qboolean checkAlerts)
 NPC_FacePosition
 -------------------------
 */
-
 qboolean NPC_FacePosition(vec3_t position, qboolean doPitch)
 {
 	vec3_t muzzle;
@@ -1540,7 +1539,6 @@ qboolean NPC_FacePosition(vec3_t position, qboolean doPitch)
 NPC_FaceEntity
 -------------------------
 */
-
 qboolean NPC_FaceEntity(gentity_t *ent, qboolean doPitch)
 {
 	vec3_t entPos;

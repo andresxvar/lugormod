@@ -130,7 +130,7 @@ static int g_lua_Game_ConcatArgs(lua_State *L)
 static int g_lua_Game_Argument(lua_State *L)
 {
 	int argn;
-	char result[32];
+	char result[64];
 
 	argn = luaL_optinteger(L, 1, 0);
 	trap_Argv(argn, result, sizeof(result));
