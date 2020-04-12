@@ -364,6 +364,9 @@ void G_SetEnemy( gentity_t *self, gentity_t *enemy )
 	if ( enemy->flags & FL_NOTARGET )
 		return;
 
+	if (OnSameTeam(self,enemy))
+		return; 
+
 	if ( !self->NPC )
 	{
 		self->enemy = enemy;

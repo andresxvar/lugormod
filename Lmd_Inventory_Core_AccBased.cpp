@@ -1,4 +1,3 @@
-
 #ifdef LMD_NEW_INVENTORY_SYSTEM
 
 #include "g_local.h"

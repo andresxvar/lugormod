@@ -1,19 +1,20 @@
-
 #include "g_local.h"
 #include "Lmd_Entities_Public.h"
 
 #include "Lmd_Actor.h"
 
-extern stringID_table_t animTable[MAX_ANIMATIONS+1];
+extern stringID_table_t animTable[MAX_ANIMATIONS + 1];
 
+#define ACTOR_ATTRIBUTE_LIST                                                                                                  \
+	{"ModelScale", "The scale to apply to the model."},                                                                       \
+		{"LegsAnim", "The text name of a legs animation to apply.  Use the admin command \'/anims' to find an animation."},   \
+		{"TorsoAnim", "The text name of a torso animation to apply.  Use the admin command \'/anims' to find an animation."}, \
+	{                                                                                                                         \
+		"rgb", "The custom RGB for the player model"                                                                          \
+	}
 
-#define ACTOR_ATTRIBUTE_LIST \
-	{"ModelScale", "The scale to apply to the model."}, \
-	{"LegsAnim", "The text name of a legs animation to apply.  Use the admin command \'/anims' to find an animation."}, \
-	{"TorsoAnim", "The text name of a torso animation to apply.  Use the admin command \'/anims' to find an animation."}, \
-	{"rgb", "The custom RGB for the player model"}
-
-void ParseActorAttributeEntityKeys(gentity_t *self) {
+void ParseActorAttributeEntityKeys(gentity_t *self)
+{
 	char *arg;
 
 	G_SpawnString("torsoAnim", "", &arg);
@@ -27,15 +28,16 @@ void ParseActorAttributeEntityKeys(gentity_t *self) {
 	G_SpawnVector("rgb", "0 0 0", self->genericVec1);
 }
 
-void ApplyActorAttributeEntityKeys(gentity_t *self, gentity_t *actor) {
+void ApplyActorAttributeEntityKeys(gentity_t *self, gentity_t *actor)
+{
 
-	if(self->modelScale[0] > 0)
+	if (self->modelScale[0] > 0)
 		Actor_SetScale(actor, self->modelScale[0]);
-	
-	if(self->genericValue1 > -1) 
+
+	if (self->genericValue1 > -1)
 		Actor_SetAnimation_Legs(actor, self->genericValue1, -1);
 
-	if(self->genericValue2 > -1) 
+	if (self->genericValue2 > -1)
 		Actor_SetAnimation_Torso(actor, self->genericValue2, -1);
 
 	VectorCopy(self->genericVec1, actor->client->ps.customRGBA);
@@ -43,16 +45,14 @@ void ApplyActorAttributeEntityKeys(gentity_t *self, gentity_t *actor) {
 
 const entityInfoData_t lmd_actor_spawnflags[] = {
 	{"1", "Drop to floor."},
-	{NULL, NULL}
-};
+	{NULL, NULL}};
 const entityInfoData_t lmd_actor_keys[] = {
 	{"NPC_TargetName", "The name to use for lmd_actor_modify or lmd_actor_action."},
 	{"Target", "The target to use after spawning an actor."},
 	{"Model", "The model to use for this actor."},
 	{"Skin", "The model skin to use for this actor."},
 	ACTOR_ATTRIBUTE_LIST,
-	NULL
-};
+	NULL};
 
 entityInfo_t lmd_actor_info = {
 	"An interactive non-player character controllable by the lmd_actor_* entities.\n"
@@ -64,9 +64,10 @@ entityInfo_t lmd_actor_info = {
 	lmd_actor_keys,
 };
 
-void lmd_actor_use(gentity_t *self, gentity_t *other, gentity_t *activator) {
+void lmd_actor_use(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
 	gentity_t *actor = Actor_Create(self->model, self->GenericStrings[0], self->s.origin, self->s.angles);
-	if(!actor)
+	if (!actor)
 		return;
 
 	actor->fullName = self->fullName;
@@ -76,26 +77,30 @@ void lmd_actor_use(gentity_t *self, gentity_t *other, gentity_t *activator) {
 	ApplyActorAttributeEntityKeys(self, actor);
 
 	//Test for drop to floor
-	if ( self->spawnflags & 1 ) {
-		trace_t		tr;
-		vec3_t		bottom;
+	if (self->spawnflags & 1)
+	{
+		trace_t tr;
+		vec3_t bottom;
 
-		VectorCopy( actor->r.currentOrigin, bottom );
+		VectorCopy(actor->r.currentOrigin, bottom);
 		bottom[2] = MIN_WORLD_COORD;
-		trap_Trace( &tr, actor->r.currentOrigin, actor->r.mins, actor->r.maxs, bottom, actor->s.number, MASK_NPCSOLID );
-		if ( !tr.allsolid && !tr.startsolid && tr.fraction < 1.0 ) {
+		trap_Trace(&tr, actor->r.currentOrigin, actor->r.mins, actor->r.maxs, bottom, actor->s.number, MASK_NPCSOLID);
+		if (!tr.allsolid && !tr.startsolid && tr.fraction < 1.0)
+		{
 			Actor_SetOrigin(actor, tr.endpos);
 		}
 	}
 	G_UseTargets(self, activator);
 }
 
-void lmd_actor(gentity_t *self) {
+void lmd_actor(gentity_t *self)
+{
 
-	if ( !self->fullName || !self->fullName[0])
+	if (!self->fullName || !self->fullName[0])
 		self->fullName = "Actor";
 
-	if(!self->model || !self->model[0]) {
+	if (!self->model || !self->model[0])
+	{
 		EntitySpawnError("lmd_actor requires a model key.");
 		G_FreeEntity(self);
 		return;
@@ -104,10 +109,10 @@ void lmd_actor(gentity_t *self) {
 
 	G_SpawnString("skin", "", &self->GenericStrings[0]);
 
-	if(!self->GenericStrings[0][0])
+	if (!self->GenericStrings[0][0])
 		self->GenericStrings[0] = "default";
 
-	if(self->targetname)
+	if (self->targetname)
 		self->use = lmd_actor_use;
 	else
 		lmd_actor_use(self, NULL, self);
@@ -119,19 +124,19 @@ const entityInfoData_t lmd_actor_modify_keys[] = {
 	{"Origin", "If non-zero, the actor will be teleported to this origin."},
 	{"Angles", "If non-zero, the actor will be turned to face these angles."},
 	ACTOR_ATTRIBUTE_LIST,
-	{NULL, NULL}
-};
+	{NULL, NULL}};
 entityInfo_t lmd_actor_modify_info = {
 	"Change actor attributes on the fly. All actors matching the NPC_Target with their NPC_TargetName will be affected.",
 	NULL,
 	lmd_actor_modify_keys,
 };
 
-//Ufo: redesigned a bit
-void lmd_actor_modify_use(gentity_t *self, gentity_t *other, gentity_t *activator) {
+void lmd_actor_modify_use(gentity_t *self, gentity_t *other, gentity_t *activator)
+{
 	gentity_t *actor = NULL;
-	while(actor = G_Find(actor, FOFS(classname), "Actor")) {
-		if(Q_stricmp(actor->NPC_targetname, self->NPC_target) != 0)
+	while (actor = G_Find(actor, FOFS(classname), "Actor"))
+	{
+		if (Q_stricmp(actor->NPC_targetname, self->NPC_target) != 0)
 			continue;
 
 		if (self->s.origin[0] || self->s.origin[1] || self->s.origin[2])
@@ -145,8 +150,10 @@ void lmd_actor_modify_use(gentity_t *self, gentity_t *other, gentity_t *activato
 	G_UseTargets(self, activator);
 }
 
-void lmd_actor_modify(gentity_t *self) {
-	if(!self->NPC_target || !self->NPC_target[0]) {
+void lmd_actor_modify(gentity_t *self)
+{
+	if (!self->NPC_target || !self->NPC_target[0])
+	{
 		EntitySpawnError("lmd_actor_modify requires the NPC_Target key.");
 		G_FreeEntity(self);
 		return;

@@ -1,9 +1,6 @@
 // leave this line at the top of all AI_xxxx.cpp files for PCH reasons...
 #include "g_headers.h"
-
 #include "b_local.h"
-
-extern void G_GetBoltPosition(gentity_t *self, int boltIndex, vec3_t pos, int modelIndex);
 
 // These define the working combat range for these suckers
 #define MIN_DISTANCE 128
@@ -71,9 +68,7 @@ qboolean Rancor_CheckRoar(gentity_t *self)
 		self->wait = 1; //do this only once
 		self->client->ps.eFlags2 |= EF2_ALERTED;
 		NPC_SetAnim(self, SETANIM_BOTH, BOTH_STAND1TO2, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD);
-
 		TIMER_Set(self, "rageTime", self->client->ps.legsTimer);
-		//G_Sound(NPC, CHAN_AUTO, G_SoundIndex( "sound/chars/rancor/rancor_roar_02" ));
 		return qtrue;
 	}
 	return qfalse;
@@ -196,6 +191,7 @@ void Rancor_DropVictim(gentity_t *self)
 	self->count = 0; //drop him
 }
 
+// Swing to grab or smack the nearby enemies
 void Rancor_Swing(qboolean tryGrab)
 {
 	int radiusEntNums[128];
@@ -210,43 +206,24 @@ void Rancor_Swing(qboolean tryGrab)
 	for (i = 0; i < numEnts; i++)
 	{
 		gentity_t *radiusEnt = &g_entities[radiusEntNums[i]];
-		if (!radiusEnt->inuse)
-		{	// must be in use
-			continue;
-		}
 
-		if (radiusEnt == NPC)
-		{ 	// skip rancor
+		if (!radiusEnt->inuse || radiusEnt == NPC || (radiusEnt->client == NULL) || (radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER))
 			continue;
-		}
-
-		if (radiusEnt->client == NULL)
-		{ 	// skip non-client entities
-			continue;
-		}
-
-		if (radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER)
-		{ 	// skip client being held
-			continue;
-		}
-		
 
 		if (radiusEnt->client->sess.spectatorState != SPECTATOR_NOT)
-		{	// skip spectators
 			continue;
-		}
 
 		if (DistanceSquared(radiusEnt->r.currentOrigin, boltOrg) <= radiusSquared)
 		{
 			if (tryGrab && NPC->count != 1 //don't have one in hand or in mouth already - FIXME: allow one in hand and any number in mouth!
 				&& radiusEnt->client->NPC_class != CLASS_RANCOR && radiusEnt->client->NPC_class != CLASS_GALAKMECH && radiusEnt->client->NPC_class != CLASS_ATST && radiusEnt->client->NPC_class != CLASS_GONK && radiusEnt->client->NPC_class != CLASS_R2D2 && radiusEnt->client->NPC_class != CLASS_R5D2 && radiusEnt->client->NPC_class != CLASS_MARK1 && radiusEnt->client->NPC_class != CLASS_MARK2 && radiusEnt->client->NPC_class != CLASS_MOUSE && radiusEnt->client->NPC_class != CLASS_PROBE && radiusEnt->client->NPC_class != CLASS_SEEKER && radiusEnt->client->NPC_class != CLASS_REMOTE && radiusEnt->client->NPC_class != CLASS_SENTRY && radiusEnt->client->NPC_class != CLASS_INTERROGATOR && radiusEnt->client->NPC_class != CLASS_VEHICLE)
-			{ //grab
+			{ // grab an enemy
 				if (NPC->count == 2)
 				{ //have one in my mouth, remove him
 					TIMER_Remove(NPC, "clearGrabbed");
 					Rancor_DropVictim(NPC);
 				}
-				NPC->enemy = radiusEnt; //make him my new best friend
+				NPC->enemy = radiusEnt;
 				radiusEnt->client->ps.eFlags2 |= EF2_HELD_BY_MONSTER;
 				//FIXME: this makes it so that the victim can't hit us with shots!  Just use activator or something
 				radiusEnt->client->ps.hasLookTarget = qtrue;
@@ -256,30 +233,23 @@ void Rancor_Swing(qboolean tryGrab)
 				//wait to attack
 				TIMER_Set(NPC, "attacking", NPC->client->ps.legsTimer + Q_irand(500, 2500));
 				if (radiusEnt->health > 0 && radiusEnt->pain)
-				{ //do pain on enemy
+				{
 					radiusEnt->pain(radiusEnt, NPC, 100);
-					//GEntity_PainFunc( radiusEnt, NPC, NPC, radiusEnt->r.currentOrigin, 0, MOD_CRUSH );
 				}
 				else if (radiusEnt->client)
 				{
 					radiusEnt->client->ps.forceHandExtend = HANDEXTEND_NONE;
 					radiusEnt->client->ps.forceHandExtendTime = 0;
-					NPC_SetAnim(radiusEnt, SETANIM_BOTH, BOTH_SWIM_IDLE1, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD);
+					G_SetAnim(radiusEnt, SETANIM_BOTH, BOTH_SWIM_IDLE1, SETANIM_FLAG_OVERRIDE | SETANIM_FLAG_HOLD, 0);
 				}
 			}
 			else
-			{ //smack
+			{ //smack and throw the enemy
 				vec3_t pushDir;
 				vec3_t angs;
 
 				G_Sound(radiusEnt, CHAN_AUTO, G_SoundIndex("sound/chars/rancor/swipehit.wav"));
-				//actually push the enemy
-				/*
-				//VectorSubtract( radiusEnt->r.currentOrigin, boltOrg, pushDir );
-				VectorSubtract( radiusEnt->r.currentOrigin, NPC->r.currentOrigin, pushDir );
-				pushDir[2] = Q_flrand( 100, 200 );
-				VectorNormalize( pushDir );
-				*/
+
 				VectorCopy(NPC->client->ps.viewangles, angs);
 				angs[YAW] += flrand(25, 50);
 				angs[PITCH] = flrand(-25, -15);
@@ -289,8 +259,8 @@ void Rancor_Swing(qboolean tryGrab)
 					G_Damage(radiusEnt, NPC, NPC, vec3_origin, radiusEnt->r.currentOrigin, Q_irand(25, 40), DAMAGE_NO_ARMOR | DAMAGE_NO_KNOCKBACK, MOD_MELEE);
 					G_Throw(radiusEnt, pushDir, 250);
 					if (radiusEnt->health > 0)
-					{							   //do pain on enemy
-						G_Knockdown(radiusEnt, 0); //, NPC, pushDir, 100, qtrue );
+					{
+						G_Knockdown(radiusEnt, 0);
 					}
 				}
 			}
@@ -298,11 +268,13 @@ void Rancor_Swing(qboolean tryGrab)
 	}
 }
 
+// Smash to damage and knockdown nearby entities
+#define RANCOR_SMASH_RADIUS 128
 void Rancor_Smash(void)
 {
-	int radiusEntNums[128];
+	int radiusEntNums[RANCOR_SMASH_RADIUS];
 	int numEnts;
-	const float radius = 128;
+	const float radius = RANCOR_SMASH_RADIUS;
 	const float halfRadSquared = ((radius / 2) * (radius / 2));
 	const float radiusSquared = (radius * radius);
 	float distSq;
@@ -316,45 +288,32 @@ void Rancor_Smash(void)
 	for (i = 0; i < numEnts; i++)
 	{
 		gentity_t *radiusEnt = &g_entities[radiusEntNums[i]];
-		if (!radiusEnt->inuse)
-		{
-			continue;
-		}
 
-		if (radiusEnt == NPC)
-		{ //Skip the rancor ent
+		if (!radiusEnt->inuse || radiusEnt == NPC || radiusEnt->client == NULL || (radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER))
 			continue;
-		}
-
-		if (radiusEnt->client == NULL)
-		{ //must be a client
-			continue;
-		}
-
-		if ((radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER))
-		{ //can't be one being held
-			continue;
-		}
 
 		distSq = DistanceSquared(radiusEnt->r.currentOrigin, boltOrg);
+
 		if (distSq <= radiusSquared)
 		{
 			G_Sound(radiusEnt, CHAN_AUTO, G_SoundIndex("sound/chars/rancor/swipehit.wav"));
+
 			if (distSq < halfRadSquared)
-			{ //close enough to do damage, too
+			{ // damage closely nearby entities
 				G_Damage(radiusEnt, NPC, NPC, vec3_origin, radiusEnt->r.currentOrigin, Q_irand(10, 25), DAMAGE_NO_ARMOR | DAMAGE_NO_KNOCKBACK, MOD_MELEE);
 			}
 			if (radiusEnt->health > 0 && radiusEnt->client && radiusEnt->client->NPC_class != CLASS_RANCOR && radiusEnt->client->NPC_class != CLASS_ATST)
 			{
 				if (distSq < halfRadSquared || radiusEnt->client->ps.groundEntityNum != ENTITYNUM_NONE)
-				{							   //within range of my fist or withing ground-shaking range and not in the air
-					G_Knockdown(radiusEnt, 0); //, NPC, vec3_origin, 100, qtrue );
+				{ // knockdown closely nearby entities
+					G_Knockdown(radiusEnt, 0);
 				}
 			}
 		}
 	}
 }
 
+// Bite and possibly dismember nearby enemies
 void Rancor_Bite(void)
 {
 	int radiusEntNums[128];
@@ -369,34 +328,18 @@ void Rancor_Bite(void)
 	for (i = 0; i < numEnts; i++)
 	{
 		gentity_t *radiusEnt = &g_entities[radiusEntNums[i]];
-		if (!radiusEnt->inuse)
+		if (!radiusEnt->inuse || radiusEnt == NPC || radiusEnt->client == NULL || (radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER))
 		{
 			continue;
 		}
 
-		if (radiusEnt == NPC)
-		{ //Skip the rancor ent
-			continue;
-		}
-
-		if (radiusEnt->client == NULL)
-		{ //must be a client
-			continue;
-		}
-
-		if ((radiusEnt->client->ps.eFlags2 & EF2_HELD_BY_MONSTER))
-		{ //can't be one already being held
-			continue;
-		}
-
-		//RoboPhred: Don't eat duelists.  They cannot take damage but they are still dismembered, causing invisibility.
-		//Probably want the rancor to eat duelists normally, but this is quick and easy for now.
 		if (duelInProgress(&radiusEnt->client->ps))
 			continue;
 
 		if (DistanceSquared(radiusEnt->r.currentOrigin, boltOrg) <= radiusSquared)
 		{
 			G_Damage(radiusEnt, NPC, NPC, vec3_origin, radiusEnt->r.currentOrigin, Q_irand(15, 30), DAMAGE_NO_ARMOR | DAMAGE_NO_KNOCKBACK, MOD_MELEE);
+			G_Sound(radiusEnt, CHAN_AUTO, G_SoundIndex("sound/chars/rancor/chomp.wav"));
 			if (radiusEnt->health <= 0 && radiusEnt->client)
 			{ //killed them, chance of dismembering
 				if (!Q_irand(0, 1))
@@ -420,12 +363,13 @@ void Rancor_Bite(void)
 					//G_DoDismemberment( radiusEnt, radiusEnt->r.currentOrigin, MOD_SABER, 1000, hitLoc, qtrue );
 				}
 			}
-			G_Sound(radiusEnt, CHAN_AUTO, G_SoundIndex("sound/chars/rancor/chomp.wav"));
 		}
 	}
 }
+
 //------------------------------
 extern void TossClientItems(gentity_t *self);
+extern void G_GetBoltPosition(gentity_t *self, int boltIndex, vec3_t pos, int modelIndex);
 void Rancor_Attack(float distance, qboolean doCharge)
 {
 	if (!TIMER_Exists(NPC, "attacking"))
@@ -710,7 +654,6 @@ void Rancor_Combat(void)
 NPC_Rancor_Pain
 -------------------------
 */
-//void NPC_Rancor_Pain( gentity_t *self, gentity_t *inflictor, gentity_t *other, const vec3_t point, int damage, int mod,int hitLoc )
 void NPC_Rancor_Pain(gentity_t *self, gentity_t *attacker, int damage)
 {
 	qboolean hitByRancor = qfalse;
