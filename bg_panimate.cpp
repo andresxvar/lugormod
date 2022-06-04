@@ -5,7 +5,7 @@
 #include "bg_strap.h"
 #include "bg_local.h"
 #include "anims.h"
-#include "../cgame/animtable.h"
+#include "../jkasdk/cgame/animtable.h"
 #ifdef QAGAME
 #include "g_local.h"
 #endif

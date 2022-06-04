@@ -11,7 +11,7 @@
 
 #define MAX_TEAMNAME 32
 
-#include "../qcommon/disablewarnings.h"
+#include "../jkasdk/qcommon/disablewarnings.h"
 
 #include "teams.h" //npc team stuff
 
@@ -2925,7 +2925,7 @@ Ghoul2 Insert End
 //typedef
 enum
 {
-#include "../qcommon/tags.h"
+#include "../jkasdk/qcommon/tags.h"
 };
 typedef char memtag_t;
 

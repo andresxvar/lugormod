@@ -11,12 +11,12 @@
 #endif
 
 #ifdef UI_EXPORTS
-#include "../ui/ui_local.h"
+#include "../jkasdk/ui/ui_local.h"
 #endif
 
 #ifndef UI_EXPORTS
 #ifndef QAGAME
-#include "../cgame/cg_local.h"
+#include "../jkasdk/cgame/cg_local.h"
 #endif
 #endif
 

@@ -148,6 +148,14 @@ static int g_lua_Game_Time(lua_State * L)
 	return 1;
 }
 
+//
+// Game.PlaySound()
+//
+static int g_lua_Game_PlaySound(lua_State *L)
+{
+	return 1;
+}
+
 // game library methods
 static const luaL_Reg GameRegistry[] = {
 	{"BindCommand", g_lua_Game_BindCommand},
@@ -155,6 +163,7 @@ static const luaL_Reg GameRegistry[] = {
 	{"Argument", g_lua_Game_Argument},
 	{"ConcatArgs", g_lua_Game_ConcatArgs},
 	{"PlayEffect", g_lua_Game_PlayEffect},
+	{"PlaySound", g_lua_Game_PlaySound},
 	{"Time", g_lua_Game_Time },
 
 	{NULL, NULL}};

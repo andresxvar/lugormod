@@ -1,7 +1,7 @@
 // Copyright (C) 1999-2000 Id Software, Inc.
 //
 #include "g_local.h"
-#include "../ghoul2/G2.h"
+#include "../jkasdk/ghoul2/G2.h"
 #include "q_shared.h"
 
 #include "Lmd_Commands_Auths.h"

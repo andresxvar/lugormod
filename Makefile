@@ -11,12 +11,12 @@ CC = g++
 CXXFLAGS = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
 	-fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
-	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME
+	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME -g -D_DEBUG 
 
 CXXFLAGS_RELEASE = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
 	-fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
-	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME
+	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME -g -D_DEBUG 
 
 LDFLAGS = -shared -lm -pthread -L$(ROOT_DIR)/lua -llua
 

@@ -2,7 +2,7 @@
 #include "bg_local.h"
 #include "w_saber.h"
 #include "ai_main.h"
-#include "../ghoul2/G2.h"
+#include "../jkasdk/ghoul2/G2.h"
 
 //RoboPhred
 #include "Lmd_Professions.h"

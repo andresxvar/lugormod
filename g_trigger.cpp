@@ -12,7 +12,6 @@ void PlayerUsableGetKeys(gentity_t *ent);
 
 void InitTrigger(gentity_t *self)
 {
-
 	PlayerUsableGetKeys(self); // Lugormod
 
 	//RoboPhred

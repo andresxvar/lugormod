@@ -8,12 +8,12 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/andres/OJK/JediAcademy_x86/openjkded.i386",
-            "args": ["+set","dedicated","2","+set","net_port","29071","+set","fs_game","lmdx","+exec","server.cfg"],
+            "program": "/home/andres/ojk/openjkded.i386",
+            "args": ["+set","dedicated","2","+set","net_port","29071","+set","fs_game","lugormod","+exec","server.cfg"],
             "stopAtEntry": false,
-            "cwd": "/home/andres/OJK/JediAcademy_x86/",
+            "cwd": "/home/andres/ojk/",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {

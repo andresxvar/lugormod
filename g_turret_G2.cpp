@@ -1,5 +1,5 @@
 #include "g_local.h"
-#include "../ghoul2/G2.h"
+#include "../jkasdk/ghoul2/G2.h"
 #include "q_shared.h"
 
 #include "Lmd_Accounts_Property.h"

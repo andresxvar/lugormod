@@ -18,13 +18,13 @@
         {
             "label": "install",
             "type": "shell",
-            "command": "cp jampgamei386.so /home/andres/OJK/JediAcademy_x86/lmdx/",
+            "command": "cp jampgamei386.so /home/andres/ojk/lugormod/",
             "problemMatcher": []
         },
         {
             "label": "install scripts",
             "type": "shell",
-            "command": "cp -r luascripts /home/andres/OJK/JediAcademy_x86/lmdx/",
+            "command": "cp -r luascripts /home/andres/ojk/lugormod/",
             "problemMatcher": []
         },
         {

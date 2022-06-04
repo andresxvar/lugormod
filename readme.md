@@ -1,7 +1,29 @@
-Compilation Guide
------------------
+# Compilation Guide
 
-Linux:
+## Linux:
+compiling Requirements:
+* install vscode
+* install make 
+* install g++ and libc6-dev-i386: sudo apt-get 
+* install g++-multilib 
+* requires some jka sdk files
+
+execute requirements:
+* jka
+* zlib:
+	```console
+	dpkg --add-architecture i386
+	apt-get update
+	apt-get install zlib1g:i386
+	```
+
+debugging requiremens:
+* install gdb: 
+	``` console 
+	sudo apt-get install gdb
+* if running in WSL for Windows set the property "externalConsole": false in launch.json
+
+
 (1) Download and install vscode
 (2) open the folder that contains the code
 (3) run make in the terminal
@@ -10,30 +32,56 @@ Ignore the many warnings etc.
 
 
 Note on dependent libraries: compiling requires the liblua.a (lua static library compiled for 32bit for compatibility).
-You can make liblua.a bu running make command in the lua folder.
+You can make liblua.a by running make command in the lua folder.
 To compile liblua.a as 32bit you need to have the readline library as 32bit.
 If your computer is 64bit machine, you can get readline library 32 bit by using:
+```console
 sudo dpkg --add-architecture i386
 sudo apt-get install libreadline-dev:i386
+```
 
 Optional Note: some recommended vscode plugins: c/c++ by Microsoft, Makefile by Markovic, Code Runner by J. Han.
 
-Installation Guide
-------------------
+# Installation Guide
 
-Linux:
+## Linux:
 If you don't want to compile, the jampgamex86.so is included in the "build" folder
-(1) Create a directory in gamedata folder ex. "lmdx"
-(2) Move jampgamex86.so to lmdx folder
-(3) Create a directory for the scripts "lmdx/luascripts/"
-(4) Add lua scripts ex. "lmdx/luascripts/rpg.lua"
-(5) add a server.cfg (lmdx/server.cfg) and start a server ex:
-./openjkded.i386 +set dedicated 2 +set net_port 29071 +set fs_game lmdx +exec server.cfg
+1. Create a directory in gamedata folder ex. "lmdx"
+2. Move jampgamex86.so to lmdx folder
+3. Create a directory for the scripts "lmdx/luascripts/"
+4. Add lua scripts ex. "lmdx/luascripts/rpg.lua"
+5. add a server.cfg (lmdx/server.cfg) and start a server ex:
+> ./openjkded.i386 +set dedicated 2 +set net_port 29071 +set fs_game lmdx +exec server.cfg
 
-Lua Features
-------------
+# Debugging
+vscode: debugging on vscode is the best option
+the launch configuration is included, you must modify the path for your application
+* run the build_install task
+* run the debugger
+
+external terminal: Make sure the g++ was run with -g option
+browse to openjkded.i386
+run the gdb with arguments:
+```console
+>> gdb --args ./openjkded.i386 +set dedicated 2 +set net_port 29071 +set fs_game lmdx +exec server.cfg
+>> run
+press ctrl+c go back to gdb
+>> info sharedlibrary
+note wether the symbols are loaded for jampgamei386.so
+see that there is link to the source code:
+>> info source
+go back to openjkded
+add breakpoint in hiscore function
+>> break Lmd_Accounts.cpp:130
+>> continue
+make it break by running the server command hitime
+>> info locals
+```
+
+# Lua Features
 List of library and meta methods for game, entity and vector
 
+```c
 // Game library methods
 library: lua ex. Game.BindCommand("class", cmd_class_f)
 	{ "BindCommand", 	g_lua_Game_BindCommand },
@@ -131,27 +179,4 @@ static const luaL_Reg vector_meta[] = {
 	{"__tostring", Vector_ToS1tring},
 	{NULL, NULL}
 };
-
-Debuggin
---------
-vscode: debugging on vscode is the best option
-the launch configuration is included, you must modify the path for your application
-run the build_install task
-run the debugger
-
-external terminal: Make sure the g++ was run with -g option
-browse to openjkded.i386
-run the gdb with arguments:
->> gdb --args ./openjkded.i386 +set dedicated 2 +set net_port 29071 +set fs_game lmdx +exec server.cfg
->> run
-press ctrl+c go back to gdb
->> info sharedlibrary
-note wether the symbols are loaded for jampgamei386.so
-see that there is link to the source code:
->> info source
-go back to openjkded
-add breakpoint in hiscore function
->> break Lmd_Accounts.cpp:130
->> continue
-make it break by running the server command hitime
->> info locals
+```

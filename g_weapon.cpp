@@ -6,7 +6,7 @@
 #include "g_local.h"
 #include "be_aas.h"
 #include "bg_saga.h"
-#include "../ghoul2/G2.h"
+#include "../jkasdk/ghoul2/G2.h"
 #include "q_shared.h"
 
 #include "Lmd_Accounts_Stats.h"

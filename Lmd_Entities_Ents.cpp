@@ -18,7 +18,7 @@
 int EntitiesInBox(const vec3_t mins, const vec3_t maxs, int *list, int maxcount, qboolean logical);
 
 //for fake body
-#include "../ghoul2/G2.h"
+#include "../jkasdk/ghoul2/G2.h"
 
 KeyPairSet_t *getAccCustSkills(int nickIndex);
 
