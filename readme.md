@@ -24,10 +24,10 @@ debugging requiremens:
 * if running in WSL for Windows set the property "externalConsole": false in launch.json
 
 
-(1) Download and install vscode
-(2) open the folder that contains the code
-(3) run make in the terminal
-This will compile jampgamex86.so for 32bit targets (since the original lugormod is only 32bit)
+1. Download and install vscode
+2. open the folder that contains the code
+3. run make in the terminal
+This will compile jampgamex86.so for 32bit targets (since the original lugormod is only 32bit)\
 Ignore the many warnings etc.
 
 
@@ -52,6 +52,12 @@ If you don't want to compile, the jampgamex86.so is included in the "build" fold
 4. Add lua scripts ex. "lmdx/luascripts/rpg.lua"
 5. add a server.cfg (lmdx/server.cfg) and start a server ex:
 > ./openjkded.i386 +set dedicated 2 +set net_port 29071 +set fs_game lmdx +exec server.cfg
+
+## Connecting locally from windows
+You can get the local inet ip for eth0 via 
+```console
+ip addr
+```
 
 # Debugging
 vscode: debugging on vscode is the best option
