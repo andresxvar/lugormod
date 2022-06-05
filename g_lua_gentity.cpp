@@ -187,6 +187,7 @@ static int g_lua_GEntity_Number(lua_State *L)
 
 //
 // GEntity:MakeHackable( )
+// places a hackable trigger around the target entity
 //
 void hacking_zone_think(gentity_t *ent)
 {

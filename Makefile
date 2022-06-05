@@ -1,47 +1,37 @@
-########################################################################
-####################### Makefile Template ##############################
-########################################################################
-
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-# Compiler settings - Can be customized.
 CC = g++
-
-# -g -D_DEBUG 
 CXXFLAGS = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
 	-fpermissive -D__linux__ -m32 -D_JK2MP \
 	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
 	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME -g -D_DEBUG 
-
-CXXFLAGS_RELEASE = -Wfatal-errors -Wno-narrowing -Wno-write-strings -Wno-literal-suffix \
-	-fpermissive -D__linux__ -m32 -D_JK2MP \
-	-DQAGAME -DLUGORMOD -DLMD_NEW_WEAPONS -DLMD_NEW_FORCEPOWERS \
-	-DLMD_NEW_SKILLSYS -D_JK2 -DJK2AWARDS -D_GAME -g -D_DEBUG 
-
 LDFLAGS = -shared -lm -pthread -L$(ROOT_DIR)/lua -llua
 
-# Makefile settings - Can be customized.
-APPNAME = jampgamei386.so
-EXT = .cpp
 SRCDIR = $(ROOT_DIR)
-OBJDIR = obj
+EXT = .cpp
 
-############## Do not change anything from here downwards! #############
+OBJDIR = obj
+OBJEXT = .o
+
+DEPDIR = dep
+DEPEXT = .d
+
+APPNAME = build/jampgamei386.so
+
 SRC = $(wildcard $(SRCDIR)/*$(EXT))
-OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
-DEP = $(OBJ:$(OBJDIR)/%.o=%.d)
-# UNIX-based OS variables & settings
+OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%$(OBJEXT))
+DEP = $(OBJ:$(OBJDIR)/%$(OBJEXT)=$(DEPDIR)/%$(DEPEXT))
+
+## command to remove files
+# Unix
 RM = rm
 DELOBJ = $(OBJ)
-# Windows OS variables & settings
+# Windows
 DEL = del
 EXE = .exe
 WDELOBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)\\%.o)
 
-########################################################################
-####################### Targets beginning here #########################
-########################################################################
-
+## targets
 all: $(APPNAME)
 
 # Builds the app
@@ -59,24 +49,19 @@ $(APPNAME): $(OBJ)
 $(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
 	$(CC) $(CXXFLAGS) -o $@ -c $<
 
-################### Cleaning rules for Unix-based OS ###################
-# Cleans complete project
+## cleanning
 .PHONY: clean
 clean:
-	$(RM) $(DELOBJ) $(DEP) $(APPNAME)
+	$(RM) $(DELOBJ)
 
-# Cleans only all files with the extension .d
 .PHONY: cleandep
 cleandep:
 	$(RM) $(DEP)
 
-#################### Cleaning rules for Windows OS #####################
-# Cleans complete project
 .PHONY: cleanw
 cleanw:
 	$(DEL) $(WDELOBJ) $(DEP) $(APPNAME)$(EXE)
 
-# Cleans only all files with the extension .d
 .PHONY: cleandepw
 cleandepw:
 	$(DEL) $(DEP)

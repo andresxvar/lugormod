@@ -12,7 +12,7 @@
         {
             "label": "clean up",
             "type": "shell",
-            "command": "cp jampgamei386.so ./build/ && make clean",
+            "command": "make clean",
             "problemMatcher": []
         },
         {
